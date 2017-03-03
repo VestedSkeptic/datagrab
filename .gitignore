@@ -1,12 +1,24 @@
 mysite2env/*
-# */*.pyc
-# mysite2/*.pyc
-# mysite2/__pycache__/*.pyc
-
 *.pyc
 *.pyo
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+# */*.pyc
+# mysite2/*.pyc
+# mysite2/__pycache__/*.pyc
 # Generated/readme.txt
 # xmlRules/*
 # scrap.txt

@@ -25,7 +25,7 @@ import requests
 def index(request):
     all_entries = reddituser.objects.all()
         
-    s = "POLLS VIEW: "
+    s = "REDDIT COMMENTS VIEW: "
     for entry in all_entries:
         s += entry.username
 
