@@ -56,30 +56,6 @@ def displayCommentListingDictMeta(d):
     else:
         rv += "ERROR data NOT FOUND"    
     return rv    
-  
-# *****************************************************************************
-def index(request):
-    all_entries = reddituser.objects.all()
-        
-    rv = ""
-    for entry in all_entries:
-        after = None
-        commentQuery = getCommentQuery(entry.username, after)
-        r = requests.get(commentQuery)
-        d = r.json()
-        
-        if 'message' in d:
-            rv += displayMessageFromDict(d)
-        elif 'data' in d:
-            rv += displayCommentListingDictMeta(d)
-            rv += processCommentListingDataChildren(d, after)
-            # after = processCommentListingDict(d)
-            # while after is not None:
-            #     after = BLUEBLUEBLUE
-            # move all this processing inside for entry in all_entries: into method which canb e called recursively
-        else:
-            rv += displayUnknownDict(d)
-    return HttpResponse(rv) 
         
 # *****************************************************************************
 def processCommentListingDataChildren(d, after):
@@ -129,6 +105,31 @@ def processCommentListingDataChildren(d, after):
         # # s += d_string
         
         
+        
+  
+# *****************************************************************************
+def index(request):
+    all_entries = reddituser.objects.all()
+        
+    rv = ""
+    for entry in all_entries:
+        after = None
+        commentQuery = getCommentQuery(entry.username, after)
+        r = requests.get(commentQuery)
+        d = r.json()
+        
+        if 'message' in d:
+            rv += displayMessageFromDict(d)
+        elif 'data' in d:
+            rv += displayCommentListingDictMeta(d)
+            rv += processCommentListingDataChildren(d, after)
+            # after = processCommentListingDict(d)
+            # while after is not None:
+            #     after = BLUEBLUEBLUE
+            # move all this processing inside for entry in all_entries: into method which canb e called recursively
+        else:
+            rv += displayUnknownDict(d)
+    return HttpResponse(rv)         
 
     
     
