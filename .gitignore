@@ -1,5 +1,7 @@
 mysite2env/*
 mysite2/*.pyc
+mysite2/__pycache__/*.pyc
+
 
 # Generated/readme.txt
 # xmlRules/*
