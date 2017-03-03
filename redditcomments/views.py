@@ -58,54 +58,41 @@ def displayCommentListingDictMeta(d):
     return rv    
         
 # *****************************************************************************
-def processCommentListingDataChildren(d, after):
+# def processCommentListingDataChildren(d, after):
+def processCommentListingDataChildren(d):
     rv = ""
     if 'children' in d['data']:
         for cd in d['data']['children']:
-        	rv += cd['kind']
-    
-    if 'after' in d['data']: after = d['data']['after']
-    else:                    after = None
-    
+        	rv += "<BR>" + cd['kind']
+
     return rv;    
+  
+# *****************************************************************************
+def processRedditUsersComments(redditusername, after):
+    rv = ""
+    
+    commentQuery = getCommentQuery(redditusername, after)
+    rv += commentQuery
+    rv += "<br> [AA: after = " + returnStringValueOrNoneIfNone(after) + "]<BR>"     
+    
+    r = requests.get(commentQuery)
+    d = r.json()
+    
+    if 'message' in d:
+        rv += displayMessageFromDict(d)
+    elif 'data' in d:
+        rv += displayCommentListingDictMeta(d)
+        rv += processCommentListingDataChildren(d)
         
-        
-        # s += "<br>" + 
-        # 
-        # 
-        # validToContinue = False
-        # 
-        # s += "<br>  "
-        # 
-        # 
-        # if 'kind' in d:
-        #     s += "KIND: " + d['kind'] + ", "
-        #     validToContinue = True
-        #     
-        # if validToContinue:
-        #     
-        #     
-        # # if 'error' in d:
-        # #     s += "ERROR: " + d['ERROR'] + ", "
-        # #     
-        # # if 'error' in d:
-        # #     s += "ERROR: " + d['ERROR'] + ", "
-        # #     
-        # # if 'error' in d:
-        # #     s += "ERROR: " + d['ERROR'] + ", "
-        # #     
-        # # if 'error' in d:
-        # #     s += "ERROR: " + d['ERROR'] + ", "
-        # #     
-        # # if 'error' in d:
-        # #     s += "ERROR: " + d['ERROR'] + ", "                                                
-        #                         
-        # # 
-        # # d_string = json.dumps(d);
-        # # s += d_string
-        
-        
-        
+        # rv += "<br> [B1: after = " + returnStringValueOrNoneIfNone(d['data']['after']) + "]<BR>" 
+        # if d['data']['after'] is not None:
+        rv += "<br> [DD: after = " + returnStringValueOrNoneIfNone(d['data']['after']) + "]<BR>" 
+        u = reddituser.objects.get(username=redditusername)
+        u.commentsafter = d['data']['after']
+        u.save()
+    else:
+        rv += displayUnknownDict(d)        
+    return rv
   
 # *****************************************************************************
 def index(request):
@@ -113,22 +100,7 @@ def index(request):
         
     rv = ""
     for entry in all_entries:
-        after = None
-        commentQuery = getCommentQuery(entry.username, after)
-        r = requests.get(commentQuery)
-        d = r.json()
-        
-        if 'message' in d:
-            rv += displayMessageFromDict(d)
-        elif 'data' in d:
-            rv += displayCommentListingDictMeta(d)
-            rv += processCommentListingDataChildren(d, after)
-            # after = processCommentListingDict(d)
-            # while after is not None:
-            #     after = BLUEBLUEBLUE
-            # move all this processing inside for entry in all_entries: into method which canb e called recursively
-        else:
-            rv += displayUnknownDict(d)
+        rv += processRedditUsersComments(entry.username, entry.commentsafter)
     return HttpResponse(rv)         
 
     
