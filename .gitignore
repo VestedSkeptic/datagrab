@@ -1,0 +1,7 @@
+mysite2env/*
+mysite2/*.pyc
+
+# Generated/readme.txt
+# xmlRules/*
+# scrap.txt
+# br*.txt
