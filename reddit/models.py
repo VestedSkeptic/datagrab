@@ -1,9 +1,6 @@
 from __future__ import unicode_literals
 from django.db import models
-
-# *****************************************************************************
-CONST_UNPROCESSED   = "unprocessed"
-CONST_PROCESSED     = "processed"
+from .defines import *
 
 # *****************************************************************************
 class user(models.Model):
