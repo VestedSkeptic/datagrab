@@ -2,6 +2,7 @@
 from django.http import HttpResponse
 from redditusers.models import reddituser
 import requests, json
+from helperLibrary.stringHelper import returnStringValueOrNoneIfNone
 
 # def index(request):
 #     r = requests.get('https://www.reddit.com/user/BeneficEvil/comments/.json')
@@ -35,11 +36,6 @@ def displayMessageFromDict(d):
 def displayUnknownDict(d):
     rv = "UNKNOWN: " + json.dumps(d)
     return rv
-    
-# *****************************************************************************
-def returnStringValueOrNoneIfNone(v):
-    if v is not None: return v
-    else:             return "None"
     
 # *****************************************************************************
 def displayCommentListingDictMeta(d):
