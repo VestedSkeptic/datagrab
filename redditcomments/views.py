@@ -60,11 +60,12 @@ def displayCommentListingDictMeta(d):
 # *****************************************************************************
 # def processCommentListingDataChildren(d, after):
 def processCommentListingDataChildren(d):
-    rv = ""
+    rv = "<br>"
     if 'children' in d['data']:
+        count = 0
         for cd in d['data']['children']:
-        	rv += "<BR>" + cd['kind']
-
+            count += 1
+            rv += "<BR><b>" + str(count) + " " + cd['data']['name'] + "</b> " + cd['data']['body'] + "<br>"
     return rv;    
   
 # *****************************************************************************
@@ -105,12 +106,32 @@ def index(request):
 
     
     
+    
+# https://www.reddit.com/user/MrMediaMogul/comments/.json
+# https://www.reddit.com/user/MrMediaMogul/comments/.json?after=t1_cqjsz5e
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 # TOO MANY REQUESTS ERROR format
 # {"message": "Too Many Requests", "error": 429}
     
     
 # Three queries to get user comments using after value from previous    
-# https://www.reddit.com/user/stp2007/comments/.json    
+  # https://www.reddit.com/user/stp2007/comments/.json    
 # https://www.reddit.com/user/stp2007/comments/.json?after=t1_d8fi1ll
 # https://www.reddit.com/user/stp2007/comments/.json?after=t1_d6b14um    
         

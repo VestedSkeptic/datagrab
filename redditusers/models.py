@@ -8,4 +8,9 @@ class reddituser(models.Model):
     commentsafter = models.CharField(max_length=30, default="", blank=True, null=True)
     
     def __str__(self):
-        return format(self.username + " " + self.commentsafter)    
+        s = self.username
+        if self.commentsafter is not None: 
+            s += " (" + self.commentsafter + ")"
+        else:
+            s += " (None)"
+        return format(s)    
