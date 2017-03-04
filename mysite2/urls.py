@@ -19,5 +19,6 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^redditcomments/', include('redditcomments.urls')),
     url(r'^redditusers/', include('redditusers.urls')),
+    url(r'^reddit/', include('reddit.urls')),
     url(r'^admin/', admin.site.urls),
 ]
