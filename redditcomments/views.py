@@ -98,6 +98,8 @@ def processRedditUsersComments(redditusername, after):
 # *****************************************************************************
 def index(request):
     all_entries = reddituser.objects.all()
+    
+    print ("TEST TEST TEST TEST TEST TEST TEST")
         
     rv = ""
     for entry in all_entries:
