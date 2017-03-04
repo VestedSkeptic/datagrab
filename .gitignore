@@ -1,6 +1,9 @@
 mysite2env/*
 *.pyc
 *.pyo
+__pycache__
+migrations
+__init__.py
 
 
 
