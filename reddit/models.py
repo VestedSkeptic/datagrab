@@ -18,3 +18,21 @@ class userCommentsProcessedStatus(models.Model):
         s += " [After: " + self.after + "]"
         s += " [Before: " + self.before + "]"
         return format(s)
+
+# *****************************************************************************
+class userCommentsIndex(models.Model):
+    user    = models.ForeignKey(user, on_delete=models.CASCADE,)
+    name    = models.CharField(max_length=12)
+    def __str__(self):
+        s = self.user.name
+        s += " [" + self.name + "]"
+        return format(s)
+
+# *****************************************************************************
+class userCommentsRaw(models.Model):
+    uci     = models.OneToOneField(userCommentsIndex, primary_key=True)
+    data    = models.TextField()
+    def __str__(self):
+        s = self.uci.user.name
+        s += " [" + self.data + "]"
+        return format(s)

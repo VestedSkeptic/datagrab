@@ -37,8 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'redditusers',
-    # 'redditcomments',
     'reddit'
 ]
 
@@ -79,7 +77,7 @@ WSGI_APPLICATION = 'mysite2.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mysite',
+        'NAME': 'mysite2',
         'USER': 'mysiteuser',
         'PASSWORD': 'password',
         'HOST': 'localhost',

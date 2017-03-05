@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
-from .models import user, userCommentsProcessedStatus
+from .models import user, userCommentsProcessedStatus, userCommentsIndex, userCommentsRaw
 from .defines import *
 from .credentials import credentials_getAuthorizationHeader
 from helperLibrary.stringHelper import *
@@ -39,16 +39,6 @@ def displayCommentListingDictMeta(d):
         rv += "ERROR data NOT FOUND"
     return rv
 
-# # *****************************************************************************
-# def processCommentListingDataChildren(d):
-#     rv = "<br>"
-#     if 'children' in d['data']:
-#         count = 0
-#         for cd in d['data']['children']:
-#             count += 1
-#             rv += "<BR><b>" + str(count) + " " + cd['data']['name'] + "</b> " + cd['data']['body']
-#     return rv;
-
 # *****************************************************************************
 def displayCommentListingDataChildren(d):
     rv = ""
@@ -60,12 +50,41 @@ def displayCommentListingDataChildren(d):
     return rv;
 
 # *****************************************************************************
-def processCommentListingDataChildren(d):
+def processCommentListingDataChildren(d, u):
     youngestChild = ""
     if 'children' in d['data']:
         for cd in d['data']['children']:
             if cd['data']['name'] > youngestChild:
                 youngestChild = cd['data']['name']
+
+            # see if userCommentsIndex exists, create if necessary
+            uc = None
+            try:
+                uc = userCommentsIndex.objects.get(user=u, name=cd['data']['name'])
+                s = "WARNING: userCommentsIndex: " + uc.name + " already exists"
+                print(s)
+            except ObjectDoesNotExist:
+                uc = userCommentsIndex(user=u, name=cd['data']['name'])
+                uc.save()
+                s = "userCommentsIndex: " + uc.name + " created"
+                print(s)
+
+
+            # see if userCommentsRaw exists, create if necessary
+            ucr = None
+            try:
+                ucr = userCommentsRaw.objects.get(uci=uc)
+                s = "WARNING: userCommentsRaw: " + ucr.uci.name + " for user " + ucr.uci.user.name + " already exists"
+                print(s)
+            except ObjectDoesNotExist:
+                ucr = userCommentsRaw(uci=uc, data=cd['data'])
+                ucr.save()
+                s = "userCommentsRaw: " + ucr.uci.name + " already exists"
+                print(s)
+
+
+
+
     return youngestChild;
 
 # *****************************************************************************
@@ -89,7 +108,6 @@ def buildCommentQuery(name, after, before):
     return rv
 
 # *****************************************************************************
-# def requestCommentsForUser(redditusername, after):
 def requestCommentsForUser(cs):
     rv = ""
 
@@ -107,7 +125,7 @@ def requestCommentsForUser(cs):
     elif 'data' in d:
         rv += displayCommentListingDictMeta(d)
         rv += displayCommentListingDataChildren(d)
-        youngestChild = processCommentListingDataChildren(d)
+        youngestChild = processCommentListingDataChildren(d, cs.user)
         rv += "<BR>youngestChild = " + youngestChild
 
         if youngestChild > cs.before:
@@ -160,8 +178,6 @@ def comments_updateForAllUsers():
     # https://www.reddit.com/user/stp2007/comments/.json
     # https://www.reddit.com/user/stp2007/comments/.json?after=t1_d8fi1ll
     # https://www.reddit.com/user/stp2007/comments/.json?after=t1_d6b14um
-
-    # print ("TEST TEST TEST TEST TEST TEST TEST")
 
 
 
