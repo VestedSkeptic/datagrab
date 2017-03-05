@@ -69,7 +69,6 @@ def processCommentListingDataChildren(d, u):
                 s = "userCommentsIndex: " + uc.name + " created"
                 print(s)
 
-
             # see if userCommentsRaw exists, create if necessary
             ucr = None
             try:
@@ -81,10 +80,6 @@ def processCommentListingDataChildren(d, u):
                 ucr.save()
                 s = "userCommentsRaw: " + ucr.uci.name + " already exists"
                 print(s)
-
-
-
-
     return youngestChild;
 
 # *****************************************************************************
@@ -160,24 +155,17 @@ def comments_updateForAllUsers():
     rv = ""
     users = user.objects.all()
     for u in users:
+        rv += "<BR> ---------------------------------"
         rv += "<BR>" + u.name + ":"
         rv += pullCommentsForUser(u)
+        rv += "<br>"
     return HttpResponse(rv)
 
 
 
 
 
-    # https://www.reddit.com/user/MrMediaMogul/comments/.json
-    # https://www.reddit.com/user/MrMediaMogul/comments/.json?after=t1_cqjsz5e
 
-    # TOO MANY REQUESTS ERROR format
-    # {"message": "Too Many Requests", "error": 429}
-
-    # Three queries to get user comments using after value from previous
-    # https://www.reddit.com/user/stp2007/comments/.json
-    # https://www.reddit.com/user/stp2007/comments/.json?after=t1_d8fi1ll
-    # https://www.reddit.com/user/stp2007/comments/.json?after=t1_d6b14um
 
 
 
