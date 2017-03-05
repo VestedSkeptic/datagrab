@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
-from .models import user, userCommentProcessedStatus
+from .models import user, userCommentsProcessedStatus
 from .defines import *
 from helperLibrary.stringHelper import *
 import requests

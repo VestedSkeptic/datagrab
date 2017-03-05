@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
-from .models import user, userCommentProcessedStatus
+from .models import user, userCommentsProcessedStatus
 from .defines import *
 from .credentials import credentials_getAuthorizationHeader
 from helperLibrary.stringHelper import *
@@ -124,12 +124,12 @@ def requestCommentsForUser(cs):
 
 # *****************************************************************************
 def pullCommentsForUser(u):
-    # get userCommentProcessedStatus for user, if not exist create one
+    # get userCommentsProcessedStatus for user, if not exist create one
     cs = None
     try:
-        cs = userCommentProcessedStatus.objects.get(user=u)
+        cs = userCommentsProcessedStatus.objects.get(user=u)
     except ObjectDoesNotExist:
-        cs = userCommentProcessedStatus(user=u)
+        cs = userCommentsProcessedStatus(user=u)
         cs.save()
     rv = "<BR>" + u.name + ": AA: " + "[After: " + cs.after + "]" + " [Before: " + cs.before + "]"
     rv += requestCommentsForUser(cs)

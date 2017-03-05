@@ -9,7 +9,7 @@ class user(models.Model):
         return format(self.name)
 
 # *****************************************************************************
-class userCommentProcessedStatus(models.Model):
+class userCommentsProcessedStatus(models.Model):
     # user = models.ForeignKey(user, on_delete=models.CASCADE, primary_key=True)
     # user = models.ForeignKey(user, on_delete=models.CASCADE, unique=True)
     user = models.OneToOneField(user, primary_key=True)
