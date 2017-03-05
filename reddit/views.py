@@ -4,9 +4,8 @@ from .comments import comments_updateForAllUsers
 
 # *****************************************************************************
 def index(request):
-    s  = '<b> INDEX </b>'
-    s += '<br><a href="http://localhost:8000/reddit/uc/">comments_updateForAllUsers</a>'
-    s += '<br><a href="http://localhost:8000/reddit/a/">credentials_get</a>'
+    s  = '<b> LINKS </b>'
+    s += '<br><a href="http://localhost:8000/reddit/uc/">get comments for all users</a>'
     s += '<br>'
     s += '<br><a href="http://localhost:8000/admin/">admin</a>'
     return HttpResponse(s)
@@ -15,10 +14,6 @@ def index(request):
 def updateComments(request):
     s = comments_updateForAllUsers()
     return HttpResponse(s)
-
-# *****************************************************************************
-def access(request):
-    return HttpResponse("ACCESS VIEW")
 
 
 # OldDevLearningLinux:
@@ -74,9 +69,20 @@ def access(request):
 
 # ADDED NEW REPLY ON Reddit
 
+# OldDevLearningLinux:
+# OldDevLearningLinux: AA: [After: processed] [Before: t1_dejeekt]
+# commentQuery: https://oauth.reddit.com/user/OldDevLearningLinux/comments/.json?before=t1_dejeekt
+# DATA: AFTER: None, BEFORE: None, MODHASH: , CHILDREN: 1
+# 1: t1_dejemg4 Reply 27a
+# youngestChild = t1_dejemg4
+# OldDevLearningLinux: BB: [After: processed] [Before: t1_dejemg4]
 
-
-
+# OldDevLearningLinux:
+# OldDevLearningLinux: AA: [After: processed] [Before: t1_dejemg4]
+# commentQuery: https://oauth.reddit.com/user/OldDevLearningLinux/comments/.json?before=t1_dejemg4
+# DATA: AFTER: None, BEFORE: None, MODHASH: , CHILDREN: 0
+# youngestChild =
+# OldDevLearningLinux: BB: [After: processed] [Before: t1_dejemg4]
 
 
 

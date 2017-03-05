@@ -72,17 +72,17 @@ def processCommentListingDataChildren(d):
 def buildCommentQuery(name, after, before):
     rv = CONST_REDDIT_REQUEST_URL
     rv += name
-    rv += '/comments/.json'
+    rv += '/comments/.json?limit=100'
 
     if after == CONST_UNPROCESSED:
         pass
     elif after != CONST_PROCESSED:
-        rv += '?after=' + after
+        rv += '&after=' + after
     else:
         if before == CONST_UNPROCESSED:
             pass
         elif before != CONST_PROCESSED:
-            rv += '?before=' + before
+            rv += '&before=' + before
         else:
             pass
 
