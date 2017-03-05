@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import user, commentStatus
+from .models import user, userCommentProcessedStatus
 
 admin.site.register(user)
-admin.site.register(commentStatus)
+admin.site.register(userCommentProcessedStatus)
 
