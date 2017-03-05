@@ -8,4 +8,3 @@ admin.site.register(user)
 admin.site.register(userCommentsProcessedStatus)
 admin.site.register(userCommentsIndex)
 admin.site.register(userCommentsRaw)
-

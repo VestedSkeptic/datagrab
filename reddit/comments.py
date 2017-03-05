@@ -78,7 +78,7 @@ def processCommentListingDataChildren(d, u):
             except ObjectDoesNotExist:
                 ucr = userCommentsRaw(uci=uc, data=cd['data'])
                 ucr.save()
-                s = "userCommentsRaw: " + ucr.uci.name + " already exists"
+                s = "userCommentsRaw: " + ucr.uci.name + " created"
                 print(s)
     return youngestChild;
 
