@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from .comments import comments_updateForAllUsers
-from .credentials import credentials_get
+from .credentials import credentials_getAuthorizationHeader
+import json
 
 # *****************************************************************************
 def index(request):
@@ -18,8 +19,9 @@ def updateComments(request):
 
 # *****************************************************************************
 def access(request):
-    s = credentials_get()
-    return HttpResponse(s)
+    AuthHeader = credentials_getAuthorizationHeader()
+    print (json.dumps(AuthHeader))
+    return HttpResponse("ACCESS VIEW")
 
 
 
