@@ -2,22 +2,13 @@ from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from .models import user, commentStatus
 from .defines import *
+from .credentials import credentials_getAuthorizationHeader
 from helperLibrary.stringHelper import *
 import requests, json
 
-
-# def index(request):
-#     r = requests.get('https://www.reddit.com/user/BeneficEvil/comments/.json')
-#     d = r.json()
-#     # return HttpResponse(d.keys())     # works
-#     # return HttpResponse(d['kind'])    # works
-#     # return HttpResponse(d['data']['modhash'])     #fails
-#     # return HttpResponse(r, content_type="application/json") # works
-#     # return HttpResponse(d['data']['children'][0]['kind'])     # works
-#     # return HttpResponse(d['data']['children'][0]['data']['link_id']) #works
-#     return HttpResponse(d['data']['children'][0]['data']['body']) #works
-
-
+# *****************************************************************************
+# CONST_REDDIT_REQUEST_URL    = "https://www.reddit.com/user/"
+CONST_REDDIT_REQUEST_URL    = "https://oauth.reddit.com/user/"
 
 # *****************************************************************************
 def displayMessageFromDict(d):
@@ -33,12 +24,13 @@ def displayUnknownDict(d):
 
 # *****************************************************************************
 def displayCommentListingDictMeta(d):
-    rv = "KIND: "
-    if 'kind' in d: rv += d['kind']
-    else:           rv += "ERROR kind NOT FOUND"
+    rv = ""
+    # rv = "<br>KIND: "
+    # if 'kind' in d: rv += d['kind']
+    # else:           rv += "ERROR kind NOT FOUND"
 
     if 'data' in d:
-        rv += ", DATA: "
+        rv += "<br>DATA: "
         if 'after' in d['data']:    rv += "AFTER: "       + stringHelper_returnStringValueOrNone(d['data']['after'])   + ", "
         if 'before' in d['data']:   rv += "BEFORE: "      + stringHelper_returnStringValueOrNone(d['data']['before'])  + ", "
         if 'modhash' in d['data']:  rv += "MODHASH: "     + stringHelper_returnStringValueOrNone(d['data']['modhash']) + ", "
@@ -47,20 +39,38 @@ def displayCommentListingDictMeta(d):
         rv += "ERROR data NOT FOUND"
     return rv
 
+# # *****************************************************************************
+# def processCommentListingDataChildren(d):
+#     rv = "<br>"
+#     if 'children' in d['data']:
+#         count = 0
+#         for cd in d['data']['children']:
+#             count += 1
+#             rv += "<BR><b>" + str(count) + " " + cd['data']['name'] + "</b> " + cd['data']['body']
+#     return rv;
+
 # *****************************************************************************
-# def processCommentListingDataChildren(d, after):
-def processCommentListingDataChildren(d):
-    rv = "<br>"
+def displayCommentListingDataChildren(d):
+    rv = ""
     if 'children' in d['data']:
         count = 0
         for cd in d['data']['children']:
             count += 1
-            rv += "<BR><b>" + str(count) + " " + cd['data']['name'] + "</b> " + cd['data']['body'] + "<br>"
+            rv += "<BR><b>" + str(count) + ": " + cd['data']['name'] + "</b> " + cd['data']['body']
     return rv;
 
 # *****************************************************************************
+def processCommentListingDataChildren(d):
+    youngestChild = ""
+    if 'children' in d['data']:
+        for cd in d['data']['children']:
+            if cd['data']['name'] > youngestChild:
+                youngestChild = cd['data']['name']
+    return youngestChild;
+
+# *****************************************************************************
 def buildCommentQuery(name, after, before):
-    rv = 'https://www.reddit.com/user/'
+    rv = CONST_REDDIT_REQUEST_URL
     rv += name
     rv += '/comments/.json'
 
@@ -81,25 +91,32 @@ def buildCommentQuery(name, after, before):
 # *****************************************************************************
 # def requestCommentsForUser(redditusername, after):
 def requestCommentsForUser(cs):
-    rv = "<BR>requestCommentsForUser"
+    rv = ""
 
     commentQuery = buildCommentQuery(cs.user.name, cs.after, cs.before)
     rv += "<BR>commentQuery: " + commentQuery
 
-    r = requests.get(commentQuery)
+    AuthHeader = credentials_getAuthorizationHeader()
+    print (json.dumps(AuthHeader))
+
+    r = requests.get(commentQuery, headers=AuthHeader)
     d = r.json()
 
     if 'message' in d:
         rv += displayMessageFromDict(d)
     elif 'data' in d:
         rv += displayCommentListingDictMeta(d)
-        rv += processCommentListingDataChildren(d)
+        rv += displayCommentListingDataChildren(d)
+        youngestChild = processCommentListingDataChildren(d)
+        rv += "<BR>youngestChild = " + youngestChild
+
+        if youngestChild > cs.before:
+            cs.before = youngestChild
 
         if d['data']['after'] is not None:
             cs.after = d['data']['after']
         else:
             cs.after = CONST_PROCESSED
-            cs.before = d['data']['children'][0]['data']['name']
         cs.save()
     else:
         rv += displayUnknownDict(d)
@@ -114,18 +131,18 @@ def pullCommentsForUser(u):
     except ObjectDoesNotExist:
         cs = commentStatus(user=u)
         cs.save()
-    rv = "<BR>pullCommentsForUser: AA: " + "[After: " + cs.after + "]" + " [Before: " + cs.before + "]"
+    rv = "<BR>" + u.name + ": AA: " + "[After: " + cs.after + "]" + " [Before: " + cs.before + "]"
     rv += requestCommentsForUser(cs)
-    rv += "<BR>pullCommentsForUser: BB: " + "[After: " + cs.after + "]" + " [Before: " + cs.before + "]"
+    rv += "<BR>" + u.name + ": BB: " + "[After: " + cs.after + "]" + " [Before: " + cs.before + "]"
 
     return rv
 
 # *****************************************************************************
 def comments_updateForAllUsers():
-    rv = "<BR>comments_updateForAllUsers"
+    rv = ""
     users = user.objects.all()
     for u in users:
-        rv += "<BR>" + u.name
+        rv += "<BR>" + u.name + ":"
         rv += pullCommentsForUser(u)
     return HttpResponse(rv)
 

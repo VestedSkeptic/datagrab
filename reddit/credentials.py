@@ -16,7 +16,7 @@ CONST_SECRET            = "Megl7I6XKHtGIQ0T4_q62KiaRQw"
 CONST_GRANT_TYPE        = "client_credentials"
 CONST_DEV_USERNAME      = "OldDevLearningLinux"
 CONST_DEV_PASSWORD      = "ygHOwxJELMzcwZP4Wi4pO72B"
-CONST_USER_AGENT        = "testscript by OldDevLearningLinux"
+CONST_USER_AGENT        = "testscript by /u/OldDevLearningLinux"
 
 # *****************************************************************************
 GLOBAL_LastTokenTime    = 0
@@ -32,9 +32,9 @@ def getTokenAsDict():
         auth=client_auth,
         data=post_data,
         headers=headers)
-    # ex: {"access_token": "5Aj6ERpE4I3-RalhKagFdSgxpb8", "expires_in": 3600, "scope": "*", "token_type": "bearer"}
     d = response.json()
-    # rv += '<BR>' + json.dumps(d)
+
+    # ex: {"access_token": "5Aj6ERpE4I3-RalhKagFdSgxpb8", "expires_in": 3600, "scope": "*", "token_type": "bearer"}
     return d
 
 # *****************************************************************************
@@ -46,43 +46,22 @@ def buildAuthHeader(d):
     global GLOBAL_AuthHeader
     GLOBAL_AuthHeader['Authorization'] = auth_token
 
-    # headers = {"Authorization": auth_token, "User-Agent": CONST_USER_AGENT}
-    # # rv += '<BR>' + json.dumps(headers)
-    # # # response = requests.get("https://oauth.reddit.com/api/v1/me", headers=headers)
-    # # response = requests.get("https://oauth.reddit.com/user/stp2007/comments/.json", headers=headers)
-
 # *****************************************************************************
 def credentials_getAuthorizationHeader():
-    rv = "<BR>credentials_get"
-
     ticks = time.time()
     if (ticks - GLOBAL_LastTokenTime) > 3500:
         print ("Last token expired, getting new one")
         d = getTokenAsDict()
         buildAuthHeader(d)
-
         global GLOBAL_LastTokenTime
         GLOBAL_LastTokenTime = ticks
     else:
-        print ("Last token still valid, returing existing one")
-
+        s = "Last token still valid, returning existing one which is good for another "
+        s += str(int(3500 - (ticks - GLOBAL_LastTokenTime)))
+        s += " seconds"
+        print (s)
     return GLOBAL_AuthHeader
 
-#
-#     # get token
-#
-#
-#
-#
-#
-# # # https://www.reddit.com/user/stp2007/comments/.json
-# #
-# #
-# #     print (response)
-# #     d = response.json()
-# #     rv += '<BR>' + json.dumps(d)
-#
-#     return HttpResponse(rv)
 
 
 
