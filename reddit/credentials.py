@@ -50,13 +50,13 @@ def buildAuthHeader(d):
 def credentials_getAuthorizationHeader():
     ticks = time.time()
     if (ticks - GLOBAL_LastTokenTime) > 3500:
-        print ("Last token expired, getting new one")
+        print ("*** Last token expired, getting new one")
         d = getTokenAsDict()
         buildAuthHeader(d)
         global GLOBAL_LastTokenTime
         GLOBAL_LastTokenTime = ticks
     else:
-        s = "Last token still valid, returning existing one which is good for another "
+        s = "*** Last token still valid, returning existing one which is good for another "
         s += str(int(3500 - (ticks - GLOBAL_LastTokenTime)))
         s += " seconds"
         print (s)

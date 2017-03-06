@@ -52,10 +52,13 @@ def displayCommentListingDataChildren(d):
 # *****************************************************************************
 def processCommentListingDataChildren(d, u):
     youngestChild = ""
+    count = 0
     if 'children' in d['data']:
         for cd in d['data']['children']:
             if cd['data']['name'] > youngestChild:
                 youngestChild = cd['data']['name']
+
+            count += 1
 
             # see if userCommentsIndex exists, create if necessary
             uc = None
@@ -66,8 +69,8 @@ def processCommentListingDataChildren(d, u):
             except ObjectDoesNotExist:
                 uc = userCommentsIndex(user=u, name=cd['data']['name'])
                 uc.save()
-                s = "userCommentsIndex: " + uc.name + " created"
-                print(s)
+                # s = "userCommentsIndex: " + uc.name + " created"
+                # print(s)
 
             # see if userCommentsRaw exists, create if necessary
             ucr = None
@@ -78,8 +81,11 @@ def processCommentListingDataChildren(d, u):
             except ObjectDoesNotExist:
                 ucr = userCommentsRaw(uci=uc, data=cd['data'])
                 ucr.save()
-                s = "userCommentsRaw: " + ucr.uci.name + " created"
-                print(s)
+                # s = "userCommentsRaw: " + ucr.uci.name + " created"
+                # print(s)
+
+    print ("*** %s comments retrieved" % (str(count)))
+
     return youngestChild;
 
 # *****************************************************************************
@@ -110,7 +116,7 @@ def requestCommentsForUser(cs):
     rv += "<BR>commentQuery: " + commentQuery
 
     AuthHeader = credentials_getAuthorizationHeader()
-    print (json.dumps(AuthHeader))
+    print ("*** %s" % (json.dumps(AuthHeader)))
 
     r = requests.get(commentQuery, headers=AuthHeader)
     d = r.json()
@@ -154,11 +160,19 @@ def pullCommentsForUser(u):
 def comments_updateForAllUsers():
     rv = ""
     users = user.objects.all()
+    count = 0
     for u in users:
         rv += "<BR> ---------------------------------"
         rv += "<BR>" + u.name + ":"
+        print ("Processing user: %s" % (u.name))
         rv += pullCommentsForUser(u)
         rv += "<br>"
+        count += 1
+
+    if count == 0:
+        rv += "<BR> ---------------------------------"
+        rv += "<BR> No users found"
+
     return HttpResponse(rv)
 
 
