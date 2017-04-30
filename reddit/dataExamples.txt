@@ -1,0 +1,82 @@
+# threadQuery: https://oauth.reddit.com/r/politics/new/.json?limit=100
+# Each child of d['data']:
+{
+  "approved_by": null,
+  "archived": false,
+  "author_flair_css_class": "massachusetts-flag",
+  "author_flair_text": "Massachusetts",
+  "author": "SimulationMe",
+  "banned_by": null,
+  "brand_safe": true,
+  "can_gild": false,
+  "clicked": false,
+  "contest_mode": false,
+  "created_utc": 1493569865.0,
+  "created": 1493598665.0,
+  "distinguished": null,
+  "domain": "thenation.com",
+  "downs": 0,
+  "edited": false,
+  "gilded": 0,
+  "hidden": false,
+  "hide_score": true,
+  "id": "68gc3f",
+  "is_self": false,
+  "likes": null,
+  "link_flair_css_class": null,
+  "link_flair_text": null,
+  "locked": false,
+  "media_embed": {},
+  "media": null,
+  "mod_reports": [],
+  "name": "t3_68gc3f",
+  "num_comments": 1,
+  "num_reports": null,
+  "over_18": false,
+  "permalink": "/r/politics/comments/68gc3f/mondays_may_day_marches_could_be_the_biggest_in/",
+  "quarantine": false,
+  "removal_reason": null,
+  "report_reasons": null,
+  "saved": false,
+  "score": 1,
+  "secure_media_embed": {},
+  "secure_media": null,
+  "selftext_html": null,
+  "selftext": "",
+  "spoiler": false,
+  "stickied": false,
+  "subreddit_id": "t5_2cneq",
+  "subreddit_name_prefixed": "r/politics",
+  "subreddit_type": "public",
+  "subreddit": "politics"
+  "suggested_sort": null,
+  "thumbnail": "default",
+  "title": "Monday\u2019s May Day Marches Could Be the Biggest in Years",
+  "ups": 1,
+  "url": "https://www.thenation.com/article/mondays-may-day-marches-could-be-the-biggest-in-years/",
+  "user_reports": [],
+  "visited": false,
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

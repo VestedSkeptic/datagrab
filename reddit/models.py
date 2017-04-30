@@ -36,3 +36,20 @@ class userCommentsRaw(models.Model):
         s = self.uci.user.name
         s += " [" + self.data + "]"
         return format(s)
+
+# *****************************************************************************
+class subreddit(models.Model):
+    name    = models.CharField(max_length=30)
+    def __str__(self):
+        return format(self.name)
+
+# *****************************************************************************
+class subredditThreadProcessedStatus(models.Model):
+    subreddit   = models.OneToOneField(subreddit, primary_key=True)
+    after       = models.CharField(max_length=30, default=CONST_UNPROCESSED)
+    before      = models.CharField(max_length=30, default=CONST_UNPROCESSED)
+    def __str__(self):
+        s = self.subreddit.name
+        s += " [After: " + self.after + "]"
+        s += " [Before: " + self.before + "]"
+        return format(s)

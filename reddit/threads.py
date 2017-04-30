@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
-from .models import user, userCommentsProcessedStatus, userCommentsIndex, userCommentsRaw
+# from .models import user, userCommentsProcessedStatus, userCommentsIndex, userCommentsRaw
+from .models import subreddit, subredditThreadProcessedStatus
 from .defines import *
 from .credentials import credentials_getAuthorizationHeader
 from helperLibrary.stringHelper import *
@@ -8,7 +9,17 @@ import requests, json
 
 # *****************************************************************************
 # CONST_REDDIT_REQUEST_URL    = "https://www.reddit.com/user/"
-CONST_REDDIT_REQUEST_URL    = "https://oauth.reddit.com/user/"
+# CONST_REDDIT_REQUEST_URL    = "https://oauth.reddit.com/user/"
+CONST_REDDIT_REQUEST_URL    = "https://oauth.reddit.com/r/"
+
+
+# commentQuery: https://oauth.reddit.com/user/OldDevLearningLinux/comments/.json?limit=100&before=t1_dejemg4
+# threadQuery:  https://oauth.reddit.com/r/politics/new/.json?limit=100
+
+
+# CONST_THREAD_RETRIEVAL_MODE = "hot"
+CONST_THREAD_RETRIEVAL_MODE = "new"
+# CONST_THREAD_RETRIEVAL_MODE = "rising"
 
 # *****************************************************************************
 def displayMessageFromDict(d):
@@ -23,14 +34,14 @@ def displayUnknownDict(d):
     return rv
 
 # *****************************************************************************
-def displayCommentListingDictMeta(d):
+def displayThreadListingDictMeta(d):
     rv = ""
     # rv = "<br>KIND: "
     # if 'kind' in d: rv += d['kind']
     # else:           rv += "ERROR kind NOT FOUND"
 
     if 'data' in d:
-        rv += "<br>DATA: "
+        rv += "<br>THREAD DATA: "
         if 'after' in d['data']:    rv += "AFTER: "       + stringHelper_returnStringValueOrNone(d['data']['after'])   + ", "
         if 'before' in d['data']:   rv += "BEFORE: "      + stringHelper_returnStringValueOrNone(d['data']['before'])  + ", "
         if 'modhash' in d['data']:  rv += "MODHASH: "     + stringHelper_returnStringValueOrNone(d['data']['modhash']) + ", "
@@ -40,13 +51,15 @@ def displayCommentListingDictMeta(d):
     return rv
 
 # *****************************************************************************
-def displayCommentListingDataChildren(d):
+def displayThreadListingDataChildren(d):
     rv = ""
     if 'children' in d['data']:
         count = 0
         for cd in d['data']['children']:
             count += 1
-            rv += "<BR><b>" + str(count) + ": " + cd['data']['name'] + "</b> " + cd['data']['body']
+            rv += "<BR><b>" + str(count) + ": " + cd['data']['name'] + "</b> " + cd['data']['title']
+            # rv += "<BR>" + json.dumps(cd['data'])
+            break
     return rv;
 
 # *****************************************************************************
@@ -89,10 +102,12 @@ def processCommentListingDataChildren(d, u):
     return youngestChild;
 
 # *****************************************************************************
-def buildCommentQuery(name, after, before):
+def buildThreadQuery(name, after, before):
     rv = CONST_REDDIT_REQUEST_URL
     rv += name
-    rv += '/comments/.json?limit=100'
+    rv += '/'
+    rv += CONST_THREAD_RETRIEVAL_MODE
+    rv += '/.json?limit=100'
 
     if after == CONST_UNPROCESSED:
         pass
@@ -109,79 +124,69 @@ def buildCommentQuery(name, after, before):
     return rv
 
 # *****************************************************************************
-def requestCommentsForUser(cs):
+def requestThreadsForSubreddit(ts):
     rv = ""
 
-    commentQuery = buildCommentQuery(cs.user.name, cs.after, cs.before)
-    rv += "<BR>commentQuery: " + commentQuery
-    # EXAMPLE: commentQuery: https://oauth.reddit.com/user/OldDevLearningLinux/comments/.json?limit=100&before=t1_dejemg4
+    threadQuery = buildThreadQuery(ts.subreddit.name, ts.after, ts.before)
+    rv += "<BR>threadQuery: " + threadQuery
 
     AuthHeader = credentials_getAuthorizationHeader()
     print ("*** %s" % (json.dumps(AuthHeader)))
-    # EXAMPLE: {"User-Agent": "testscript by /u/OldDevLearningLinux", "Authorization": "bearer eAKTo07KQutnf1qCMBNphzuU9Wg"}
 
-    r = requests.get(commentQuery, headers=AuthHeader)
+    r = requests.get(threadQuery, headers=AuthHeader)
     d = r.json()
 
     if 'message' in d:
         rv += displayMessageFromDict(d)
     elif 'data' in d:
-        rv += displayCommentListingDictMeta(d)
-        # EXAMPLE: DATA: AFTER: None, BEFORE: None, MODHASH: , CHILDREN: 1
-
-        rv += displayCommentListingDataChildren(d)
-        # EXAMPLE: 1: t1_dgy8eac Will probably be asking for leadership tips.
-
-        youngestChild = processCommentListingDataChildren(d, cs.user)
-        rv += "<BR>youngestChild = " + youngestChild
-        # EXAMPLE: youngestChild = t1_dgy8eac
-
-        if youngestChild > cs.before:
-            cs.before = youngestChild
-
-        if d['data']['after'] is not None:
-            cs.after = d['data']['after']
-        else:
-            cs.after = CONST_PROCESSED
-        cs.save()
+        rv += displayThreadListingDictMeta(d)
+        rv += displayThreadListingDataChildren(d)
+        # youngestChild = processCommentListingDataChildren(d, ts.user)
+        # rv += "<BR>youngestChild = " + youngestChild
+        #
+        # if youngestChild > ts.before:
+        #     ts.before = youngestChild
+        #
+        # if d['data']['after'] is not None:
+        #     ts.after = d['data']['after']
+        # else:
+        #     ts.after = CONST_PROCESSED
+        # ts.save()
     else:
         rv += displayUnknownDict(d)
     return rv
 
 # *****************************************************************************
-def pullCommentsForUser(u):
-    # get userCommentsProcessedStatus for user, if not exist create one
-    cs = None
+def pullThreadsForSubreddit(s):
+    # get subredditThreadProcessedStatus for user, if not exist create one
+    ts = None
     try:
-        cs = userCommentsProcessedStatus.objects.get(user=u)
+        ts = subredditThreadProcessedStatus.objects.get(subreddit=s)
     except ObjectDoesNotExist:
-        cs = userCommentsProcessedStatus(user=u)
-        cs.save()
-    rv = "<BR>" + u.name + ": AA: " + "[After: " + cs.after + "]" + " [Before: " + cs.before + "]"
-    # EXAMPLE: RoadsideBandit: AA: [After: processed] [Before: t1_dgv6c86]
-
-    rv += requestCommentsForUser(cs)
-    rv += "<BR>" + u.name + ": BB: " + "[After: " + cs.after + "]" + " [Before: " + cs.before + "]"
-    # EXAMPLE: RoadsideBandit: BB: [After: processed] [Before: t1_dgy8eac]
+        ts = subredditThreadProcessedStatus(subreddit=s)
+        ts.save()
+    rv = "<BR>" + s.name + ": AA: " + "[After: " + ts.after + "]" + " [Before: " + ts.before + "]"
+    rv += requestThreadsForSubreddit(ts)
+    rv += "<BR>" + s.name + ": BB: " + "[After: " + ts.after + "]" + " [Before: " + ts.before + "]"
 
     return rv
 
 # *****************************************************************************
-def comments_updateForAllUsers():
-    rv = "<B>comments_updateForAllUsers</B><BR>"
-    users = user.objects.all()
+def threads_updateForAllSubreddits():
+    rv = ""
+    subreddits = subreddit.objects.all()
     count = 0
-    for u in users:
+    for s in subreddits:
         rv += "<BR> ---------------------------------"
-        rv += "<BR>" + u.name + ":"
-        print ("Processing user: %s" % (u.name))
-        rv += pullCommentsForUser(u)
+        rv += "<BR>" + s.name + ":"
+        print ("Processing subreddit: %s" % (s.name))
+        rv += pullThreadsForSubreddit(s)
         rv += "<br>"
         count += 1
 
     if count == 0:
         rv += "<BR> ---------------------------------"
-        rv += "<BR> No users found"
+        rv += "<BR> No subreddits found"
 
     return HttpResponse(rv)
 
