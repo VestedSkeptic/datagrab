@@ -23,14 +23,14 @@ CONST_THREAD_RETRIEVAL_MODE = "new"
 
 # *****************************************************************************
 def displayMessageFromDict(d):
-    rv = "MESSAGE: " + d['message']
+    rv = "<BR>ERROR MESSAGE: " + d['message']
     if 'error' in d:
         rv += ", " + "ERROR: " + str(d['error'])
     return rv
 
 # *****************************************************************************
 def displayUnknownDict(d):
-    rv = "UNKNOWN: " + json.dumps(d)
+    rv = "<BR>ERROR UNKNOWN: " + json.dumps(d)
     return rv
 
 # *****************************************************************************
@@ -124,65 +124,78 @@ def buildThreadQuery(name, after, before):
     return rv
 
 # *****************************************************************************
-def requestThreadsForSubreddit(ts):
-    rv = ""
+def getNewThreadsForSubreddit(cs):
+    rv = "<BR>" + cs.subreddit.name + ": AA: " + "[After: " + cs.after + "]" + " [Before: " + cs.before + "]"
+    # EXAMPLE: politics: AA: [After: NOT processed] [Before: NOT processed]
 
-    threadQuery = buildThreadQuery(ts.subreddit.name, ts.after, ts.before)
+    threadQuery = buildThreadQuery(cs.subreddit.name, cs.after, cs.before)
     rv += "<BR>threadQuery: " + threadQuery
+    # EXAMPLE: threadQuery: https://oauth.reddit.com/r/politics/new/.json?limit=100
 
     AuthHeader = credentials_getAuthorizationHeader()
-    print ("*** %s" % (json.dumps(AuthHeader)))
+    # print ("*** %s" % (json.dumps(AuthHeader)))
+    # EXAMPLE: {"User-Agent": "testscript by /u/OldDevLearningLinux", "Authorization": "bearer eAKTo07KQutnf1qCMBNphzuU9Wg"}
 
     r = requests.get(threadQuery, headers=AuthHeader)
     d = r.json()
+    ##### EVENTUALLY CHANGE TO     d.update(r.json())  WHEN D IS PASSED IN VIA A PARAMETER
 
     if 'message' in d:
         rv += displayMessageFromDict(d)
     elif 'data' in d:
         rv += displayThreadListingDictMeta(d)
+        # EXAMPLE: THREAD DATA: AFTER: t3_68g9dd, BEFORE: None, MODHASH: , CHILDREN: 100
+
         rv += displayThreadListingDataChildren(d)
-        # youngestChild = processCommentListingDataChildren(d, ts.user)
+        # EXAMPLE: 1: t3_68gzts Trump's chief of staff: 'We've looked at' changing libel laws
+
+        # youngestChild = processCommentListingDataChildren(d, cs.user)
         # rv += "<BR>youngestChild = " + youngestChild
         #
-        # if youngestChild > ts.before:
-        #     ts.before = youngestChild
+        # if youngestChild > cs.before:
+        #     cs.before = youngestChild
         #
         # if d['data']['after'] is not None:
-        #     ts.after = d['data']['after']
+        #     cs.after = d['data']['after']
         # else:
-        #     ts.after = CONST_PROCESSED
-        # ts.save()
+        #     cs.after = CONST_PROCESSED
+        # cs.save()
     else:
         rv += displayUnknownDict(d)
+
+    rv += "<BR>" + cs.subreddit.name + ": BB: " + "[After: " + cs.after + "]" + " [Before: " + cs.before + "]"
+    # EXAMPLE: politics: BB: [After: NOT processed] [Before: NOT processed]
     return rv
 
 # *****************************************************************************
-def pullThreadsForSubreddit(s):
-    # get subredditThreadProcessedStatus for user, if not exist create one
+def getSubredditThreadProcessedStatus(s):
+    # get subredditThreadProcessedStatus for subreddit, if not exist create one
     ts = None
     try:
         ts = subredditThreadProcessedStatus.objects.get(subreddit=s)
+        print("*** subredditThreadProcessedStatus already exists")
     except ObjectDoesNotExist:
         ts = subredditThreadProcessedStatus(subreddit=s)
         ts.save()
-    rv = "<BR>" + s.name + ": AA: " + "[After: " + ts.after + "]" + " [Before: " + ts.before + "]"
-    rv += requestThreadsForSubreddit(ts)
-    rv += "<BR>" + s.name + ": BB: " + "[After: " + ts.after + "]" + " [Before: " + ts.before + "]"
-
-    return rv
+        print("*** subredditThreadProcessedStatus created")
+    return ts
 
 # *****************************************************************************
 def threads_updateForAllSubreddits():
-    rv = ""
+    rv = "<B>threads_updateForAllSubreddits</B><BR>"
+    print("=====================================================")
+
     subreddits = subreddit.objects.all()
     count = 0
     for s in subreddits:
+        count += 1
         rv += "<BR> ---------------------------------"
         rv += "<BR>" + s.name + ":"
         print ("Processing subreddit: %s" % (s.name))
-        rv += pullThreadsForSubreddit(s)
+        cs = getSubredditThreadProcessedStatus(s)
+        rv += getNewThreadsForSubreddit(cs)
         rv += "<br>"
-        count += 1
+        print("")
 
     if count == 0:
         rv += "<BR> ---------------------------------"

@@ -59,6 +59,67 @@
 }
 
 
+# EXAMPLE of dict returned from getDictOfNewCommentsForUser
+{
+  "data": {
+    "children": [
+      {
+        "data":
+          {
+            "subreddit": "test",
+            "body": "Reply 30a",
+            "link_title":
+            "Test Thread 01",
+            "approved_by": null,
+            "replies": "",
+            "author_flair_text": null,
+            "subreddit_type": "public",
+            "author_flair_css_class": null,
+            "link_author": "OldDevLearningLinux",
+            "user_reports": [],
+            "downs": 0,
+            "link_id": "t3_5xnbad",
+            "subreddit_id": "t5_2qh23",
+            "mod_reports": [],
+            "subreddit_name_prefixed": "r/test",
+            "parent_id": "t3_5xnbad",
+            "id": "dgyf703",
+            "link_permalink": "https://www.reddit.com/r/test/comments/5xnbad/test_thread_01/",
+            "likes": null,
+            "author": "OldDevLearningLinux",
+            "removal_reason": null,
+            "stickied": false,
+            "banned_by": null,
+            "distinguished": null,
+            "can_gild": true,
+            "ups": 1,
+            "name": "t1_dgyf703",
+            "report_reasons": null,
+            "gilded": 0,
+            "body_html": "&lt;div class=\"md\"&gt;&lt;p&gt;Reply 30a&lt;/p&gt;\n&lt;/div&gt;",
+            "edited": false,
+            "archived": false,
+            "over_18": false,
+            "link_url": "https://www.reddit.com/r/test/comments/5xnbad/test_thread_01/",
+            "saved": false,
+            "num_comments": 36,
+            "score": 1,
+            "score_hidden": false,
+            "created_utc": 1493579948.0,
+            "num_reports": null,
+            "quarantine": false,
+            "created": 1493608748.0,
+            "controversiality": 0
+          },
+        "kind": "t1"
+      }
+    ],
+    "modhash": "",
+    "after": null,
+    "before": null
+  },
+  "kind": "Listing"
+}
 
 
 

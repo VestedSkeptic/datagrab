@@ -12,14 +12,14 @@ CONST_REDDIT_REQUEST_URL    = "https://oauth.reddit.com/user/"
 
 # *****************************************************************************
 def displayMessageFromDict(d):
-    rv = "MESSAGE: " + d['message']
+    rv = "<BR>ERROR MESSAGE: " + d['message']
     if 'error' in d:
         rv += ", " + "ERROR: " + str(d['error'])
     return rv
 
 # *****************************************************************************
 def displayUnknownDict(d):
-    rv = "UNKNOWN: " + json.dumps(d)
+    rv = "<BR>ERROR UNKNOWN: " + json.dumps(d)
     return rv
 
 # *****************************************************************************
@@ -107,77 +107,120 @@ def buildCommentQuery(name, after, before):
             pass
 
     return rv
+# *****************************************************************************
+def validateNewCommentsDataDict (d, validateResult):
+    rv = ""
+
+    if 'message' in d:
+        rv += displayMessageFromDict(d)
+    elif 'data' in d:
+        if 'children' in d['data']:
+            validateResult = True
+            rv += "<BR>VALIDATES SUCCESSFULLY"
+        else:
+            rv += "<BR>ERROR: children key not found in d[data]"
+    else:
+        rv += displayUnknownDict(d)
+
+    return rv
 
 # *****************************************************************************
-def requestCommentsForUser(cs):
-    rv = ""
+def getDictOfNewCommentsForUser(cs, d):
+    rv = "<BR>" + cs.user.name + ": AA: " + "[After: " + cs.after + "]" + " [Before: " + cs.before + "]"
+    # EXAMPLE: UserName: AA: [After: processed] [Before: t1_dddddd86]
 
     commentQuery = buildCommentQuery(cs.user.name, cs.after, cs.before)
     rv += "<BR>commentQuery: " + commentQuery
     # EXAMPLE: commentQuery: https://oauth.reddit.com/user/OldDevLearningLinux/comments/.json?limit=100&before=t1_dejemg4
 
     AuthHeader = credentials_getAuthorizationHeader()
-    print ("*** %s" % (json.dumps(AuthHeader)))
+    # print ("*** %s" % (json.dumps(AuthHeader)))
     # EXAMPLE: {"User-Agent": "testscript by /u/OldDevLearningLinux", "Authorization": "bearer eAKTo07KQutnf1qCMBNphzuU9Wg"}
 
     r = requests.get(commentQuery, headers=AuthHeader)
-    d = r.json()
 
-    if 'message' in d:
-        rv += displayMessageFromDict(d)
-    elif 'data' in d:
-        rv += displayCommentListingDictMeta(d)
-        # EXAMPLE: DATA: AFTER: None, BEFORE: None, MODHASH: , CHILDREN: 1
+    # d = r.json()
+    # dd = r.json()
+    # print ("*** %s" % (json.dumps(dd)))
+    d.update(r.json())
 
-        rv += displayCommentListingDataChildren(d)
-        # EXAMPLE: 1: t1_dgy8eac Will probably be asking for leadership tips.
 
-        youngestChild = processCommentListingDataChildren(d, cs.user)
-        rv += "<BR>youngestChild = " + youngestChild
-        # EXAMPLE: youngestChild = t1_dgy8eac
-
-        if youngestChild > cs.before:
-            cs.before = youngestChild
-
-        if d['data']['after'] is not None:
-            cs.after = d['data']['after']
-        else:
-            cs.after = CONST_PROCESSED
-        cs.save()
-    else:
-        rv += displayUnknownDict(d)
+    # if 'message' in d:
+    #     rv += displayMessageFromDict(d)
+    # elif 'data' in d:
+    #     # if 'children' in d['data']:
+    #     #     DO RESTRICTE
+    #     # else:
+    #     #     rv += "<BR> ERROR: could not find children field in d[data] dict"
+    #
+    #
+    #     rv += displayCommentListingDictMeta(d)
+    #     # EXAMPLE: DATA: AFTER: None, BEFORE: None, MODHASH: , CHILDREN: 1
+    #
+    #     rv += displayCommentListingDataChildren(d)
+    #     # EXAMPLE: 1: t1_dgydfqu Reply 29b
+    #     #          2: t1_dgydfby Reply 29a
+    #
+    #     youngestChild = processCommentListingDataChildren(d, cs.user)
+    #
+    #     rv += "<BR>youngestChild = " + youngestChild
+    #     # EXAMPLE: youngestChild = t1_dgy8eac
+    #
+    #     if youngestChild > cs.before:
+    #         cs.before = youngestChild
+    #
+    #     if d['data']['after'] is not None:
+    #         cs.after = d['data']['after']
+    #     else:
+    #         cs.after = CONST_PROCESSED
+    #     cs.save()
+    # else:
+    #     rv += displayUnknownDict(d)
+    #
+    # rv += "<BR>" + cs.user.name + ": BB: " + "[After: " + cs.after + "]" + " [Before: " + cs.before + "]"
+    # # EXAMPLE: UserName: BB: [After: processed] [Before: t1_ddddddac]
     return rv
 
 # *****************************************************************************
-def pullCommentsForUser(u):
-    # get userCommentsProcessedStatus for user, if not exist create one
+def getUsersCommentsProcessedStatus(u):
+    # get userCommentsProcessedStatus for user, if not exist create on
     cs = None
     try:
         cs = userCommentsProcessedStatus.objects.get(user=u)
+        print("*** userCommentsProcessedStatus already exists")
     except ObjectDoesNotExist:
         cs = userCommentsProcessedStatus(user=u)
         cs.save()
-    rv = "<BR>" + u.name + ": AA: " + "[After: " + cs.after + "]" + " [Before: " + cs.before + "]"
-    # EXAMPLE: RoadsideBandit: AA: [After: processed] [Before: t1_dgv6c86]
-
-    rv += requestCommentsForUser(cs)
-    rv += "<BR>" + u.name + ": BB: " + "[After: " + cs.after + "]" + " [Before: " + cs.before + "]"
-    # EXAMPLE: RoadsideBandit: BB: [After: processed] [Before: t1_dgy8eac]
-
-    return rv
+        print("*** userCommentsProcessedStatus created")
+    return cs
 
 # *****************************************************************************
 def comments_updateForAllUsers():
     rv = "<B>comments_updateForAllUsers</B><BR>"
+    print("=====================================================")
+
     users = user.objects.all()
     count = 0
     for u in users:
-        rv += "<BR> ---------------------------------"
-        rv += "<BR>" + u.name + ":"
-        print ("Processing user: %s" % (u.name))
-        rv += pullCommentsForUser(u)
-        rv += "<br>"
         count += 1
+        rv += "<BR> ---------------------------------"
+        print("Processing user: %s" % (u.name))
+        cs = getUsersCommentsProcessedStatus(u)
+
+        d = {}
+        rv += getDictOfNewCommentsForUser(cs, d)
+        print ("*** %s" % (json.dumps(d)))
+
+        validateResult = False
+        rv += validateNewCommentsDataDict(d, validateResult)
+
+        if validateResult:
+            print("*** validate is true")
+        else:
+            print("*** validate is false")
+
+        rv += "<br>"
+        print("")
 
     if count == 0:
         rv += "<BR> ---------------------------------"
