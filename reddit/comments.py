@@ -108,21 +108,18 @@ def buildCommentQuery(name, after, before):
 
     return rv
 # *****************************************************************************
-def validateNewCommentsDataDict (d, validateResult):
-    rv = ""
-
+def validateNewCommentsDataDict (d, argDict):
     if 'message' in d:
-        rv += displayMessageFromDict(d)
+        argDict['rv'] += displayMessageFromDict(d)
     elif 'data' in d:
         if 'children' in d['data']:
-            validateResult = True
-            rv += "<BR>VALIDATES SUCCESSFULLY"
+            argDict['validateResult'] = True
+            argDict['rv'] += "<BR>VALIDATES SUCCESSFULLY"
         else:
-            rv += "<BR>ERROR: children key not found in d[data]"
+            argDict['rv'] += "<BR>ERROR: children key not found in d[data]"
     else:
-        rv += displayUnknownDict(d)
-
-    return rv
+        argDict['rv'] += displayUnknownDict(d)
+    return
 
 # *****************************************************************************
 def getDictOfNewCommentsForUser(cs, d):
@@ -138,47 +135,8 @@ def getDictOfNewCommentsForUser(cs, d):
     # EXAMPLE: {"User-Agent": "testscript by /u/OldDevLearningLinux", "Authorization": "bearer eAKTo07KQutnf1qCMBNphzuU9Wg"}
 
     r = requests.get(commentQuery, headers=AuthHeader)
-
-    # d = r.json()
-    # dd = r.json()
-    # print ("*** %s" % (json.dumps(dd)))
     d.update(r.json())
 
-
-    # if 'message' in d:
-    #     rv += displayMessageFromDict(d)
-    # elif 'data' in d:
-    #     # if 'children' in d['data']:
-    #     #     DO RESTRICTE
-    #     # else:
-    #     #     rv += "<BR> ERROR: could not find children field in d[data] dict"
-    #
-    #
-    #     rv += displayCommentListingDictMeta(d)
-    #     # EXAMPLE: DATA: AFTER: None, BEFORE: None, MODHASH: , CHILDREN: 1
-    #
-    #     rv += displayCommentListingDataChildren(d)
-    #     # EXAMPLE: 1: t1_dgydfqu Reply 29b
-    #     #          2: t1_dgydfby Reply 29a
-    #
-    #     youngestChild = processCommentListingDataChildren(d, cs.user)
-    #
-    #     rv += "<BR>youngestChild = " + youngestChild
-    #     # EXAMPLE: youngestChild = t1_dgy8eac
-    #
-    #     if youngestChild > cs.before:
-    #         cs.before = youngestChild
-    #
-    #     if d['data']['after'] is not None:
-    #         cs.after = d['data']['after']
-    #     else:
-    #         cs.after = CONST_PROCESSED
-    #     cs.save()
-    # else:
-    #     rv += displayUnknownDict(d)
-    #
-    # rv += "<BR>" + cs.user.name + ": BB: " + "[After: " + cs.after + "]" + " [Before: " + cs.before + "]"
-    # # EXAMPLE: UserName: BB: [After: processed] [Before: t1_ddddddac]
     return rv
 
 # *****************************************************************************
@@ -211,11 +169,32 @@ def comments_updateForAllUsers():
         rv += getDictOfNewCommentsForUser(cs, d)
         print ("*** %s" % (json.dumps(d)))
 
-        validateResult = False
-        rv += validateNewCommentsDataDict(d, validateResult)
+        argDict = {'rv': "", 'validateResult': False}
+        validateNewCommentsDataDict(d, argDict)
+        rv += argDict['rv']
 
-        if validateResult:
+        if argDict['validateResult']:
             print("*** validate is true")
+
+            rv += displayCommentListingDictMeta(d)
+            # EXAMPLE: DATA: AFTER: None, BEFORE: None, MODHASH: , CHILDREN: 1
+
+            rv += displayCommentListingDataChildren(d)
+            # EXAMPLE: 1: t1_dgydfqu Reply 29b
+            #          2: t1_dgydfby Reply 29a
+            youngestChild = processCommentListingDataChildren(d, cs.user)
+
+            rv += "<BR>youngestChild = " + youngestChild
+            # EXAMPLE: youngestChild = t1_dgy8eac
+
+            if youngestChild > cs.before:
+                cs.before = youngestChild
+
+            if d['data']['after'] is not None:
+                cs.after = d['data']['after']
+            else:
+                cs.after = CONST_PROCESSED
+            cs.save()
         else:
             print("*** validate is false")
 
