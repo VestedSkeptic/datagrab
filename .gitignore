@@ -4,7 +4,8 @@ mysite2env/*
 __pycache__
 migrations
 __init__.py
-.tags
+.tags*
+.fuse*
 
 
 
