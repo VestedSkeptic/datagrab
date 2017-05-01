@@ -50,42 +50,41 @@ def displayCommentListingDataChildren(d):
     return rv;
 
 # *****************************************************************************
-def processCommentListingDataChildren(d, u):
+def processCommentListingCreatingIndexAndRawEntriesAppropriately(d, u):
     youngestChild = ""
     count = 0
-    if 'children' in d['data']:
-        for cd in d['data']['children']:
-            if cd['data']['name'] > youngestChild:
-                youngestChild = cd['data']['name']
+    # if 'children' in d['data']:
+    for cd in d['data']['children']:
+        if cd['data']['name'] > youngestChild:
+            youngestChild = cd['data']['name']
 
-            count += 1
+        count += 1
 
-            # see if userCommentsIndex exists, create if necessary
-            uc = None
-            try:
-                uc = userCommentsIndex.objects.get(user=u, name=cd['data']['name'])
-                s = "WARNING: userCommentsIndex: " + uc.name + " already exists"
-                print(s)
-            except ObjectDoesNotExist:
-                uc = userCommentsIndex(user=u, name=cd['data']['name'])
-                uc.save()
-                # s = "userCommentsIndex: " + uc.name + " created"
-                # print(s)
+        # see if userCommentsIndex exists, create if necessary
+        uc = None
+        try:
+            uc = userCommentsIndex.objects.get(user=u, name=cd['data']['name'])
+            s = "WARNING: userCommentsIndex: " + uc.name + " already exists"
+            print(s)
+        except ObjectDoesNotExist:
+            uc = userCommentsIndex(user=u, name=cd['data']['name'])
+            uc.save()
+            # s = "userCommentsIndex: " + uc.name + " created"
+            # print(s)
 
-            # see if userCommentsRaw exists, create if necessary
-            ucr = None
-            try:
-                ucr = userCommentsRaw.objects.get(uci=uc)
-                s = "WARNING: userCommentsRaw: " + ucr.uci.name + " for user " + ucr.uci.user.name + " already exists"
-                print(s)
-            except ObjectDoesNotExist:
-                ucr = userCommentsRaw(uci=uc, data=cd['data'])
-                ucr.save()
-                # s = "userCommentsRaw: " + ucr.uci.name + " created"
-                # print(s)
+        # see if userCommentsRaw exists, create if necessary
+        ucr = None
+        try:
+            ucr = userCommentsRaw.objects.get(uci=uc)
+            s = "WARNING: userCommentsRaw: " + ucr.uci.name + " for user " + ucr.uci.user.name + " already exists"
+            print(s)
+        except ObjectDoesNotExist:
+            ucr = userCommentsRaw(uci=uc, data=cd['data'])
+            ucr.save()
+            # s = "userCommentsRaw: " + ucr.uci.name + " created"
+            # print(s)
 
     print ("*** %s comments retrieved" % (str(count)))
-
     return youngestChild;
 
 # *****************************************************************************
@@ -107,6 +106,7 @@ def buildCommentQuery(name, after, before):
             pass
 
     return rv
+
 # *****************************************************************************
 def validateNewCommentsDataDict (d, argDict):
     if 'message' in d:
@@ -153,58 +153,63 @@ def getUsersCommentsProcessedStatus(u):
     return cs
 
 # *****************************************************************************
+def updateCommentsForUser(u):
+    rv = "<BR> ---------------------------------"
+    print("Processing user: %s" % (u.name))
+    cs = getUsersCommentsProcessedStatus(u)
+
+    d = {}
+    rv += getDictOfNewCommentsForUser(cs, d)
+    print ("*** %s" % (json.dumps(d)))
+
+    argDict = {'rv': "", 'validateResult': False}
+    validateNewCommentsDataDict(d, argDict)
+    rv += argDict['rv']
+
+    if argDict['validateResult']:
+        print("*** validate is true")
+
+        rv += displayCommentListingDictMeta(d)
+        # EXAMPLE: DATA: AFTER: None, BEFORE: None, MODHASH: , CHILDREN: 1
+
+        rv += displayCommentListingDataChildren(d)
+        # EXAMPLE: 1: t1_dgydfqu Reply 29b
+        #          2: t1_dgydfby Reply 29a
+        youngestChild = processCommentListingCreatingIndexAndRawEntriesAppropriately(d, cs.user)
+
+        rv += "<BR>youngestChild = " + youngestChild
+        # EXAMPLE: youngestChild = t1_dgy8eac
+
+        if youngestChild > cs.before:
+            cs.before = youngestChild
+
+        if d['data']['after'] is not None:
+            cs.after = d['data']['after']
+        else:
+            cs.after = CONST_PROCESSED
+        cs.save()
+    else:
+        print("*** validate is false")
+
+    rv += "<BR>" + cs.user.name + ": BB: " + "[After: " + cs.after + "]" + " [Before: " + cs.before + "]"
+    # EXAMPLE: UserName: BB: [After: processed] [Before: t1_dddddd86]
+
+    rv += "<br>"
+    print("")
+    return rv
+
+# *****************************************************************************
 def comments_updateForAllUsers():
     rv = "<B>comments_updateForAllUsers</B><BR>"
     print("=====================================================")
 
     users = user.objects.all()
-    count = 0
-    for u in users:
-        count += 1
-        rv += "<BR> ---------------------------------"
-        print("Processing user: %s" % (u.name))
-        cs = getUsersCommentsProcessedStatus(u)
-
-        d = {}
-        rv += getDictOfNewCommentsForUser(cs, d)
-        print ("*** %s" % (json.dumps(d)))
-
-        argDict = {'rv': "", 'validateResult': False}
-        validateNewCommentsDataDict(d, argDict)
-        rv += argDict['rv']
-
-        if argDict['validateResult']:
-            print("*** validate is true")
-
-            rv += displayCommentListingDictMeta(d)
-            # EXAMPLE: DATA: AFTER: None, BEFORE: None, MODHASH: , CHILDREN: 1
-
-            rv += displayCommentListingDataChildren(d)
-            # EXAMPLE: 1: t1_dgydfqu Reply 29b
-            #          2: t1_dgydfby Reply 29a
-            youngestChild = processCommentListingDataChildren(d, cs.user)
-
-            rv += "<BR>youngestChild = " + youngestChild
-            # EXAMPLE: youngestChild = t1_dgy8eac
-
-            if youngestChild > cs.before:
-                cs.before = youngestChild
-
-            if d['data']['after'] is not None:
-                cs.after = d['data']['after']
-            else:
-                cs.after = CONST_PROCESSED
-            cs.save()
-        else:
-            print("*** validate is false")
-
-        rv += "<br>"
-        print("")
-
-    if count == 0:
+    if users.count() == 0:
         rv += "<BR> ---------------------------------"
         rv += "<BR> No users found"
-
+    else:
+        for u in users:
+            rv += updateCommentsForUser(u)
     return HttpResponse(rv)
 
 
