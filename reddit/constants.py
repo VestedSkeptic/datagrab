@@ -23,3 +23,22 @@ CONST_USER_AGENT                                        = "testscript by /u/OldD
 
 # commentQuery: https://oauth.reddit.com/user/OldDevLearningLinux/comments/.json?limit=100&before=t1_dejemg4
 # threadQuery:  https://oauth.reddit.com/r/politics/new/.json?limit=100
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
