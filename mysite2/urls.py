@@ -17,8 +17,8 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 urlpatterns = [
-    # url(r'^redditcomments/', include('redditcomments.urls')),
-    # url(r'^redditusers/', include('redditusers.urls')),
-    url(r'^reddit/', include('reddit.urls')),
+    url(r'^reddit/', include('rMain.urls')),
+    url(r'^reddit/', include('rUserComments.urls')),
+    url(r'^reddit/', include('rSubredditThreads.urls')),
     url(r'^admin/', admin.site.urls),
 ]

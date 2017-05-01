@@ -1,7 +1,4 @@
 from django.http import HttpResponse
-from .comments import comments_updateForAllUsers
-from .threads import threads_updateForAllSubreddits
-# import json
 
 # *****************************************************************************
 def index(request):
@@ -14,15 +11,7 @@ def index(request):
     s += '<br>'
     return HttpResponse(s)
 
-# *****************************************************************************
-def updateComments(request):
-    s = comments_updateForAllUsers()
-    return HttpResponse(s)
 
-# *****************************************************************************
-def updateSubredditThreads(request):
-    s = threads_updateForAllSubreddits()
-    return HttpResponse(s)
 
 
 
