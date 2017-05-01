@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from .models import user, userCommentsProcessedStatus
-from .defines import *
+from .constants import *
 from helperLibrary.stringHelper import *
 import requests
 import requests.auth
@@ -9,14 +9,6 @@ import json
 import time
 
 # ref: https://github.com/reddit/reddit/wiki/OAuth2-Quick-Start-Example
-
-# *****************************************************************************
-CONST_CLIENT_ID         = "kcksu9E4VgC0TQ"
-CONST_SECRET            = "Megl7I6XKHtGIQ0T4_q62KiaRQw"
-CONST_GRANT_TYPE        = "client_credentials"
-CONST_DEV_USERNAME      = "OldDevLearningLinux"
-CONST_DEV_PASSWORD      = "ygHOwxJELMzcwZP4Wi4pO72B"
-CONST_USER_AGENT        = "testscript by /u/OldDevLearningLinux"
 
 # *****************************************************************************
 GLOBAL_LastTokenTime    = 0

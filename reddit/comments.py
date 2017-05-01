@@ -1,43 +1,10 @@
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from .models import user, userCommentsProcessedStatus, userCommentsIndex, userCommentsRaw
-from .defines import *
+from .constants import *
 from .credentials import credentials_getAuthorizationHeader
-from helperLibrary.stringHelper import *
+from redditCommon.listingDict import *
 import requests, json
-
-# *****************************************************************************
-# CONST_REDDIT_REQUEST_URL    = "https://www.reddit.com/user/"
-CONST_REDDIT_REQUEST_URL    = "https://oauth.reddit.com/user/"
-
-# *****************************************************************************
-def displayMessageFromDict(d):
-    rv = "<BR>ERROR MESSAGE: " + d['message']
-    if 'error' in d:
-        rv += ", " + "ERROR: " + str(d['error'])
-    return rv
-
-# *****************************************************************************
-def displayUnknownDict(d):
-    rv = "<BR>ERROR UNKNOWN: " + json.dumps(d)
-    return rv
-
-# *****************************************************************************
-def displayCommentListingDictMeta(d):
-    rv = ""
-    # rv = "<br>KIND: "
-    # if 'kind' in d: rv += d['kind']
-    # else:           rv += "ERROR kind NOT FOUND"
-
-    if 'data' in d:
-        rv += "<br>DATA: "
-        if 'after' in d['data']:    rv += "AFTER: "       + stringHelper_returnStringValueOrNone(d['data']['after'])   + ", "
-        if 'before' in d['data']:   rv += "BEFORE: "      + stringHelper_returnStringValueOrNone(d['data']['before'])  + ", "
-        if 'modhash' in d['data']:  rv += "MODHASH: "     + stringHelper_returnStringValueOrNone(d['data']['modhash']) + ", "
-        if 'children' in d['data']: rv += "CHILDREN: "    + str(len(d['data']['children']))
-    else:
-        rv += "ERROR data NOT FOUND"
-    return rv
 
 # *****************************************************************************
 def displayCommentListingDataChildren(d):
@@ -53,7 +20,6 @@ def displayCommentListingDataChildren(d):
 def processCommentListingCreatingIndexAndRawEntriesAppropriately(d, u):
     youngestChild = ""
     count = 0
-    # if 'children' in d['data']:
     for cd in d['data']['children']:
         if cd['data']['name'] > youngestChild:
             youngestChild = cd['data']['name']
@@ -69,8 +35,6 @@ def processCommentListingCreatingIndexAndRawEntriesAppropriately(d, u):
         except ObjectDoesNotExist:
             uc = userCommentsIndex(user=u, name=cd['data']['name'])
             uc.save()
-            # s = "userCommentsIndex: " + uc.name + " created"
-            # print(s)
 
         # see if userCommentsRaw exists, create if necessary
         ucr = None
@@ -81,17 +45,17 @@ def processCommentListingCreatingIndexAndRawEntriesAppropriately(d, u):
         except ObjectDoesNotExist:
             ucr = userCommentsRaw(uci=uc, data=cd['data'])
             ucr.save()
-            # s = "userCommentsRaw: " + ucr.uci.name + " created"
-            # print(s)
 
     print ("*** %s comments retrieved" % (str(count)))
     return youngestChild;
 
 # *****************************************************************************
 def buildCommentQuery(name, after, before):
-    rv = CONST_REDDIT_REQUEST_URL
+    rv = CONST_REDDIT_USER_COMMENT_REQUEST_URL
     rv += name
-    rv += '/comments/.json?limit=100'
+    rv += '/comments'
+    rv += '/.json?limit='
+    rv += str(CONST_REDDIT_REQUEST_LIMIT)
 
     if after == CONST_UNPROCESSED:
         pass
@@ -106,20 +70,6 @@ def buildCommentQuery(name, after, before):
             pass
 
     return rv
-
-# *****************************************************************************
-def validateNewCommentsDataDict (d, argDict):
-    if 'message' in d:
-        argDict['rv'] += displayMessageFromDict(d)
-    elif 'data' in d:
-        if 'children' in d['data']:
-            argDict['validateResult'] = True
-            argDict['rv'] += "<BR>VALIDATES SUCCESSFULLY"
-        else:
-            argDict['rv'] += "<BR>ERROR: children key not found in d[data]"
-    else:
-        argDict['rv'] += displayUnknownDict(d)
-    return
 
 # *****************************************************************************
 def getDictOfNewCommentsForUser(cs, d):
@@ -163,13 +113,13 @@ def updateCommentsForUser(u):
     print ("*** %s" % (json.dumps(d)))
 
     argDict = {'rv': "", 'validateResult': False}
-    validateNewCommentsDataDict(d, argDict)
+    listingDict_validate(d, argDict)
     rv += argDict['rv']
 
     if argDict['validateResult']:
         print("*** validate is true")
 
-        rv += displayCommentListingDictMeta(d)
+        rv += listingDict_displayMeta(d)
         # EXAMPLE: DATA: AFTER: None, BEFORE: None, MODHASH: , CHILDREN: 1
 
         rv += displayCommentListingDataChildren(d)
