@@ -1,8 +1,8 @@
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from .models import subreddit, subredditThreadProcessedStatus, subredditThreadIndex, subredditThreadRaw
-from .constants import *
-from .credentials import credentials_getAuthorizationHeader
+from redditCommon.constants import *
+from redditCommon.credentials import credentials_getAuthorizationHeader
 from redditCommon.listingDict import *
 import requests, json
 

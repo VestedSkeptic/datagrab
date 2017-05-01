@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from .models import user, userCommentsProcessedStatus
-from .constants import *
+from redditCommon.constants import *
 from helperLibrary.stringHelper import *
 import requests
 import requests.auth
