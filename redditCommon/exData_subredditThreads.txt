@@ -1,0 +1,74 @@
+Example of data returned when querying threads for a subreddit:
+https://oauth.reddit.com/r/politics/new/.json?limit=1
+https://reddit.com/r/politics/new/.json?limit=1
+
+{
+    "kind": "Listing",
+    "data": {
+        "modhash": "043zfwlitpf1def3c7001688a58269b499101f651e5b927745",
+        "children": [
+            {
+                "kind": "t3",
+                "data": {
+                    "approved_by": null,
+                    "archived": false,
+                    "author_flair_css_class": null,
+                    "author_flair_text": null,
+                    "author": "r4816",
+                    "banned_by": null,
+                    "brand_safe": true,
+                    "can_gild": true,
+                    "clicked": false,
+                    "contest_mode": false,
+                    "created_utc": 1493734366.0,
+                    "created": 1493763166.0,
+                    "distinguished": null,
+                    "domain": "thehill.com",
+                    "downs": 0,
+                    "edited": false,
+                    "gilded": 0,
+                    "hidden": false,
+                    "hide_score": true,
+                    "id": "68tcrv",
+                    "is_self": false,
+                    "likes": null,
+                    "link_flair_css_class": null,
+                    "link_flair_text": null,
+                    "locked": false,
+                    "media_embed": { },
+                    "media": null,
+                    "mod_reports": [ ],
+                    "name": "t3_68tcrv",
+                    "num_comments": 1,
+                    "num_reports": null,
+                    "over_18": false,
+                    "permalink": "/r/politics/comments/68tcrv/mccain_trump_foreign_policy_remarks_more/",
+                    "quarantine": false,
+                    "removal_reason": null,
+                    "report_reasons": null,
+                    "saved": false,
+                    "score": 1,
+                    "secure_media_embed": { },
+                    "secure_media": null,
+                    "selftext_html": null,
+                    "selftext": "",
+                    "spoiler": false,
+                    "stickied": false,
+                    "subreddit_id": "t5_2cneq",
+                    "subreddit_name_prefixed": "r/politics",
+                    "subreddit_type": "public",
+                    "subreddit": "politics",
+                    "suggested_sort": null,
+                    "thumbnail": "",
+                    "title": "McCain: Trump foreign policy remarks 'more confusion than anything else'",
+                    "ups": 1
+                    "url": "http://thehill.com/homenews/administration/331519-mccain-we-must-show-us-stands-for-democracy-more-than-ever-before",
+                    "user_reports": [ ],
+                    "visited": false,
+                }
+            }
+        ],
+        "after": "t3_68tcrv",
+        "before": null
+    }
+}

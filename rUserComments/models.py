@@ -52,16 +52,6 @@ class userCommentsRaw(models.Model):
 
 
 
-# Probably want to add a field to user
-# POI with default value of false
-# Only if poi is true do I grab all of their comments.
-# Will allow adding users to same DB table as I parse comment threads without automatically grabbing all of this users comments_updateForAllUsers():
-
-
-# THESE FIELDS RETURNED WHEN DIRECTLY QUERYING A USERS comments
-# COMPARE THIS TO THE FIELDS RETURNED FOR COMMENTS FROM A THREAD
-
-
 
 
 
