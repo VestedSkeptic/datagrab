@@ -153,7 +153,7 @@ def comments_updateForAllUsers():
     rv = "<B>comments_updateForAllUsers</B><BR>"
     print("=====================================================")
 
-    users = user.objects.all()
+    users = user.objects.filter(poi=True)
     if users.count() == 0:
         rv += "<BR> ---------------------------------"
         rv += "<BR> No users found"
