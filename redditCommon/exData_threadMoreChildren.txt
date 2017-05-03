@@ -321,7 +321,7 @@ https://api.reddit.com/api/morechildren/.json?api_type=json&sort=old&link_id=t3_
      THEN
      https://www.reddit.com/r/redditdev/comments/?count=25&after=t1_dgxyqn1
 
-#05: IF IT TURNS OUT THERE IS A BOTTLENECK SPEED WIZE IN GETTING ALL COMMENTS FOR A THREAD
+#05: IF IT TURNS OUT THERE IS A BOTTLENECK SPEED WISE IN GETTING ALL COMMENTS FOR A THREAD
      REVIEW REDDIT GOLD FEATURES AND SEE IF THAT LIFTS THE BOTTLENECK and SEE IF THAT SAME
      LIFTING OF LIMITATION WOULD APPLY TO AN API CALL USING THAT ACCOUNT???????????
      "You could buy your bot's account Reddit Gold and have access to a lot more comments at

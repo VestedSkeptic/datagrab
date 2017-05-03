@@ -224,7 +224,8 @@ def threadComments_updateForAll():
 
 
 
-
+#  example of getting new comments to a subreddit in json format
+# http://www.reddit.com/r/learnPython/hot/.json
 
 
 
