@@ -1,0 +1,378 @@
+Example of data returned when querying a subreddit thread for more children
+that weren't returned with top level threadComment call due to limits.
+
+https://www.reddit.com/api/morechildren/.json?api_type=json&sort=new&link_id=t3_68rxw2&children=dh0tf5k
+
+
+
+
+
+api_type	       the string json
+children	       a comma-delimited list of comment ID36s
+id	             (optional) id of the associated MoreChildren object
+link_id	          fullname of a link
+sort	           one of (confidence, top, new, controversial, old, random, qa, live)
+
+
+
+
+
+
+Example of processing an entire thread:
+{USING MY TEST THREAD} with a limit of one and sort of old
+
+
+First call with a limit of one
+https://www.reddit.com/r/test/comments/5xnbad/.json?sort=old&threaded=false&limit=1
+
+Returns oldest comment (due to sorting by old).
+Returns TWO MORE chunks?
+
+---------------------------------------------------
+FIRST CHUNK
+{
+    "kind": "more",
+    "data": {
+        "count": 4,
+        "name": "t1_dejdc9t",                 # seems to be arbitrarily the first child below
+        "id": "dejdc9t",                      # ditto
+        "parent_id": "t1_dejda4f",
+        "depth": 1,
+        "children": [
+            "dejdc9t",
+            "dejdate"
+        ]
+    }
+}
+THIS POINTS AT TWO IMMEDIATE CHILDREN OF THE COMMENT RETURNED ABOVE.
+"dejdc9t" AND "dejdate"
+which accounts for depth value of 1
+"dejdc9t" has two children as well which might account for the count value of 4
+
+---------------------------------------------------
+SECOND CHUNK
+{
+    "kind": "more",
+    "data": {
+        "count": 38,
+        "name": "t1_dejdf5s",
+        "id": "dejdf5s",
+        "parent_id": "t3_5xnbad",
+        "depth": 0,
+        "children": [
+            "dejdf5s",
+            "dejde9u",
+            "dgykxno",
+            "dejddl6",
+            "dejdfgu",
+            "dh12idt",
+            "dejdd7m",
+            "dejemg4",
+            "dejddid",
+            "dejddeu",
+            "dejdewe",
+            "dgykx1k",
+            "dgyf703",
+            "dgydfby",
+            "dgzmtdk",
+            "dejde7w",
+            "dejdfb2",
+            "dgzmzqu",
+            "dejddty",
+            "dejddqf",
+            "dejdefc",
+            "dejdeoy",
+            "dejeekt",
+            "dejdfdu",
+            "dejdf88",
+            "dejdf15",
+            "dejdejh",
+            "dejdece",
+            "dejddwl",
+            "dgykv38",
+            "dejde3q",
+            "dgydaik",
+            "dejdem6",
+            "dejddo6",
+            "dejek8s",
+            "dejderj"
+        ]
+    }
+}
+THIS POINTS AT THE 36 TOP LEVEL COMMENTS at a depth of zero
+Two of these comments have one reply which accounts for depth of 38 returned
+
+
+TEST
+Youngest            dh12idt
+Second youngest     dgzmzqu
+# Querying trying to see if I can purposefully get comment AFTER the second youngest
+https://reddit.com/r/test/comments/5xnbad/.json?sort=new&threaded=false&id=dgzmzqu
+https://reddit.com/r/test/comments/5xnbad/.json?sort=new&threaded=false&id=dgzmzqu&limit=1
+KIND OF CAN. RETURNED ONE ITEM WHICH WAS THE YOUNGEST.
+further testing ...
+https://reddit.com/r/test/comments/5xnbad/.json?sort=old&limit=1&threaded=false&id=dejda4f
+returns dejda4f = Reply 01a
+#NOPE
+https://reddit.com/r/test/comments/5xnbad/.json?sort=new&limit=1&threaded=false&id=dejda4f
+returns dh12idt = Reply 36a
+#NOPE
+https://reddit.com/r/test/comments/5xnbad/.json?sort=old&limit=2&threaded=false&id=dejda4f
+returns dejda4f = Reply 01a
+returns dejdate = Reply 01aa
+# Kinda except it returns first entry which is duplicated
+# Continue test from this situation
+https://reddit.com/r/test/comments/5xnbad/.json?sort=old&limit=4&threaded=false&id=dejdate
+returns dejda4f = Reply 01a
+returns dejdate = Reply 01aa
+returns dejdc9t = Reply 01ab
+returns dejdcjp = Reply 01aba
+# NOPE THIS ISNT WORKING, THE ID VALUE DOESNT DO ANYTHING. NOT SURPRISING AS IT ISN'T
+# PART OF THE API AND IM TESTING IT BECAUSE I TRIED IT AND IT SEEMED TO INITIALLY WORK
+# BUT NOPE NOPE NOPE
+
+
+Test #2 with initial
+GET [/r/subreddit]/comments/article call
+followed up with calls to
+GET /api/morechildren
+repeated until there are no more children
+
+
+https://reddit.com/r/test/comments/68uvd9/.json?sort=old&threaded=false
+# As there are currently only 8 comments in thread this call returns all of them
+https://reddit.com/r/test/comments/68uvd9/.json?sort=old&threaded=false&limit=5
+returns 7 children
+dh1g2dk = Comment 01a
+dh1g2r9 = Comment 02a
+dh1g3lq = Comment 02aa
+dh1g40n = Comment 02aaa
+MORE with children dh1g4v6
+dh1g329 = Comment 03a
+MORE with children dh1g58x
+...
+# Next a call to moreChildren with one children detected in two more sections above
+https://api.reddit.com/api/morechildren/.json?api_type=json&sort=new&link_id=t3_68uvd9&children=dh1g4v6
+        returns different format, ex:
+        {
+            "json": {
+                "errors": [ ],
+                "data": {
+                    "things": [
+                        {
+                            "kind": "t1",
+                            "data": {
+returns 1 THINGS
+dh1g4v6 = Comment 02ab
+---- OR ------
+# A call to moreChildren with two children detected in two more sections above
+https://api.reddit.com/api/morechildren/.json?api_type=json&sort=new&link_id=t3_68uvd9&children=dh1g4v6,dh1g58x
+        same different format [FIGURE THAT OUT]
+returns 2 THINGS
+dh1g58x = Comment 04a
+dh1g5k2 = Comment 04aa
+# THIS DOES NOT RETURN THREE CHILDREN WHICH SHOULD INCLUDE CHILD FROM dh1g4v6 CALL_FUNCTION
+?????
+
+
+
+    #Trying second calls again with a new format I found looking at a redditDev thread.
+    https://api.reddit.com/comments/68uvd9/api/morechildren?api_type=json&sort=new&link_id=t3_68uvd9&showmore=true&children=dh1g4v6,dh1g58x
+    # THIS HAS THE RIGHT FORMAT THAT THE CALL ABOVE DIDNT HAVE
+    returns 4 children with nested comments which I dont like
+    # ANOTHER TRY
+    https://api.reddit.com/comments/68uvd9/api/morechildren?api_type=json&sort=new&link_id=t3_68uvd9&showmore=true&children=dh1g4v6,dh1g58x
+    https://api.reddit.com/                api/morechildren?api_type=json&sort=new&link_id=t3_68uvd9&showmore=true&children=dh1g4v6,dh1g58x
+    # ANOTHER TRY
+    #REF
+    http://www.reddit.com/r/redditdev/comments/w60cs/using_morechildren_without_praw/.json?limit=2
+    #try
+    https://api.reddit.com/api/morechildren/.json?api_type=json&sort=new&link_id=t3_68uvd9&children=dh1g4v6,dh1g58x
+    https://api.reddit.com/api/morechildren/.json?api_type=json&sort=new&link_id=t3_68uvd9&children=t1_dh1g4v6,t1_dh1g58x
+
+#another try
+ref https://www.reddit.com/api/morechildren.json?api_type=json&link_id=t3_46hq6t&children=d05cudt
+ref https://www.reddit.com/api/morechildren.json?api_type=json&link_id=t3_3hw3vu&sort=hot&children=cubdvrt&depth=20
+WHICH INDICATES, WITH DEVELOPER CONFIRMATION, THAT THIS FORMAT
+          {
+              "json": {
+                  "errors": [ ],
+                  "data": {
+                      "things": [
+                          {
+                              "kind": "t1",
+                              "data": {
+IS AS EXPECTED AND IS A FLAT ARRAY FORMAT !!!!!!!
+
+ANOTHER TRY BUT MANUALLY ESCAPING COMMA SEPARATING CHILD IDS
+%2C
+https://api.reddit.com/api/morechildren/.json?api_type=json&sort=new&link_id=t3_68uvd9&children=dh1g4v6,dh1g58x
+BECOMES
+https://api.reddit.com/api/morechildren/.json?api_type=json&sort=new&link_id=t3_68uvd9&children=dh1g4v6%2Cdh1g58x
+returns two child things:
+dh1g58x = Comment 04a
+dh1g5k2 = Comment 04aa
+#NOPE
+
+
+Another try - trying showmore parameter, not removed sort=new parameter
+ref:
+https://api.reddit.com/api/morechildren/.json?api_type=json&sort=new&link_id=t3_68uvd9&children=dh1g4v6,dh1g58x
+try
+https://api.reddit.com/api/morechildren.json?api_type=json&showmore=true&link_id=t3_68uvd9&children=dh1g4v6,dh1g58x
+returns two child things:
+dh1g58x = Comment 04a
+dh1g5k2 = Comment 04aa
+# nope
+
+
+ANOTHER GOD DAMNED FUCKING try
+https://api.reddit.com/r/test/comments/68uvd9/.json?sort=old&threaded=false&limit=1
+returns two children
+dh1g2dk = Comment 01a
+three MORE id's: "dh1g58x", "dh1g2r9", "dh1g329"
+THEN:
+https://api.reddit.com/api/morechildren/.json?api_type=json&sort=new&link_id=t3_68uvd9&children=dh1g58x
+returns 2 things:
+dh1g58x = Comment 04a
+dh1g5k2 = Comment 04aa
+AND
+https://api.reddit.com/api/morechildren/.json?api_type=json&sort=new&link_id=t3_68uvd9&children=dh1g2r9
+returns 4 things:
+dh1g2r9 = Comment 02a
+dh1g4v6 = Comment 02ab
+dh1g3lq = Comment 02aa
+dh1g40n = Comment 02aaa
+AND
+https://api.reddit.com/api/morechildren/.json?api_type=json&sort=new&link_id=t3_68uvd9&children=dh1g329
+returns 1 things:
+dh1g329 = Comment 03a
+WHILE:
+https://api.reddit.com/api/morechildren/.json?api_type=json&sort=new&link_id=t3_68uvd9&children=dh1g58x,dh1g2r9,dh1g329
+returns 7 things:
+dh1g58x = Comment 04a
+dh1g5k2 = Comment 04aa
+dh1g329 = Comment 03a
+dh1g2r9 = Comment 02a
+dh1g4v6 = Comment 02ab
+dh1g3lq = Comment 02aa
+dh1g40n = Comment 02aaa
+# SO THIS SEEMS TO FUCKING WORK SO WHY WAS I HAVEING PROBLEMS WITH THE GOD DAMNED FILTER 5 FIRST ATTEMPT AND NEXT TWO CALLS
+
+
+# TRYING THAT AGAIN
+https://api.reddit.com/r/test/comments/68uvd9/.json?sort=old&threaded=false&limit=5
+returns 7 children
+dh1g2dk = Comment 01a
+dh1g2r9 = Comment 02a
+dh1g3lq = Comment 02aa
+dh1g40n = Comment 02aaa
+dh1g329 = Comment 03a
+more children = dh1g4v6
+more children = dh1g58x
+THEN
+https://api.reddit.com/api/morechildren/.json?api_type=json&sort=new&link_id=t3_68uvd9&children=dh1g4v6
+returns 1 things:
+dh1g4v6 = Comment 02ab
+AND
+https://api.reddit.com/api/morechildren/.json?api_type=json&sort=new&link_id=t3_68uvd9&children=dh1g58x
+returns 2 things:
+dh1g58x = Comment 04a
+dh1g5k2 = Comment 04aa
+WHILE:
+https://api.reddit.com/api/morechildren/.json?api_type=json&sort=new&link_id=t3_68uvd9&children=dh1g58x,dh1g4v6
+returns 2 things:
+dh1g58x = Comment 04a
+dh1g5k2 = Comment 04aa
+
+
+# Posted comment to Reddit about these results.
+# One reply so far said my mix of sort might be an issue.
+# Also that you cannot combine different more groups.
+# TEST THIS
+# Limit 1: both using sort = old
+https://api.reddit.com/r/test/comments/68uvd9/.json?sort=old&threaded=false&limit=1
+https://api.reddit.com/api/morechildren/.json?api_type=json&sort=old&link_id=t3_68uvd9&children=dh1g58x,dh1g2r9,dh1g329
+SAME RESULTS
+
+# Limit 5: both using sort = old
+https://api.reddit.com/r/test/comments/68uvd9/.json?sort=old&threaded=false&limit=5
+https://api.reddit.com/api/morechildren/.json?api_type=json&sort=old&link_id=t3_68uvd9&children=dh1g58x,dh1g4v6
+
+
+
+#01: Make the request sending the link_id and a comma-delimited list of up to 20 comment IDs
+
+
+#02: Assuming TEST #2 works, what is the best way to later test if new comments have been added to a thread.
+     Do I reverse the process and start from newest comments to oldest until I meet where the previous comments
+     were saved?
+
+#03: THIS ALLOWS DIRECT GETTING OF ITEMS BY THEIR ID
+     GET [/r/subreddit]/api/inforead
+     Return a listing of things specified by their fullnames.
+     Only Links, Comments, and Subreddits are allowed.
+     id	A comma-separated list of thing fullnames
+     url	a valid URL
+
+#04: UNDOCUMENTED (OR I HAVENT FOUND DOCUMENTATION)
+     METHOD TO WATCH ALL COMMENTS TO A SUBREDDIT
+     https://www.reddit.com/r/redditdev/comments/
+     THEN
+     https://www.reddit.com/r/redditdev/comments/?count=25&after=t1_dgxyqn1
+
+#05: IF IT TURNS OUT THERE IS A BOTTLENECK SPEED WIZE IN GETTING ALL COMMENTS FOR A THREAD
+     REVIEW REDDIT GOLD FEATURES AND SEE IF THAT LIFTS THE BOTTLENECK and SEE IF THAT SAME
+     LIFTING OF LIMITATION WOULD APPLY TO AN API CALL USING THAT ACCOUNT???????????
+     "You could buy your bot's account Reddit Gold and have access to a lot more comments at
+     once. If you don't want to do this, you could add limit=500 to your requests if it's not
+     already grabbing 500 at a time.""
+     "If the account making the request has gold, it will be able to receive up to 1,500
+     comments by using limit=1500"
+     Limit without reddit gold seems to be 500
+
+#06: Example of somone using moreChildren. Specified as:
+     http://www.reddit.com/api/morechildren
+     Posting:
+     {
+        "api_type":"json",
+        "link_id":"t3_XXXXXX",
+        "children":"t1_XXXXXX,t1_XXXXXX,...",
+        "sort":"old"
+     }
+     Question: what does the posting part mean and is it the same as I've been passing values via url prams?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

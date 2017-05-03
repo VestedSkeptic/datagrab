@@ -9,6 +9,8 @@ def index(request):
     s += '<br>'
     s += '<br><a href="http://localhost:8000/reddit/ut/">update subreddit threads</a>'
     s += '<br>'
+    s += '<br><a href="http://localhost:8000/reddit/utc/">update subreddit comments</a>'
+    s += '<br>'
     return HttpResponse(s)
 
 

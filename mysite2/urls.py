@@ -20,5 +20,6 @@ urlpatterns = [
     url(r'^reddit/', include('rMain.urls')),
     url(r'^reddit/', include('rUserComments.urls')),
     url(r'^reddit/', include('rSubredditThreads.urls')),
+    url(r'^reddit/', include('rThreadComments.urls')),
     url(r'^admin/', admin.site.urls),
 ]
