@@ -8,7 +8,7 @@ import pprint
 
 # *****************************************************************************
 # get subredditThreadProcessedStatus for subreddit, if not exist create on
-def blSubredditThreads_getSubredditThreadProcessedStatus(subreddit):
+def blSubredditSubmissions_getSubredditThreadProcessedStatus(subreddit):
     cs = None
     try:
         cs = subredditThreadProcessedStatus.objects.get(subreddit=subreddit)
@@ -19,7 +19,7 @@ def blSubredditThreads_getSubredditThreadProcessedStatus(subreddit):
 
 # *****************************************************************************
 # if subredditThreadIndex exists return it otherwise create it
-def blSubredditThreads_getSubredditThreadIndex(thread, subreddit, aDict):
+def blSubredditSubmissions_getSubredditThreadIndex(thread, subreddit, aDict):
     sti = None
     try:
         sti = subredditThreadIndex.objects.get(subreddit=subreddit, name=thread.name)
@@ -33,7 +33,7 @@ def blSubredditThreads_getSubredditThreadIndex(thread, subreddit, aDict):
 # *****************************************************************************
 # if subredditThreadRaw does not exist save it.
 # TODO else compare appropriate fields, if any differences record appropriately
-def blSubredditThreads_saveSubredditThreadRaw(thread, sti):
+def blSubredditSubmissions_saveSubredditThreadRaw(thread, sti):
     stRaw = None
     try:
         stRaw = subredditThreadRaw.objects.get(sti=sti)
@@ -44,7 +44,7 @@ def blSubredditThreads_saveSubredditThreadRaw(thread, sti):
     return
 
 # *****************************************************************************
-def blSubredditThreads_updateThreadsForSubreddits(subreddit, argDict):
+def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
     print("Processing subreddit: %s" % (subreddit.name))
 
     # create PRAW reddit instance
@@ -52,7 +52,7 @@ def blSubredditThreads_updateThreadsForSubreddits(subreddit, argDict):
 
     # get status of comments already processed by this subreddit
     params={};
-    cs = blSubredditThreads_getSubredditThreadProcessedStatus(subreddit)
+    cs = blSubredditSubmissions_getSubredditThreadProcessedStatus(subreddit)
     # NOTE: Not using youngest currently because using it:
     #       * limits resuilts to 100 for some reason
     #       * fails if youngest doesn't exist any more (or is too old)
@@ -64,10 +64,10 @@ def blSubredditThreads_updateThreadsForSubreddits(subreddit, argDict):
     countDuplicate = 0
     for thread in reddit.subreddit(subreddit.name).new(limit=1023, params=params):
         aDict = {'sti' : None, 'isNew' : True }
-        blSubredditThreads_getSubredditThreadIndex(thread, subreddit, aDict)
+        blSubredditSubmissions_getSubredditThreadIndex(thread, subreddit, aDict)
 
         if aDict['isNew']:
-            blSubredditThreads_saveSubredditThreadRaw(thread, aDict['sti'])
+            blSubredditSubmissions_saveSubredditThreadRaw(thread, aDict['sti'])
             countNew += 1
         else:
             countDuplicate += 1
@@ -83,9 +83,9 @@ def blSubredditThreads_updateThreadsForSubreddits(subreddit, argDict):
     return
 
 # *****************************************************************************
-def blSubredditThreads_updateForAllSubreddits():
+def blSubredditSubmissions_updateForAllSubreddits():
     print("=====================================================")
-    rv = "<B>PRAW</B> blSubredditThreads_updateForAllSubreddits<BR>"
+    rv = "<B>PRAW</B> blSubredditSubmissions_updateForAllSubreddits<BR>"
 
     subreddits = subreddit.objects.all()
     if subreddits.count() == 0:
@@ -93,7 +93,7 @@ def blSubredditThreads_updateForAllSubreddits():
     else:
         for su in subreddits:
             argDict = {'rv': ""}
-            blSubredditThreads_updateThreadsForSubreddits(su, argDict)
+            blSubredditSubmissions_updateThreadsForSubreddits(su, argDict)
             rv += argDict['rv']
     print("=====================================================")
     return HttpResponse(rv)
