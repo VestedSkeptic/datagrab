@@ -44,14 +44,6 @@ class userCommentsRaw(models.Model):
 
 
 
-# GET [/r/subreddit]/comments/article
-# apu call uses the threads ID not its name
-# ID:       "68ot5m",
-# name":    "t3_68ot5m",
-
-
-
-
 
 
 

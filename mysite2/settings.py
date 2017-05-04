@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'rMain',
     'rSubredditThreads',
     'rThreadComments',
-    'rUserComments'
+    'rUserComments',
+    'reddit'
 ]
 
 MIDDLEWARE = [
