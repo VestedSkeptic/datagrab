@@ -8,7 +8,7 @@ import praw
 
 # *****************************************************************************
 # get userCommentsProcessedStatus for user, if not exist create on
-def getUsersCommentsProcessedStatus(user):
+def blUserComments_getUsersCommentsProcessedStatus(user):
     cs = None
     try:
         cs = userCommentsProcessedStatus.objects.get(user=user)
@@ -19,7 +19,7 @@ def getUsersCommentsProcessedStatus(user):
 
 # *****************************************************************************
 # if userCommentsIndex exists return it otherwise create it
-def getUserCommentIndex(comment, user, aDict):
+def blUserComments_getUserCommentIndex(comment, user, aDict):
     uci = None
     try:
         uci = userCommentsIndex.objects.get(user=user, name=comment.name)
@@ -32,9 +32,9 @@ def getUserCommentIndex(comment, user, aDict):
 
 
 # *****************************************************************************
-# if saveUserCommentsRaw does not exist save it.
+# if blUserComments_saveUserCommentsRaw does not exist save it.
 # TODO else compare appropriate fields, if any differences record appropriately
-def saveUserCommentsRaw(comment, uci):
+def blUserComments_saveUserCommentsRaw(comment, uci):
     ucr = None
     try:
         ucr = userCommentsRaw.objects.get(uci=uci)
@@ -45,14 +45,14 @@ def saveUserCommentsRaw(comment, uci):
     return
 
 # *****************************************************************************
-def updateCommentsForUser(user, argDict):
+def blUserComments_updateCommentsForUser(user, argDict):
     print("Processing user: %s" % (user.name))
 
     # create PRAW reddit instance
     reddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
 
     # get status of comments already processed by this user
-    cs = getUsersCommentsProcessedStatus(user)
+    cs = blUserComments_getUsersCommentsProcessedStatus(user)
     params={};
     # NOTE: Not using youngest currently because using it:
     #       * limits resuilts to 100 for some reason
@@ -65,9 +65,9 @@ def updateCommentsForUser(user, argDict):
     countDuplicate = 0
     for comment in reddit.redditor(user.name).comments.new(limit=None, params=params):
         aDict = {'uci' : None, 'isNew' : True }
-        getUserCommentIndex(comment, user, aDict)
+        blUserComments_getUserCommentIndex(comment, user, aDict)
         if aDict['isNew']:
-            saveUserCommentsRaw(comment, aDict['uci'])
+            blUserComments_saveUserCommentsRaw(comment, aDict['uci'])
             countNew += 1
         else:
             countDuplicate += 1
@@ -84,9 +84,9 @@ def updateCommentsForUser(user, argDict):
     return
 
 # *****************************************************************************
-def comments_updateForAllUsers():
+def blUserComments_updateForAllUsers():
     print("=====================================================")
-    rv = "<B>PRAW</B> comments_updateForAllUsers<BR>"
+    rv = "<B>PRAW</B> blUserComments_updateForAllUsers<BR>"
 
     users = user.objects.filter(poi=True)
     if users.count() == 0:
@@ -94,18 +94,10 @@ def comments_updateForAllUsers():
     else:
         for us in users:
             argDict = {'rv': ""}
-            updateCommentsForUser(us, argDict)
+            blUserComments_updateCommentsForUser(us, argDict)
             rv += argDict['rv']
     print("=====================================================")
     return HttpResponse(rv)
-
-
-
-
-
-
-
-
 
 
 

@@ -1,6 +1,6 @@
 from django.http import HttpResponse
-from .blUserComments import comments_updateForAllUsers
-from .blSubredditThreads import threads_updateForAllSubreddits
+from .blUserComments import blUserComments_updateForAllUsers
+from .blSubredditThreads import blSubredditThreads_updateForAllSubreddits
 # from django.shortcuts import render
 
 # *****************************************************************************
@@ -14,10 +14,10 @@ def main(request):
 
 # *****************************************************************************
 def updateCommentsForAllUsers(request):
-    s = comments_updateForAllUsers()
+    s = blUserComments_updateForAllUsers()
     return HttpResponse(s)
 
 # *****************************************************************************
 def updateThreadsForAllSubreddits(request):
-    s = threads_updateForAllSubreddits()
+    s = blSubredditThreads_updateForAllSubreddits()
     return HttpResponse(s)
