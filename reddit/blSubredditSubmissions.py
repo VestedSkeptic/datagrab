@@ -25,7 +25,7 @@ def blSubredditSubmissions_getsubredditSubmissionIndex(submission, subreddit, aD
         sti = subredditSubmissionIndex.objects.get(subreddit=subreddit, name=submission.name)
         aDict['isNew'] = False
     except ObjectDoesNotExist:
-        sti = subredditSubmissionIndex(subreddit=subreddit, name=submission.name)
+        sti = subredditSubmissionIndex(subreddit=subreddit, name=submission.name, iidd=submission.id)
         sti.save()
     aDict['sti'] = sti
     return

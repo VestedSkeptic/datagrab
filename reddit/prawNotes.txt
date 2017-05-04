@@ -11,7 +11,7 @@ print(comment.name) # to make it non-lazy
 pprint.pprint(vars(comment))
 
 # ----------------------------------------------------------------------------
-# COMMENT ATTRIBUTES
+# COMMENT ATTRIBUTES COMING FROM A USER
 {
   '_fetched'                      : True,
   '_info_params'                  : {},
@@ -244,12 +244,104 @@ pprint.pprint(vars(comment))
 
 
 
+comment = reddit.redditor('stp2007').comments.new(limit=1).next()
+print(comment.name) # to make it non-lazy
+pprint.pprint(vars(comment))
 
+# ----------------------------------------------------------------------------
+# COMMENT ATTRIBUTES COMING FROM A SUBMISSION
+{
+  '_fetched': True,
+  '_info_params': {},
+  '_mod': None,
+  '_reddit': <praw.reddit.Reddit object at 0x7fe085ff5f28>,
+  '_replies': <praw.models.comment_forest.CommentForest object at 0x7fe085433d68>,
+  '_submission': Submission(id='69a8hl'),
+  'approved_by': None,
+  'archived': False,
+  'author_flair_css_class': None,
+  'author_flair_text': None,
+  'author': Redditor(name='AutoModerator'),
+  'banned_by': None,
+  'body_html': '<div class="md"><p>As a reminder, this subreddit <a ',
+  'body': '\nAs a reminder, this subreddit [is for civil ',
+  'can_gild': True,
+  'controversiality': 0,
+  'created_utc': 1493930841.0,
+  'created': 1493959641.0,
+  'depth': 0,
+  'distinguished': 'moderator',
+  'downs': 0,
+  'edited': False,
+  'gilded': 0,
+  'id': 'dh4zdvm',
+  'likes': None,
+  'link_id': 't3_69a8hl',
+  'mod_reports': [],
+  'name': 't1_dh4zdvm',
+  'num_reports': None,
+  'parent_id': 't3_69a8hl',
+  'removal_reason': None,
+  'report_reasons': None,
+  'saved': False,
+  'score_hidden': True,
+  'score': 1,
+  'stickied': True,
+  'subreddit_id': 't5_2cneq',
+  'subreddit_name_prefixed': 'r/politics',
+  'subreddit_type': 'public',
+  'subreddit': Subreddit(display_name='politics'),
+  'ups': 1,
+  'user_reports': []
+}
 
-
-
-
-
+# ----------------------------------------------------------------------------
+# COMMENT ATTRIBUTES COMING FROM A SUBMISSION
+# THAT HAS BEEN REMOVED!!!!!!!!
+{
+  '_fetched': True,
+  '_info_params': {},
+  '_mod': None,
+  '_reddit': <praw.reddit.Reddit object at 0x7fd8892a1cc0>,
+  '_replies': <praw.models.comment_forest.CommentForest object at 0x7fd888686c18>,
+  '_submission': Submission(id='699g45'),
+  'approved_by': None,
+  'archived': False,
+  'author_flair_css_class': None,
+  'author_flair_text': None,
+  'author': None,
+  'banned_by': None,
+  'body_html': '<div class="md"><p>[removed]</p>\n</div>',
+  'body': '[removed]',
+  'can_gild': True,
+  'controversiality': 0,
+  'created_utc': 1493923566.0,
+  'created': 1493952366.0,
+  'depth': 0,
+  'distinguished': None,
+  'downs': 0,
+  'edited': 1493927430.0,
+  'gilded': 0,
+  'id': 'dh4skol',
+  'likes': None,
+  'link_id': 't3_699g45',
+  'mod_reports': [],
+  'name': 't1_dh4skol',
+  'num_reports': None,
+  'parent_id': 't3_699g45',
+  'removal_reason': None,
+  'report_reasons': None,
+  'saved': False,
+  'score_hidden': True,
+  'score': 1,
+  'stickied': False,
+  'subreddit_id': 't5_2cneq',
+  'subreddit_name_prefixed': 'r/politics',
+  'subreddit_type': 'public',
+  'subreddit': Subreddit(display_name='politics'),
+  'ups': 1,
+  'user_reports': []
+}
 
 
 
