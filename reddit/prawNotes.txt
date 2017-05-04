@@ -151,7 +151,7 @@ pprint.pprint(vars(comment))
  }
 
 # ----------------------------------------------------------------------------
-# SUBMISSION or THREAD attributes
+# SUBMISSION attributes
 # EX:
 # subreddit = reddit.subreddit('redditdev')
 # submission = subreddit.hot(limit=1).next()

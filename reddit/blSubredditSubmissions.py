@@ -19,13 +19,13 @@ def blSubredditSubmissions_getsubredditSubmissionProcessedStatus(subreddit):
 
 # *****************************************************************************
 # if subredditSubmissionIndex exists return it otherwise create it
-def blSubredditSubmissions_getsubredditSubmissionIndex(thread, subreddit, aDict):
+def blSubredditSubmissions_getsubredditSubmissionIndex(submission, subreddit, aDict):
     sti = None
     try:
-        sti = subredditSubmissionIndex.objects.get(subreddit=subreddit, name=thread.name)
+        sti = subredditSubmissionIndex.objects.get(subreddit=subreddit, name=submission.name)
         aDict['isNew'] = False
     except ObjectDoesNotExist:
-        sti = subredditSubmissionIndex(subreddit=subreddit, name=thread.name)
+        sti = subredditSubmissionIndex(subreddit=subreddit, name=submission.name)
         sti.save()
     aDict['sti'] = sti
     return
@@ -33,13 +33,13 @@ def blSubredditSubmissions_getsubredditSubmissionIndex(thread, subreddit, aDict)
 # *****************************************************************************
 # if subredditSubmissionRaw does not exist save it.
 # TODO else compare appropriate fields, if any differences record appropriately
-def blSubredditSubmissions_savesubredditSubmissionRaw(thread, sti):
+def blSubredditSubmissions_savesubredditSubmissionRaw(submission, sti):
     stRaw = None
     try:
         stRaw = subredditSubmissionRaw.objects.get(sti=sti)
     except ObjectDoesNotExist:
-        # vars converts thread to json dict which can be saved to DB
-        stRaw = subredditSubmissionRaw(sti=sti, data=vars(thread), title=thread.title)
+        # vars converts submission to json dict which can be saved to DB
+        stRaw = subredditSubmissionRaw(sti=sti, data=vars(submission), title=submission.title)
         stRaw.save()
     return
 
@@ -62,19 +62,19 @@ def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
     # iterate through submissions saving them
     countNew = 0
     countDuplicate = 0
-    for thread in reddit.subreddit(subreddit.name).new(limit=1023, params=params):
+    for submission in reddit.subreddit(subreddit.name).new(limit=1023, params=params):
         aDict = {'sti' : None, 'isNew' : True }
-        blSubredditSubmissions_getsubredditSubmissionIndex(thread, subreddit, aDict)
+        blSubredditSubmissions_getsubredditSubmissionIndex(submission, subreddit, aDict)
 
         if aDict['isNew']:
-            blSubredditSubmissions_savesubredditSubmissionRaw(thread, aDict['sti'])
+            blSubredditSubmissions_savesubredditSubmissionRaw(submission, aDict['sti'])
             countNew += 1
         else:
             countDuplicate += 1
 
         # update youngest appropriately
-        if thread.name > cs.youngest:
-            cs.youngest = thread.name
+        if submission.name > cs.youngest:
+            cs.youngest = submission.name
 
     # save cs so it contains appropriate value for youngest
     cs.save()

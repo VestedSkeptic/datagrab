@@ -88,8 +88,12 @@ def blSubmissionComments_updateForAllSubmissions():
     print("=====================================================")
     rv = "<B>PRAW</B> blSubmissionComments_updateForAllSubmissions<BR>"
 
+    submission = "690ved"   # https://www.reddit.com/r/politics/comments/690ved/discussion_megathread_fbi_director_comey/
+    submission = "699g45"   # https://www.reddit.com/r/politics/comments/699g45/megathread_republican_health_care_plan_passes/
+    submission = "69a8hl"   # https://www.reddit.com/r/politics/comments/69a8hl/nancy_pelosi_on_trumpcare_this_is_a_scar_they/
 
-    # For testing am only working on one thread at a time.
+
+    # For testing am only working on one submission_replies at a time.
 
     # users = user.objects.filter(poi=True)
     # if users.count() == 0:
@@ -103,12 +107,6 @@ def blSubmissionComments_updateForAllSubmissions():
     return HttpResponse(rv)
 
 
-# TWO VERY BIG THREADS WITH LOTS OF COMMENTS
-# https://www.reddit.com/r/politics/comments/690ved/discussion_megathread_fbi_director_comey/
-# https://www.reddit.com/r/politics/comments/699g45/megathread_republican_health_care_plan_passes/
-
-# NEW THREAD WITH FEW comments
-# https://www.reddit.com/r/politics/comments/69a8hl/nancy_pelosi_on_trumpcare_this_is_a_scar_they/
 
 
 
