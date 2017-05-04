@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from .models import subreddit, subredditThreadProcessedStatus, subredditThreadIndex, subredditThreadRaw
-from redditCommon.constants import *
+from .constants import *
 import json
 import praw
 # import pprint
