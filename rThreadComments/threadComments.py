@@ -5,6 +5,8 @@ from redditCommon.constants import *
 from redditCommon.credentials import credentials_getAuthorizationHeader
 from redditCommon.listingDict import *
 import requests, json
+import praw
+import pprint
 
 # *****************************************************************************
 def displayThreadListingDataChildren(d):
@@ -202,30 +204,152 @@ def hack_doSecondCallToGetMoreChildrenForAThread():
     return rv;
 
 
+# # *****************************************************************************
+# def threadComments_updateForAll():
+#     rv = "<B>subredditComments_updateForAllSubreddits</B><BR>"
+#     print("=====================================================")
+#
+#     # rv += hack_doInitialCallToGetMostCommentsForAThread()
+#
+#     rv += hack_doSecondCallToGetMoreChildrenForAThread()
+#
+#     # subreddits = subreddit.objects.all()
+#     # if subreddits.count() == 0:
+#     #     rv += "<BR> ---------------------------------"
+#     #     rv += "<BR> No subreddits found"
+#     # else:
+#     #     for s in subreddits:
+#     #         rv += updateThreadsForSubreddit(s)
+#     return HttpResponse(rv)
+
+
 # *****************************************************************************
 def threadComments_updateForAll():
     rv = "<B>subredditComments_updateForAllSubreddits</B><BR>"
     print("=====================================================")
 
-    # rv += hack_doInitialCallToGetMostCommentsForAThread()
 
-    rv += hack_doSecondCallToGetMoreChildrenForAThread()
+    reddit = praw.Reddit(
+        client_id=CONST_CLIENT_ID,
+        client_secret=CONST_SECRET,
+        user_agent=CONST_USER_AGENT,
+        username=CONST_DEV_USERNAME,
+        password=CONST_DEV_PASSWORD)
 
-    # subreddits = subreddit.objects.all()
-    # if subreddits.count() == 0:
-    #     rv += "<BR> ---------------------------------"
-    #     rv += "<BR> No subreddits found"
-    # else:
-    #     for s in subreddits:
-    #         rv += updateThreadsForSubreddit(s)
+    # # subreddit = reddit.subreddit('redditdev')
+    # #
+    # # print(subreddit.display_name)  # Output: redditdev
+    # # # print(subreddit.title)         # Output: reddit Development
+    # # # print(subreddit.description)   # Output: A subreddit for discussion of
+    # #
+    # #
+    # # for submission in subreddit.hot(limit=10):
+    # #     print(submission.title)  # Output: the submission's title
+    # #     # print(submission.score)  # Output: the submission's score
+    # #     print(submission.id)     # Output: the submission's ID
+    # #     # print(submission.url)    # Output: the URL the submission points to
+    # #     #                          # or the submission's URL if it's a self post
+    #
+    #
+    #
+    # # for comment in reddit.redditor('OldDevLearningLinux').comments.new(limit=None):
+    # count = 0
+    # # redditUser = 'OldDevLearningLinux'
+    # # redditUser = 'roadsideBandit'
+    # redditUser = 'stp2007'
+    # # # for comment in reddit.redditor(redditUser).comments.new(limit=None):
+    # # for comment in reddit.redditor(redditUser).comments.new(limit=1):
+    # #     count += 1
+    # #
+    # #     # determine attributes available in object
+    # #     print(comment.name) # to make it non-lazy
+    # #     pprint.pprint(vars(comment))
+    #
+    #
+    # # comment = reddit.redditor('stp2007').comments.new(limit=1).next()
+    # # print(comment.name) # to make it non-lazy
+    # # pprint.pprint(vars(comment))
+    #
+    # subreddit = reddit.subreddit('redditdev')
+    # submission = subreddit.hot(limit=1).next()
+    # print(submission.title)  # to make it non-lazy
+    # pprint.pprint(vars(submission))
+
+
+
+
+
+
+    # for comment in reddit.redditor('OldDevLearningLinux').comments.new(limit=None):
+    count = 0
+    redditUser = 'OldDevLearningLinux'
+    # redditUser = 'roadsideBandit'
+    # redditUser = 'stp2007'
+    # for comment in reddit.redditor(redditUser).comments.new(limit=None):
+    for comment in reddit.redditor(redditUser).comments.new(limit=5):
+        count += 1
+        print("CALL 1: %d: %s: %s" % (count, comment.id, comment.body.split('\n', 1)[0][:79]))
+
+    print("----------------------")
+    for comment in reddit.redditor(redditUser).comments.new(limit=2, params={"before" : "t1_dh2oxc9"}):
+        count += 1
+        print("CALL 2: %d: %s: %s" % (count, comment.id, comment.body.split('\n', 1)[0][:79]))
+
+    # print("----------------------")
+    # for comment in reddit.redditor(redditUser).comments.new(limit=3, params={"after" : "t1_dh2oxc9"}):
+    #     count += 1
+    #     print("CALL 3: %d: %s: %s" % (count, comment.id, comment.body.split('\n', 1)[0][:79]))
+    #
+    # print("----------------------")
+    # for comment in reddit.redditor(redditUser).comments.new(limit=4, params={"after" : "dh2oxc9"}):
+    #     count += 1
+    #     print("CALL 4: %d: %s: %s" % (count, comment.id, comment.body.split('\n', 1)[0][:79]))
+
+
+
+
+# https://www.reddit.com/user/OldDevLearningLinux/
+# https://www.reddit.com/user/OldDevLearningLinux/comments/?before=t1_dh2oxc9
+#
+# # https://www.reddit.com/r/redditdev/comments/68w9x7/morechildren_api_results_not_consistent/dh2oxc9/
+#
+# # len(list(reddit.redditor('bboe').comments.new(limit=None, params={'before': 't1_dh2tczt'})))
+# # Out[5]: 1
+
+
+
+# IF SAVING RAW INDICATE SOURCE FOR RAW ITEM
+# THEREFORE COMMENTS CAN HAVE TWO SOURCES.
+# ONE DIRECTLY FROM A REDDIT USERNAME
+# ANOTHER FROM FOLLOWING A SUBMISSION REPLIES
+# TRACKING SOURCE MIGHT HELP WITH SLIGHLY DIFFERENT FIELDS
+# RETURNED BY DIFFERENT SOURCES
+
+
+
+
+
+
+
+
+
+
+
+    print("=====================================================")
+
     return HttpResponse(rv)
 
 
 
 
 
-#  example of getting new comments to a subreddit in json format
-# http://www.reddit.com/r/learnPython/hot/.json
+
+
+
+
+
+
+
 
 
 
