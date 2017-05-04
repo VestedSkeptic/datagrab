@@ -4,7 +4,7 @@ from .models import subreddit, subredditThreadProcessedStatus, subredditThreadIn
 from .constants import *
 import json
 import praw
-# import pprint
+import pprint
 
 # *****************************************************************************
 # get subredditThreadProcessedStatus for subreddit, if not exist create on
@@ -19,15 +19,16 @@ def getSubredditThreadProcessedStatus(subreddit):
 
 # *****************************************************************************
 # if subredditThreadIndex exists return it otherwise create it
-def getSubredditThreadIndex(thread, subreddit):
+def getSubredditThreadIndex(thread, subreddit, aDict):
     sti = None
     try:
         sti = subredditThreadIndex.objects.get(subreddit=subreddit, name=thread.name)
-        print ("WARNING: getUserCommentIndex: " + sti.name + " already exists");
+        aDict['isNew'] = False
     except ObjectDoesNotExist:
         sti = subredditThreadIndex(subreddit=subreddit, name=thread.name)
         sti.save()
-    return sti
+    aDict['sti'] = sti
+    return
 
 # *****************************************************************************
 # if subredditThreadRaw does not exist save it.
@@ -36,12 +37,10 @@ def saveSubredditThreadRaw(thread, sti):
     stRaw = None
     try:
         stRaw = subredditThreadRaw.objects.get(sti=sti)
-        print("WARNING: saveSubredditThreadRaw: " + stRaw.sti.name + " for user " + stRaw.sti.subreddit.name + " already exists")
     except ObjectDoesNotExist:
         # vars converts thread to json dict which can be saved to DB
         stRaw = subredditThreadRaw(sti=sti, data=vars(thread), title=thread.title)
         stRaw.save()
-
     return
 
 # *****************************************************************************
@@ -52,25 +51,35 @@ def updateThreadsForSubreddits(subreddit, argDict):
     reddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
 
     # get status of comments already processed by this subreddit
-    cs = getSubredditThreadProcessedStatus(subreddit)
     params={};
-    if cs.youngest != "":
-        params['before'] = cs.youngest;
+    cs = getSubredditThreadProcessedStatus(subreddit)
+    # NOTE: Not using youngest currently because using it:
+    #       * limits resuilts to 100 for some reason
+    #       * fails if youngest doesn't exist any more (or is too old)
+    # if cs.youngest != "":
+    #     params['before'] = cs.youngest;
 
-    # iterate through comments saving them
-    count = 0
-    for thread in reddit.subreddit(subreddit.name).new(limit=None, params=params):
-        sti = getSubredditThreadIndex(thread, subreddit)
-        saveSubredditThreadRaw(thread, sti)
+    # iterate through submissions saving them
+    countNew = 0
+    countDuplicate = 0
+    for thread in reddit.subreddit(subreddit.name).new(limit=1023, params=params):
+        aDict = {'sti' : None, 'isNew' : True }
+        getSubredditThreadIndex(thread, subreddit, aDict)
+
+        if aDict['isNew']:
+            saveSubredditThreadRaw(thread, aDict['sti'])
+            countNew += 1
+        else:
+            countDuplicate += 1
+
         # update youngest appropriately
         if thread.name > cs.youngest:
             cs.youngest = thread.name
-        count += 1
 
     # save cs so it contains appropriate value for youngest
     cs.save()
 
-    argDict['rv'] += "<br><b>" + subreddit.name + "</b>: " + str(count) + " threads processed."
+    argDict['rv'] += "<br><b>" + subreddit.name + "</b>: " + str(countNew) + " new and " + str(countDuplicate) + " duplicate submissions processed"
     return
 
 # *****************************************************************************
