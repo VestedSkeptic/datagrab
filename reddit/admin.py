@@ -5,15 +5,15 @@ from .models import userCommentsProcessedStatus
 from .models import userCommentsIndex
 from .models import userCommentsRaw
 from .models import subreddit
-from .models import subredditThreadProcessedStatus
-from .models import subredditThreadIndex
-from .models import subredditThreadRaw
+from .models import subredditSubmissionProcessedStatus
+from .models import subredditSubmissionIndex
+from .models import subredditSubmissionRaw
 
 admin.site.register(user)
 admin.site.register(userCommentsProcessedStatus)
 admin.site.register(userCommentsIndex)
 admin.site.register(userCommentsRaw)
 admin.site.register(subreddit)
-admin.site.register(subredditThreadProcessedStatus)
-admin.site.register(subredditThreadIndex)
-admin.site.register(subredditThreadRaw)
+admin.site.register(subredditSubmissionProcessedStatus)
+admin.site.register(subredditSubmissionIndex)
+admin.site.register(subredditSubmissionRaw)

@@ -1,45 +1,45 @@
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
-from .models import subreddit, subredditThreadProcessedStatus, subredditThreadIndex, subredditThreadRaw
+from .models import subreddit, subredditSubmissionProcessedStatus, subredditSubmissionIndex, subredditSubmissionRaw
 from .constants import *
 import json
 import praw
 import pprint
 
 # *****************************************************************************
-# get subredditThreadProcessedStatus for subreddit, if not exist create on
-def blSubredditSubmissions_getSubredditThreadProcessedStatus(subreddit):
+# get subredditSubmissionProcessedStatus for subreddit, if not exist create on
+def blSubredditSubmissions_getsubredditSubmissionProcessedStatus(subreddit):
     cs = None
     try:
-        cs = subredditThreadProcessedStatus.objects.get(subreddit=subreddit)
+        cs = subredditSubmissionProcessedStatus.objects.get(subreddit=subreddit)
     except ObjectDoesNotExist:
-        cs = subredditThreadProcessedStatus(subreddit=subreddit)
+        cs = subredditSubmissionProcessedStatus(subreddit=subreddit)
         cs.save()
     return cs
 
 # *****************************************************************************
-# if subredditThreadIndex exists return it otherwise create it
-def blSubredditSubmissions_getSubredditThreadIndex(thread, subreddit, aDict):
+# if subredditSubmissionIndex exists return it otherwise create it
+def blSubredditSubmissions_getsubredditSubmissionIndex(thread, subreddit, aDict):
     sti = None
     try:
-        sti = subredditThreadIndex.objects.get(subreddit=subreddit, name=thread.name)
+        sti = subredditSubmissionIndex.objects.get(subreddit=subreddit, name=thread.name)
         aDict['isNew'] = False
     except ObjectDoesNotExist:
-        sti = subredditThreadIndex(subreddit=subreddit, name=thread.name)
+        sti = subredditSubmissionIndex(subreddit=subreddit, name=thread.name)
         sti.save()
     aDict['sti'] = sti
     return
 
 # *****************************************************************************
-# if subredditThreadRaw does not exist save it.
+# if subredditSubmissionRaw does not exist save it.
 # TODO else compare appropriate fields, if any differences record appropriately
-def blSubredditSubmissions_saveSubredditThreadRaw(thread, sti):
+def blSubredditSubmissions_savesubredditSubmissionRaw(thread, sti):
     stRaw = None
     try:
-        stRaw = subredditThreadRaw.objects.get(sti=sti)
+        stRaw = subredditSubmissionRaw.objects.get(sti=sti)
     except ObjectDoesNotExist:
         # vars converts thread to json dict which can be saved to DB
-        stRaw = subredditThreadRaw(sti=sti, data=vars(thread), title=thread.title)
+        stRaw = subredditSubmissionRaw(sti=sti, data=vars(thread), title=thread.title)
         stRaw.save()
     return
 
@@ -52,7 +52,7 @@ def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
 
     # get status of comments already processed by this subreddit
     params={};
-    cs = blSubredditSubmissions_getSubredditThreadProcessedStatus(subreddit)
+    cs = blSubredditSubmissions_getsubredditSubmissionProcessedStatus(subreddit)
     # NOTE: Not using youngest currently because using it:
     #       * limits resuilts to 100 for some reason
     #       * fails if youngest doesn't exist any more (or is too old)
@@ -64,10 +64,10 @@ def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
     countDuplicate = 0
     for thread in reddit.subreddit(subreddit.name).new(limit=1023, params=params):
         aDict = {'sti' : None, 'isNew' : True }
-        blSubredditSubmissions_getSubredditThreadIndex(thread, subreddit, aDict)
+        blSubredditSubmissions_getsubredditSubmissionIndex(thread, subreddit, aDict)
 
         if aDict['isNew']:
-            blSubredditSubmissions_saveSubredditThreadRaw(thread, aDict['sti'])
+            blSubredditSubmissions_savesubredditSubmissionRaw(thread, aDict['sti'])
             countNew += 1
         else:
             countDuplicate += 1

@@ -84,24 +84,31 @@ def blUserComments_updateCommentsForUser(user, argDict):
     return
 
 # *****************************************************************************
-def blUserComments_updateForAllUsers():
+def blSubmissionComments_updateForAllSubmissions():
     print("=====================================================")
-    rv = "<B>PRAW</B> blUserComments_updateForAllUsers<BR>"
+    rv = "<B>PRAW</B> blSubmissionComments_updateForAllSubmissions<BR>"
 
-    users = user.objects.filter(poi=True)
-    if users.count() == 0:
-        rv += "<BR> No users found"
-    else:
-        for us in users:
-            argDict = {'rv': ""}
-            blUserComments_updateCommentsForUser(us, argDict)
-            rv += argDict['rv']
+
+    # For testing am only working on one thread at a time.
+
+    # users = user.objects.filter(poi=True)
+    # if users.count() == 0:
+    #     rv += "<BR> No users found"
+    # else:
+    #     for us in users:
+    #         argDict = {'rv': ""}
+    #         blUserComments_updateCommentsForUser(us, argDict)
+    #         rv += argDict['rv']
     print("=====================================================")
     return HttpResponse(rv)
 
 
+# TWO VERY BIG THREADS WITH LOTS OF COMMENTS
+# https://www.reddit.com/r/politics/comments/690ved/discussion_megathread_fbi_director_comey/
+# https://www.reddit.com/r/politics/comments/699g45/megathread_republican_health_care_plan_passes/
 
-
+# NEW THREAD WITH FEW comments
+# https://www.reddit.com/r/politics/comments/69a8hl/nancy_pelosi_on_trumpcare_this_is_a_scar_they/
 
 
 

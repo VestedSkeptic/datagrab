@@ -46,7 +46,7 @@ class subreddit(models.Model):
         return format(self.name)
 
 # *****************************************************************************
-class subredditThreadProcessedStatus(models.Model):
+class subredditSubmissionProcessedStatus(models.Model):
     subreddit   = models.OneToOneField(subreddit, primary_key=True)
     youngest    = models.CharField(max_length=30, default="")
     def __str__(self):
@@ -55,7 +55,7 @@ class subredditThreadProcessedStatus(models.Model):
         return format(s)
 
 # *****************************************************************************
-class subredditThreadIndex(models.Model):
+class subredditSubmissionIndex(models.Model):
     subreddit   = models.ForeignKey(subreddit, on_delete=models.CASCADE,)
     name        = models.CharField(max_length=12)
     def __str__(self):
@@ -64,8 +64,8 @@ class subredditThreadIndex(models.Model):
         return format(s)
 
 # *****************************************************************************
-class subredditThreadRaw(models.Model):
-    sti         = models.OneToOneField(subredditThreadIndex, primary_key=True)
+class subredditSubmissionRaw(models.Model):
+    sti         = models.OneToOneField(subredditSubmissionIndex, primary_key=True)
     data        = models.TextField()
     title       = models.CharField(max_length=301)      # added so title is easily displayable for testing may remove later
     def __str__(self):
