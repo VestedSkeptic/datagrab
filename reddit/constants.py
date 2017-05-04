@@ -1,18 +1,3 @@
-# # *****************************************************************************
-# CONST_UNPROCESSED   = "NOT processed"
-# CONST_PROCESSED     = "processed"
-#
-# # *****************************************************************************
-# CONST_REDDIT_USER_COMMENT_REQUEST_URL                   = "https://oauth.reddit.com/user/"
-#
-# CONST_REDDIT_SUBREDDIT_THREAD_REQUEST_URL               = "https://oauth.reddit.com/r/"
-# CONST_REDDIT_SUBREDDIT_THREAD_REQUEST_RETRIEVAL_MODE    = "new"
-# # CONST_REDDIT_SUBREDDIT_THREAD_REQUEST_RETRIEVAL_MODE    = "hot"
-# # CONST_REDDIT_SUBREDDIT_THREAD_REQUEST_RETRIEVAL_MODE    = "rising"
-#
-# CONST_REDDIT_REQUEST_LIMIT                              = 100
-# # CONST_REDDIT_REQUEST_LIMIT                              = 2
-#
 # *****************************************************************************
 CONST_CLIENT_ID                                         = "kcksu9E4VgC0TQ"
 CONST_SECRET                                            = "Megl7I6XKHtGIQ0T4_q62KiaRQw"
