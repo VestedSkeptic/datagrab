@@ -33,6 +33,19 @@ def blSubredditSubmissions_savesubredditSubmissionRaw(submission, sti):
     return
 
 # *****************************************************************************
+def blSubredditSubmissions_getMostValidBeforeValue(subreddit, reddit):
+    youngestRV = ''
+
+    for item in subredditSubmissionIndex.objects.filter(subreddit=subreddit).order_by('-name'):
+        # CAN I BATCH THIS QUERY UP TO GET MULTIPLE COMMENTS FROM REDDIT AT ONCE?
+        submission = reddit.submission(item.name[3:])
+        if submission.author != None:
+            youngestRV = item.name
+            break
+
+    return youngestRV
+
+# *****************************************************************************
 def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
     print("Processing subreddit: %s" % (subreddit.name))
 
@@ -41,10 +54,7 @@ def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
 
     # get youngest subredditSubmissionIndex in DB if there are any
     params={};
-    params['before'] = ''
-    qs = subredditSubmissionIndex.objects.filter(subreddit=subreddit).order_by('-name')
-    if qs.count() > 0:
-        params['before'] = qs[0].name
+    params['before'] = blSubredditSubmissions_getMostValidBeforeValue(subreddit, reddit)
     print ("params[before] = %s" % params['before'])
 
     # iterate through submissions saving them

@@ -4,7 +4,7 @@ from .models import user, userCommentsIndex, userCommentsRaw
 from .constants import *
 import json
 import praw
-# import pprint
+import pprint
 
 # *****************************************************************************
 # if userCommentsIndex exists return it otherwise create it
@@ -34,11 +34,15 @@ def blUserComments_saveUserCommentsRaw(comment, uci):
     return
 
 # *****************************************************************************
-def blUserComments_getMostValidBeforeValue(user):
+def blUserComments_getMostValidBeforeValue(user, reddit):
     youngestRV = ''
-    qs = userCommentsIndex.objects.filter(user=user).order_by('-name')
-    if qs.count() > 0:
-        youngestRV = qs[0].name
+
+    for item in userCommentsIndex.objects.filter(user=user).order_by('-name'):
+        # CAN I BATCH THIS QUERY UP TO GET MULTIPLE COMMENTS FROM REDDIT AT ONCE?
+        comment = reddit.comment(item.name[3:])
+        if comment.author != None and comment.author.name.lower() == user.name.lower():
+            youngestRV = item.name
+            break
 
     return youngestRV
 
@@ -51,7 +55,7 @@ def blUserComments_updateCommentsForUser(user, argDict):
 
     # get youngest userCommentsIndex in DB if there are any
     params={};
-    params['before'] = blUserComments_getMostValidBeforeValue(user)
+    params['before'] = blUserComments_getMostValidBeforeValue(user, reddit)
     print ("params[before] = %s" % params['before'])
 
     # iterate through comments saving them
