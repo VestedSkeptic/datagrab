@@ -47,6 +47,7 @@ def blUserComments_getMostValidBeforeValue(user, reddit):
         else: # Update item as deleted.
             item.deleted = True
             item.save()
+            print("userCommentIndex %s flagged as deleted" % (item.name))
 
     return youngestRV
 

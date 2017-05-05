@@ -45,6 +45,8 @@ def blSubredditSubmissions_getMostValidBeforeValue(subreddit, reddit):
         else: # Update item as deleted.
             item.deleted = True
             item.save()
+            print("subredditSubmissionIndex %s flagged as deleted" % (item.name))
+
 
     return youngestRV
 

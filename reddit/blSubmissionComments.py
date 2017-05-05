@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
-from .models import subredditSubmissionRaw, user, userCommentsIndex, userCommentsRaw
+# from .models import subredditSubmissionRaw, user, userCommentsIndex, userCommentsRaw
+from .models import subredditSubmissionIndex, user, userCommentsIndex, userCommentsRaw
 from .blUserComments import blUserComments_getUserCommentIndex, blUserComments_saveUserCommentsRaw
 from .constants import *
 import json
@@ -9,7 +10,8 @@ import pprint
 
 # *****************************************************************************
 def blSubmissionComments_updateCommentsForSubmission(submission, argDict):
-    print("Processing submission: %s: %s" % (submission.sti.name, submission.title))
+    # print("Processing submission: %s: %s" % (submission.sti.name, submission.title))
+    print("Processing submission: %s: %s" % (submission.subreddit.name, submission.name))
 
     # create PRAW reddit instance
     reddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
@@ -27,49 +29,43 @@ def blSubmissionComments_updateCommentsForSubmission(submission, argDict):
     countNew = 0
     countDuplicate = 0
     countPostsWithNoAuthor = 0
-    submissionObject = reddit.submission(id=submission.sti.name[3:])
+    # submissionObject = reddit.submission(id=submission.sti.name[3:])
+    submissionObject = reddit.submission(id=submission.name[3:])
     submissionObject.comments.replace_more(limit=0)
-    for comment in submissionObject.comments.list():
-        # See if comment.author.name exists in class user(models.Model):
-        # If not add it with poi value set to false.
-
-        if comment.author == None:
-            countPostsWithNoAuthor += 1
-        else:
-            uuser = None
-            try:
-                uuser = user.objects.get(name=comment.author.name)
-            except ObjectDoesNotExist:
-                uuser = user(name=comment.author.name, poi=False)
-                uuser.save()
-
-            aDict = {'uci' : None, 'isNew' : True }
-            blUserComments_getUserCommentIndex(comment, uuser, aDict)
-            if aDict['isNew']:
-                blUserComments_saveUserCommentsRaw(comment, aDict['uci'])
-                countNew += 1
-            else:
-                countDuplicate += 1
+    # for comment in submissionObject.comments.list():
+    #     # See if comment.author.name exists in class user(models.Model):
+    #     # If not add it with poi value set to false.
+    #
+    #     if comment.author == None:
+    #         countPostsWithNoAuthor += 1
+    #     else:
+    #         uuser = None
+    #         try:
+    #             uuser = user.objects.get(name=comment.author.name)
+    #         except ObjectDoesNotExist:
+    #             uuser = user(name=comment.author.name, poi=False)
+    #             uuser.save()
+    #
+    #         aDict = {'uci' : None, 'isNew' : True }
+    #         blUserComments_getUserCommentIndex(comment, uuser, aDict)
+    #         if aDict['isNew']:
+    #             blUserComments_saveUserCommentsRaw(comment, aDict['uci'])
+    #             countNew += 1
+    #         else:
+    #             countDuplicate += 1
 
         # # print(comment.body[0:40])
         # # print(comment.author.name)
         # pprint.pprint(vars(comment))
         # break
 
-
-
-
-        # # update youngest appropriately
-        # if comment.name > cs.youngest:
-        #     cs.youngest = comment.name
-
-    # save cs so it contains appropriate value for youngest
-    # cs.save()
-
+    # submission.sti.name + \
+    # ", " + \
+    # submission.title + \
     argDict['rv'] += "<br><b>" + \
-        submission.sti.name + \
+        submission.subreddit.name + \
         ", " + \
-        submission.title + \
+        submission.name + \
         "</b>: " + \
         str(countNew) + \
         " new, " + \
@@ -93,7 +89,8 @@ def blSubmissionComments_updateForAllSubmissions():
 
     # For testing am only working on one submission_replies at a time.
     # submissions = subredditSubmissionRaw.objects.filter(sti__name=submission)
-    submissions = subredditSubmissionRaw.objects.all()
+    # submissions = subredditSubmissionRaw.objects.all()
+    submissions =subredditSubmissionIndex.objects.filter(deleted=False).order_by('subreddit__name')
     if submissions.count() == 0:
         rv += "<BR> No Submissions found"
     else:
