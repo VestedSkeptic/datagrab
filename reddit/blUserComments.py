@@ -34,6 +34,15 @@ def blUserComments_saveUserCommentsRaw(comment, uci):
     return
 
 # *****************************************************************************
+def blUserComments_getMostValidBeforeValue(user):
+    youngestRV = ''
+    qs = userCommentsIndex.objects.filter(user=user).order_by('-name')
+    if qs.count() > 0:
+        youngestRV = qs[0].name
+
+    return youngestRV
+
+# *****************************************************************************
 def blUserComments_updateCommentsForUser(user, argDict):
     print("Processing user: %s" % (user.name))
 
@@ -42,10 +51,7 @@ def blUserComments_updateCommentsForUser(user, argDict):
 
     # get youngest userCommentsIndex in DB if there are any
     params={};
-    params['before'] = ''
-    qs = userCommentsIndex.objects.filter(user=user).order_by('-name')
-    if qs.count() > 0:
-        params['before'] = qs[0].name
+    params['before'] = blUserComments_getMostValidBeforeValue(user)
     print ("params[before] = %s" % params['before'])
 
     # iterate through comments saving them
