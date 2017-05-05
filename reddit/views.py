@@ -10,8 +10,8 @@ def main(request):
     s  = ''
     s += '<br><b>PRAW</b><br>'
     s += '<br><a href="http://localhost:8000/admin/">admin</a><br>'
-    s += '<br><a href="http://localhost:8000/reddit/praw/ucfau/">update user comments</a><br>'
-    s += '<br><a href="http://localhost:8000/reddit/praw/usfas/">update subreddit submissions</a><br>'
+    # s += '<br><a href="http://localhost:8000/reddit/praw/ucfau/">update user comments</a><br>'
+    # s += '<br><a href="http://localhost:8000/reddit/praw/usfas/">update subreddit submissions</a><br>'
     s += '<br><a href="http://localhost:8000/reddit/praw/ucfas/">update submission comments</a><br>'
     s += displayDatabaseModelCounts()
     return HttpResponse(s)

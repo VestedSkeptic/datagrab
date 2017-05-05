@@ -27,11 +27,9 @@ def blSubmissionComments_updateCommentsForSubmission(submission, argDict):
 
 
 # TESTING
-# COMMENT #4: t1_dh6fsse is youngest comment in lone MOLW submission SAVED IN DB.
-# COMMENT #5: t1_dh6fz1n is a newer comment in that submission.
-# COMMENT #6: t1_dh6fz7q is the newest comment in that thread.
-
-
+# COMMENT #6: t1_dh6fz7q is youngest comment in lone MOLW submission SAVED IN DB.
+# COMMENT #7: t1_dh6hif7 is a newer comment in that submission.
+# COMMENT #8: t1_dh6hil0 is the newest comment in that thread.
 
 
     countNew = 0
