@@ -47,22 +47,12 @@ def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
         params['before'] = qs[0].name
     print ("params[before] = %s" % params['before'])
 
-
-
-    # get status of comments already processed by this subreddit
-    # NOTE: Not using youngest currently because using it:
-    #       * limits resuilts to 100 for some reason
-    #       * fails if youngest doesn't exist any more (or is too old)
-    # if cs.youngest != "":
-    #     params['before'] = cs.youngest;
-
     # iterate through submissions saving them
     countNew = 0
     countDuplicate = 0
     for submission in reddit.subreddit(subreddit.name).new(limit=None, params=params):
         aDict = {'sti' : None, 'isNew' : True }
         blSubredditSubmissions_getsubredditSubmissionIndex(submission, subreddit, aDict)
-
         if aDict['isNew']:
             blSubredditSubmissions_savesubredditSubmissionRaw(submission, aDict['sti'])
             countNew += 1

@@ -48,12 +48,6 @@ def blUserComments_updateCommentsForUser(user, argDict):
         params['before'] = qs[0].name
     print ("params[before] = %s" % params['before'])
 
-    # NOTE: Not using youngest currently because using it:
-    #       * limits resuilts to 100 for some reason
-    #       * fails if youngest doesn't exist any more (or is too old)
-    # if cs.youngest != "":
-    #     params['before'] = cs.youngest;
-
     # iterate through comments saving them
     countNew = 0
     countDuplicate = 0
