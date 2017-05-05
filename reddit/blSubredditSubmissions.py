@@ -28,7 +28,7 @@ def blSubredditSubmissions_savesubredditSubmissionRaw(submission, ssi):
         stRaw = subredditSubmissionRaw.objects.get(ssi=ssi)
     except ObjectDoesNotExist:
         # vars converts submission to json dict which can be saved to DB
-        stRaw = subredditSubmissionRaw(ssi=ssi, data=vars(submission), title=submission.title)
+        stRaw = subredditSubmissionRaw(ssi=ssi, data=vars(submission))
         stRaw.save()
     return
 
