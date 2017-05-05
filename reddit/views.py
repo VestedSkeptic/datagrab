@@ -38,23 +38,29 @@ def updateSubmissionsForAllSubreddits(request):
 
 # *****************************************************************************
 def displayDatabaseModelCounts():
-    users_poi           = user.objects.filter(poi=True).count()
-    users_notPoi        = user.objects.filter(poi=False).count()
-    users_ci            = userCommentsIndex.objects.all().count()
+    users_poi               = user.objects.filter(poi=True).count()
+    users_notPoi            = user.objects.filter(poi=False).count()
 
-    subreddits          = subreddit.objects.all().count()
-    subreddits_si       = subredditSubmissionIndex.objects.all().count()
+    users_ci                = userCommentsIndex.objects.filter(deleted=False).count()
+    users_ci_deleted        = userCommentsIndex.objects.filter(deleted=True).count()
+
+    subreddits              = subreddit.objects.all().count()
+
+    subreddits_si           = subredditSubmissionIndex.objects.filter(deleted=False).count()
+    subreddits_si_deleted   = subredditSubmissionIndex.objects.filter(deleted=True).count()
 
     s = ''
     s += '<BR>==========================='
     s += '<BR>Users POI = ' + str(users_poi)
     s += '<BR>Users not POI = ' + str(users_notPoi)
-    s += '<BR>Total Users = ' + str(users_poi + users_notPoi)
-    s += '<BR>Users comments saved = ' + str(users_ci)
-
+    s += '<BR>'
+    s += '<BR>Users Comments = ' + str(users_ci)
+    s += '<BR>Users Comments Deleted = ' + str(users_ci_deleted)
     s += '<BR>'
     s += '<BR>Subreddits = ' + str(subreddits)
-    s += '<BR>Subreddit comments saved = ' + str(subreddits_si)
+    s += '<BR>'
+    s += '<BR>Subreddit Submissions = ' + str(subreddits_si)
+    s += '<BR>Subreddit Submissions Deleted = ' + str(subreddits_si_deleted)
     s += '<BR>==========================='
 
     return s

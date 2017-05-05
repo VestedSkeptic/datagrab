@@ -37,12 +37,16 @@ def blUserComments_saveUserCommentsRaw(comment, uci):
 def blUserComments_getMostValidBeforeValue(user, reddit):
     youngestRV = ''
 
-    for item in userCommentsIndex.objects.filter(user=user).order_by('-name'):
+    for item in userCommentsIndex.objects.filter(user=user, deleted=False).order_by('-name'):
         # CAN I BATCH THIS QUERY UP TO GET MULTIPLE COMMENTS FROM REDDIT AT ONCE?
         comment = reddit.comment(item.name[3:])
-        if comment.author != None and comment.author.name.lower() == user.name.lower():
+        # if comment.author != None and comment.author.name.lower() == user.name.lower():
+        if comment.author != None:
             youngestRV = item.name
             break
+        else: # Update item as deleted.
+            item.deleted = True
+            item.save()
 
     return youngestRV
 

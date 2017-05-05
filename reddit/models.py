@@ -16,6 +16,7 @@ class user(models.Model):
 class userCommentsIndex(models.Model):
     user        = models.ForeignKey(user, on_delete=models.CASCADE,)
     name        = models.CharField(max_length=12)
+    deleted     = models.BooleanField(default=False)
     def __str__(self):
         s = self.user.name
         s += " [" + self.name + "]"
@@ -40,6 +41,7 @@ class subreddit(models.Model):
 class subredditSubmissionIndex(models.Model):
     subreddit   = models.ForeignKey(subreddit, on_delete=models.CASCADE,)
     name        = models.CharField(max_length=12)
+    deleted     = models.BooleanField(default=False)
     def __str__(self):
         s = self.subreddit.name
         s += " [" + self.name + "]"

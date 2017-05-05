@@ -36,12 +36,15 @@ def blSubredditSubmissions_savesubredditSubmissionRaw(submission, sti):
 def blSubredditSubmissions_getMostValidBeforeValue(subreddit, reddit):
     youngestRV = ''
 
-    for item in subredditSubmissionIndex.objects.filter(subreddit=subreddit).order_by('-name'):
+    for item in subredditSubmissionIndex.objects.filter(subreddit=subreddit, deleted=False).order_by('-name'):
         # CAN I BATCH THIS QUERY UP TO GET MULTIPLE COMMENTS FROM REDDIT AT ONCE?
         submission = reddit.submission(item.name[3:])
         if submission.author != None:
             youngestRV = item.name
             break
+        else: # Update item as deleted.
+            item.deleted = True
+            item.save()
 
     return youngestRV
 
