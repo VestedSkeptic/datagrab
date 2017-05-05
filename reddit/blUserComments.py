@@ -1,21 +1,10 @@
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
-from .models import user, userCommentsProcessedStatus, userCommentsIndex, userCommentsRaw
+from .models import user, userCommentsIndex, userCommentsRaw
 from .constants import *
 import json
 import praw
 # import pprint
-
-# *****************************************************************************
-# get userCommentsProcessedStatus for user, if not exist create on
-def blUserComments_getUsersCommentsProcessedStatus(user):
-    cs = None
-    try:
-        cs = userCommentsProcessedStatus.objects.get(user=user)
-    except ObjectDoesNotExist:
-        cs = userCommentsProcessedStatus(user=user)
-        cs.save()
-    return cs
 
 # *****************************************************************************
 # if userCommentsIndex exists return it otherwise create it
@@ -51,9 +40,14 @@ def blUserComments_updateCommentsForUser(user, argDict):
     # create PRAW reddit instance
     reddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
 
-    # get status of comments already processed by this user
-    cs = blUserComments_getUsersCommentsProcessedStatus(user)
+    # get youngest userCommentsIndex in DB if there are any
     params={};
+    youngest = ''
+    qs = userCommentsIndex.objects.filter(user=user).order_by('-name')
+    if qs.count() > 0:
+        youngest = qs[0].name
+    # print ("youngest = %s" % youngest)
+
     # NOTE: Not using youngest currently because using it:
     #       * limits resuilts to 100 for some reason
     #       * fails if youngest doesn't exist any more (or is too old)
@@ -72,15 +66,7 @@ def blUserComments_updateCommentsForUser(user, argDict):
         else:
             countDuplicate += 1
 
-        # update youngest appropriately
-        if comment.name > cs.youngest:
-            cs.youngest = comment.name
-
-    # save cs so it contains appropriate value for youngest
-    cs.save()
-
     argDict['rv'] += "<br><b>" + user.name + "</b>: " + str(countNew) + " new and " + str(countDuplicate) + " duplicate comments processed"
-
     return
 
 # *****************************************************************************

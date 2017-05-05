@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
-from .models import subredditSubmissionRaw, user, userCommentsIndex, userCommentsRaw # , userCommentsProcessedStatus
+from .models import subredditSubmissionRaw, user, userCommentsIndex, userCommentsRaw
 from .blUserComments import blUserComments_getUserCommentIndex, blUserComments_saveUserCommentsRaw
 from .constants import *
 import json

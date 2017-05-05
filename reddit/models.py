@@ -13,15 +13,6 @@ class user(models.Model):
         return format(s)
 
 # *****************************************************************************
-class userCommentsProcessedStatus(models.Model):
-    user        = models.OneToOneField(user, primary_key=True)
-    youngest    = models.CharField(max_length=30, default="")
-    def __str__(self):
-        s = self.user.name
-        s += " [Youngest: " + self.youngest + "]"
-        return format(s)
-
-# *****************************************************************************
 class userCommentsIndex(models.Model):
     user        = models.ForeignKey(user, on_delete=models.CASCADE,)
     name        = models.CharField(max_length=12)
@@ -44,15 +35,6 @@ class subreddit(models.Model):
     name        = models.CharField(max_length=30)
     def __str__(self):
         return format(self.name)
-
-# *****************************************************************************
-class subredditSubmissionProcessedStatus(models.Model):
-    subreddit   = models.OneToOneField(subreddit, primary_key=True)
-    youngest    = models.CharField(max_length=30, default="")
-    def __str__(self):
-        s = self.subreddit.name
-        s += " [Youngest: " + self.youngest + "]"
-        return format(s)
 
 # *****************************************************************************
 class subredditSubmissionIndex(models.Model):

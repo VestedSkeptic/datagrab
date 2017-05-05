@@ -1,21 +1,10 @@
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
-from .models import subreddit, subredditSubmissionProcessedStatus, subredditSubmissionIndex, subredditSubmissionRaw
+from .models import subreddit, subredditSubmissionIndex, subredditSubmissionRaw
 from .constants import *
 import json
 import praw
 import pprint
-
-# *****************************************************************************
-# get subredditSubmissionProcessedStatus for subreddit, if not exist create on
-def blSubredditSubmissions_getsubredditSubmissionProcessedStatus(subreddit):
-    cs = None
-    try:
-        cs = subredditSubmissionProcessedStatus.objects.get(subreddit=subreddit)
-    except ObjectDoesNotExist:
-        cs = subredditSubmissionProcessedStatus(subreddit=subreddit)
-        cs.save()
-    return cs
 
 # *****************************************************************************
 # if subredditSubmissionIndex exists return it otherwise create it
@@ -50,9 +39,17 @@ def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
     # create PRAW reddit instance
     reddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
 
-    # get status of comments already processed by this subreddit
+    # get youngest subredditSubmissionIndex in DB if there are any
     params={};
-    cs = blSubredditSubmissions_getsubredditSubmissionProcessedStatus(subreddit)
+    youngest = ''
+    qs = subredditSubmissionIndex.objects.filter(subreddit=subreddit).order_by('-name')
+    if qs.count() > 0:
+        youngest = qs[0].name
+    # print ("youngest = %s" % youngest)
+
+
+
+    # get status of comments already processed by this subreddit
     # NOTE: Not using youngest currently because using it:
     #       * limits resuilts to 100 for some reason
     #       * fails if youngest doesn't exist any more (or is too old)
@@ -71,13 +68,6 @@ def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
             countNew += 1
         else:
             countDuplicate += 1
-
-        # update youngest appropriately
-        if submission.name > cs.youngest:
-            cs.youngest = submission.name
-
-    # save cs so it contains appropriate value for youngest
-    cs.save()
 
     argDict['rv'] += "<br><b>" + subreddit.name + "</b>: " + str(countNew) + " new and " + str(countDuplicate) + " duplicate submissions processed"
     return

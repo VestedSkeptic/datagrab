@@ -40,11 +40,9 @@ def updateSubmissionsForAllSubreddits(request):
 def displayDatabaseModelCounts():
     users_poi           = user.objects.filter(poi=True).count()
     users_notPoi        = user.objects.filter(poi=False).count()
-    users_cps           = userCommentsProcessedStatus.objects.all().count()
     users_ci            = userCommentsIndex.objects.all().count()
 
     subreddits          = subreddit.objects.all().count()
-    subreddits_sps      = subredditSubmissionIndex.objects.all().count()
     subreddits_si       = subredditSubmissionIndex.objects.all().count()
 
     s = ''
@@ -52,20 +50,11 @@ def displayDatabaseModelCounts():
     s += '<BR>Users POI = ' + str(users_poi)
     s += '<BR>Users not POI = ' + str(users_notPoi)
     s += '<BR>Total Users = ' + str(users_poi + users_notPoi)
-    if users_cps == users_ci:
-        s += '<BR>Users comments saved = ' + str(users_cps)
-    else:
-        s += '<BR>WARNING: Dicrepency in Users comments saved'
-        s += '<BR>users_cps = ' + str(users_cps)
-        s += '<BR>users_ci = ' + str(users_ci)
+    s += '<BR>Users comments saved = ' + str(users_ci)
+
     s += '<BR>'
     s += '<BR>Subreddits = ' + str(subreddits)
-    if subreddits_sps == subreddits_si:
-        s += '<BR>Subreddit comments saved = ' + str(subreddits_sps)
-    else:
-        s += '<BR>WARNING: Dicrepency in Subreddit comments saved'
-        s += '<BR>subreddits_sps = ' + str(subreddits_sps)
-        s += '<BR>subreddits_si = ' + str(subreddits_si)
+    s += '<BR>Subreddit comments saved = ' + str(subreddits_si)
     s += '<BR>==========================='
 
     return s
