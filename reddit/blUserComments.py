@@ -42,11 +42,11 @@ def blUserComments_updateCommentsForUser(user, argDict):
 
     # get youngest userCommentsIndex in DB if there are any
     params={};
-    youngest = ''
+    params['before'] = ''
     qs = userCommentsIndex.objects.filter(user=user).order_by('-name')
     if qs.count() > 0:
-        youngest = qs[0].name
-    # print ("youngest = %s" % youngest)
+        params['before'] = qs[0].name
+    print ("params[before] = %s" % params['before'])
 
     # NOTE: Not using youngest currently because using it:
     #       * limits resuilts to 100 for some reason

@@ -41,11 +41,11 @@ def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
 
     # get youngest subredditSubmissionIndex in DB if there are any
     params={};
-    youngest = ''
+    params['before'] = ''
     qs = subredditSubmissionIndex.objects.filter(subreddit=subreddit).order_by('-name')
     if qs.count() > 0:
-        youngest = qs[0].name
-    # print ("youngest = %s" % youngest)
+        params['before'] = qs[0].name
+    print ("params[before] = %s" % params['before'])
 
 
 
