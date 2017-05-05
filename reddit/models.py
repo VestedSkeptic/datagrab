@@ -40,10 +40,9 @@ class subreddit(models.Model):
 class subredditSubmissionIndex(models.Model):
     subreddit   = models.ForeignKey(subreddit, on_delete=models.CASCADE,)
     name        = models.CharField(max_length=12)
-    iidd        = models.CharField(max_length=9)
     def __str__(self):
         s = self.subreddit.name
-        s += " [" + self.name + "]" + " [" + self.iidd + "]"
+        s += " [" + self.name + "]"
         return format(s)
 
 # *****************************************************************************

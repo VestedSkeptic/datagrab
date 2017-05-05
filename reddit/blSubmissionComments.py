@@ -27,7 +27,7 @@ def blSubmissionComments_updateCommentsForSubmission(submission, argDict):
     countNew = 0
     countDuplicate = 0
     countPostsWithNoAuthor = 0
-    submissionObject = reddit.submission(id=submission.sti.iidd)
+    submissionObject = reddit.submission(id=submission.sti.name[3:])
     submissionObject.comments.replace_more(limit=0)
     for comment in submissionObject.comments.list():
         # See if comment.author.name exists in class user(models.Model):
