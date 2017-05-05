@@ -26,12 +26,35 @@ def blSubmissionComments_updateCommentsForSubmission(submission, argDict):
     # if cs.youngest != "":
     #     params['before'] = cs.youngest;
 
+
+# TESTING
+# COMMENT #4: t1_dh6fsse is youngest comment in lone MOLW submission SAVED IN DB.
+# COMMENT #5: t1_dh6fz1n is a newer comment in that submission.
+# COMMENT #6: t1_dh6fz7q is the newest comment in that thread.
+
+
+
+
     countNew = 0
     countDuplicate = 0
     countPostsWithNoAuthor = 0
-    # submissionObject = reddit.submission(id=submission.sti.name[3:])
+
+    # works: gets all
     submissionObject = reddit.submission(id=submission.name[3:])
-    submissionObject.comments.replace_more(limit=0)
+    # fails: "submission object has no attribute new"
+    # submissionObject = reddit.submission(id=submission.name[3:]).new(limit=None, params=params)
+
+
+    # TODO: Later review use of 0 value in limit. Should it be replaced with None?
+    # 0 = remove all MoreComments
+    # None = no limit to number of MoreComments replaced [MAX = 32]
+
+    # works: gets all
+    submissionObject.comments.replace_more(limit=None)
+    # Fails: an unexpected keyword argument 'params'
+    # submissionObject.comments.replace_more(limit=None, params=params)
+
+
     # for comment in submissionObject.comments.list():
     #     # See if comment.author.name exists in class user(models.Model):
     #     # If not add it with poi value set to false.
@@ -81,15 +104,6 @@ def blSubmissionComments_updateForAllSubmissions():
     print("=====================================================")
     rv = "<B>PRAW</B> blSubmissionComments_updateForAllSubmissions<BR>"
 
-    # submission = "t3_690ved"   # https://www.reddit.com/r/politics/comments/690ved/discussion_megathread_fbi_director_comey/
-    submission = "t3_699g45"   # https://www.reddit.com/r/politics/comments/699g45/megathread_republican_health_care_plan_passes/
-    # submission = "t3_69a8hl"   # https://www.reddit.com/r/politics/comments/69a8hl/nancy_pelosi_on_trumpcare_this_is_a_scar_they/
-
-
-
-    # For testing am only working on one submission_replies at a time.
-    # submissions = subredditSubmissionRaw.objects.filter(sti__name=submission)
-    # submissions = subredditSubmissionRaw.objects.all()
     submissions =subredditSubmissionIndex.objects.filter(deleted=False).order_by('subreddit__name')
     if submissions.count() == 0:
         rv += "<BR> No Submissions found"
