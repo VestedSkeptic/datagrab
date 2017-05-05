@@ -24,17 +24,6 @@ def blSubmissionComments_updateCommentsForSubmission(submission, argDict):
     # if cs.youngest != "":
     #     params['before'] = cs.youngest;
 
-    # iterate through comments saving them
-    # for comment in reddit.redditor(user.name).comments.new(limit=None, params=params):
-    #     aDict = {'uci' : None, 'isNew' : True }
-    #     blUserComments_getUserCommentIndex(comment, user, aDict)
-    #     if aDict['isNew']:
-    #         blUserComments_saveUserCommentsRaw(comment, aDict['uci'])
-    #         countNew += 1
-    #     else:
-    #         countDuplicate += 1
-
-
     countNew = 0
     countDuplicate = 0
     countPostsWithNoAuthor = 0
@@ -108,14 +97,10 @@ def blSubmissionComments_updateForAllSubmissions():
     if submissions.count() == 0:
         rv += "<BR> No Submissions found"
     else:
-        breakCount=50
         for sub in submissions:
             argDict = {'rv': ""}
             blSubmissionComments_updateCommentsForSubmission(sub, argDict)
             rv += argDict['rv']
-            breakCount -= 1
-            if breakCount == 0:
-                break
 
     print("=====================================================")
     return HttpResponse(rv)

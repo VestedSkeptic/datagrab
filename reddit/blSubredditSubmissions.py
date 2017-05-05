@@ -62,7 +62,7 @@ def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
     # iterate through submissions saving them
     countNew = 0
     countDuplicate = 0
-    for submission in reddit.subreddit(subreddit.name).new(limit=1023, params=params):
+    for submission in reddit.subreddit(subreddit.name).new(limit=None, params=params):
         aDict = {'sti' : None, 'isNew' : True }
         blSubredditSubmissions_getsubredditSubmissionIndex(submission, subreddit, aDict)
 
