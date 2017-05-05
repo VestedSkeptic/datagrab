@@ -49,11 +49,11 @@ class subredditSubmissionIndex(models.Model):
 
 # *****************************************************************************
 class subredditSubmissionRaw(models.Model):
-    sti         = models.OneToOneField(subredditSubmissionIndex, primary_key=True)
+    ssi         = models.OneToOneField(subredditSubmissionIndex, primary_key=True)
     data        = models.TextField()
     title       = models.CharField(max_length=301)      # added so title is easily displayable for testing may remove later
     def __str__(self):
-        s = self.sti.subreddit.name
+        s = self.ssi.subreddit.name
         s += " [" + self.title + "]"
         return format(s)
 

@@ -10,7 +10,6 @@ import pprint
 
 # *****************************************************************************
 def blSubmissionComments_updateCommentsForSubmission(submission, argDict):
-    # print("Processing submission: %s: %s" % (submission.sti.name, submission.title))
     print("Processing submission: %s: %s" % (submission.subreddit.name, submission.name))
 
     # create PRAW reddit instance
@@ -82,9 +81,6 @@ def blSubmissionComments_updateCommentsForSubmission(submission, argDict):
         # pprint.pprint(vars(comment))
         # break
 
-    # submission.sti.name + \
-    # ", " + \
-    # submission.title + \
     argDict['rv'] += "<br><b>" + \
         submission.subreddit.name + \
         ", " + \

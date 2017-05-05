@@ -9,26 +9,26 @@ import pprint
 # *****************************************************************************
 # if subredditSubmissionIndex exists return it otherwise create it
 def blSubredditSubmissions_getsubredditSubmissionIndex(submission, subreddit, aDict):
-    sti = None
+    ssi = None
     try:
-        sti = subredditSubmissionIndex.objects.get(subreddit=subreddit, name=submission.name)
+        ssi = subredditSubmissionIndex.objects.get(subreddit=subreddit, name=submission.name)
         aDict['isNew'] = False
     except ObjectDoesNotExist:
-        sti = subredditSubmissionIndex(subreddit=subreddit, name=submission.name)
-        sti.save()
-    aDict['sti'] = sti
+        ssi = subredditSubmissionIndex(subreddit=subreddit, name=submission.name)
+        ssi.save()
+    aDict['ssi'] = ssi
     return
 
 # *****************************************************************************
 # if subredditSubmissionRaw does not exist save it.
 # TODO else compare appropriate fields, if any differences record appropriately
-def blSubredditSubmissions_savesubredditSubmissionRaw(submission, sti):
+def blSubredditSubmissions_savesubredditSubmissionRaw(submission, ssi):
     stRaw = None
     try:
-        stRaw = subredditSubmissionRaw.objects.get(sti=sti)
+        stRaw = subredditSubmissionRaw.objects.get(ssi=ssi)
     except ObjectDoesNotExist:
         # vars converts submission to json dict which can be saved to DB
-        stRaw = subredditSubmissionRaw(sti=sti, data=vars(submission), title=submission.title)
+        stRaw = subredditSubmissionRaw(ssi=ssi, data=vars(submission), title=submission.title)
         stRaw.save()
     return
 
@@ -66,10 +66,10 @@ def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
     countNew = 0
     countDuplicate = 0
     for submission in reddit.subreddit(subreddit.name).new(limit=None, params=params):
-        aDict = {'sti' : None, 'isNew' : True }
+        aDict = {'ssi' : None, 'isNew' : True }
         blSubredditSubmissions_getsubredditSubmissionIndex(submission, subreddit, aDict)
         if aDict['isNew']:
-            blSubredditSubmissions_savesubredditSubmissionRaw(submission, aDict['sti'])
+            blSubredditSubmissions_savesubredditSubmissionRaw(submission, aDict['ssi'])
             countNew += 1
         else:
             countDuplicate += 1
