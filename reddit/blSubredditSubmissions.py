@@ -77,6 +77,7 @@ def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
             if aDict['isNew']:
                 blSubredditSubmissions_savesubredditSubmissionRaw(submission, aDict['ssi'])
                 countNew += 1
+                logger.debug("Added submission: %s" % (submission.title[:40]))
             else:
                 countDuplicate += 1
     except praw.exceptions.APIException as e:
