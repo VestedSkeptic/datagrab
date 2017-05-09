@@ -203,9 +203,9 @@ import praw
 #     return
 
 # *****************************************************************************
-def getCommentsByCommentForest(submission, argDict, sortOrder):
+def getCommentsByCommentForest(subIndex, argDict, sortOrder):
     logger = getmLoggerInstance()
-    logger.info("Processing submission: %s: %s: sortOrder = %s" % (submission.subreddit.name, submission.name, sortOrder))
+    logger.info("Processing subIndex: %s: %s: sortOrder = %s" % (subIndex.subreddit.name, subIndex.name, sortOrder))
 
     # create PRAW prawReddit instance
     prawReddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
@@ -213,9 +213,8 @@ def getCommentsByCommentForest(submission, argDict, sortOrder):
     countNew = 0
     countDuplicate = 0
     countPostsWithNoAuthor = 0
-
     try:
-        submissionObject = prawReddit.submission(id=submission.name[3:])
+        submissionObject = prawReddit.submission(id=subIndex.name[3:])
         submissionObject.comment_sort = sortOrder
         submissionObject.comments.replace_more(limit=None)
         for comment in submissionObject.comments.list():
@@ -243,10 +242,35 @@ def getCommentsByCommentForest(submission, argDict, sortOrder):
     except praw.exceptions.APIException as e:
         logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
 
-    s_temp = submission.subreddit.name + ", " + submission.name + ": " + str(countNew) + " new, " + str(countDuplicate) + " duplicated, " + str(countPostsWithNoAuthor) + " with no author."
+    # Update subIndex appropriately
+    saveSubIndex = False
+    if sortOrder == "new":
+        subIndex.cForestGot = True
+        logger.debug("subIndex: %s: %s: cForestGot set to True" % (subIndex.subreddit.name, subIndex.name))
+        saveSubIndex = True
+    if countNew > 0:
+        subIndex.count += countNew
+        logger.debug("subIndex: %s: %s: count set to %d" % (subIndex.subreddit.name, subIndex.name, subIndex.count))
+        saveSubIndex = True
+    if saveSubIndex:
+        subIndex.save()
+
+    s_temp = subIndex.subreddit.name + ", " + subIndex.name + ": " + str(countNew) + " new, " + str(countDuplicate) + " duplicated, " + str(countPostsWithNoAuthor) + " with no author."
     logger.info(s_temp)
     argDict['rv'] += "<br>" + s_temp
     return
+
+# *****************************************************************************
+def updateSubIndexComments(subIndex, argDict):
+    logger = getmLoggerInstance()
+    if not subIndex.cForestGot:
+        logger.debug("New commentForest updating sorted by new")
+        getCommentsByCommentForest(subIndex, argDict, "new")
+    elif subIndex.count < 100:
+        logger.debug("Old small commentForest updating sorted by old")
+        getCommentsByCommentForest(subIndex, argDict, "old")
+    else:
+        logger.debug("Old large commentForest updating by METHOD TO BE IMPLEMENTED LATER")
 
 # *****************************************************************************
 def blSubmissionComments_updateForAllSubmissions():
@@ -254,16 +278,13 @@ def blSubmissionComments_updateForAllSubmissions():
     logger.info("=====================================================")
     rv = "<B>PRAW</B> blSubmissionComments_updateForAllSubmissions<BR>"
 
-    submissions =subredditSubmissionIndex.objects.filter(deleted=False).order_by('subreddit__name')
-    if submissions.count() == 0:
+    submissionsIndexObjects =subredditSubmissionIndex.objects.filter(deleted=False).order_by('subreddit__name')
+    if submissionsIndexObjects.count() == 0:
         rv += "<BR> No Submissions found"
     else:
-        for sub in submissions:
+        for subIndex in submissionsIndexObjects:
             argDict = {'rv': ""}
-            # blSubmissionComments_updateCommentsForSubmission(sub, argDict)
-            getCommentsByCommentForest(sub, argDict, "new")
-            # getCommentsByCommentForest(sub, argDict, "old")
-            # blSubmissionComments_updateCommentsForSubmission_phase2_submissionIteration(sub, argDict)
+            updateSubIndexComments(subIndex, argDict)
             rv += argDict['rv']
 
     logger.info("=====================================================")

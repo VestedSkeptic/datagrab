@@ -34,24 +34,35 @@ def blUserComments_saveUserCommentsRaw(comment, uci):
     return
 
 # *****************************************************************************
-def blUserComments_getMostValidBeforeValue(user, prawReddit):
+def blUserComments_getMostValidBeforeValue(user, prawReddit, forceGetAllHistory=False):
     logger = getmLoggerInstance()
     youngestRV = ''
 
-    for item in userCommentsIndex.objects.filter(user=user, deleted=False).order_by('-name'):
-        try:
-            # CAN I BATCH THIS QUERY UP TO GET MULTIPLE COMMENTS FROM REDDIT AT ONCE?
-            comment = prawReddit.comment(item.name[3:])
-            # if comment.author != None and comment.author.name.lower() == user.name.lower():
-            if comment.author != None:
-                youngestRV = item.name
-                break
-            else: # Update item as deleted.
-                item.deleted = True
-                item.save()
-                logger.debug("userCommentIndex %s flagged as deleted" % (item.name))
-        except praw.exceptions.APIException as e:
-            logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
+    if not user.cHistoryGot:
+        forceGetAllHistory = True
+        user.cHistoryGot = True
+        user.save()
+        logger.debug("user %s cHistoryGot set to True" % (user.name))
+
+    if not forceGetAllHistory:
+        qs = userCommentsIndex.objects.filter(user=user, deleted=False).order_by('-name')
+        for item in qs:
+            try:
+                # CAN I BATCH THIS QUERY UP TO GET MULTIPLE COMMENTS FROM REDDIT AT ONCE?
+                comment = prawReddit.comment(item.name[3:])
+                # if comment.author != None and comment.author.name.lower() == user.name.lower():
+                if comment.author != None:
+                    youngestRV = item.name
+                    break
+                else: # Update item as deleted.
+                    item.deleted = True
+                    item.save()
+                    logger.debug("userCommentIndex %s flagged as deleted" % (item.name))
+            except praw.exceptions.APIException as e:
+                logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
+    else:
+        logger.debug("cHistoryGot set to True")
+
     return youngestRV
 
 # *****************************************************************************

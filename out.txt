@@ -1,28 +1,13 @@
-16:41:40 DEBUG    mLogging.py                  (line   13): ************************************************************
-16:41:40 DEBUG    mLogging.py                  (line   14): "django_logger" initialized.
-16:41:40 DEBUG    mLogging.py                  (line   15):  at 2017-05-09 16:41:40.360070
-16:41:40 DEBUG    mLogging.py                  (line   17): ************************************************************
-16:41:40 DEBUG    mLogging.py                  (line   18): 
-16:44:06 INFO     blUserComments.py            (line   93): =====================================================
-16:44:06 INFO     blUserComments.py            (line   60): Processing user: OldDevLearningLinux
-16:44:10 DEBUG    blUserComments.py            (line   68): params[before] = t1_dhcexcx
-16:44:11 INFO     blUserComments.py            (line   86): OldDevLearningLinux: 0 new and 0 duplicate comments processed
-16:44:11 INFO     blUserComments.py            (line  104): =====================================================
-16:44:22 INFO     blSubredditSubmissions.py    (line   93): =====================================================
-16:44:22 INFO     blSubredditSubmissions.py    (line   60): Processing subreddit: molw
-16:44:26 DEBUG    blSubredditSubmissions.py    (line   68): params[before] = t3_68nhb3
-16:44:27 INFO     blSubredditSubmissions.py    (line   86): molw: 0 new and 0 duplicate submissions processed
-16:44:27 INFO     blSubredditSubmissions.py    (line  104): =====================================================
-16:46:54 INFO     blUserComments.py            (line   93): =====================================================
-16:46:54 INFO     blUserComments.py            (line   60): Processing user: OldDevLearningLinux
-16:46:55 DEBUG    blUserComments.py            (line   68): params[before] = t1_dhcexcx
-16:46:55 INFO     blUserComments.py            (line   86): OldDevLearningLinux: 0 new and 0 duplicate comments processed
-16:46:55 INFO     blUserComments.py            (line  104): =====================================================
-16:48:25 INFO     blUserComments.py            (line   93): =====================================================
-16:48:25 INFO     blUserComments.py            (line   60): Processing user: OldDevLearningLinux
-16:48:27 DEBUG    blUserComments.py            (line   68): params[before] = t1_dhcexcx
-16:48:27 INFO     blUserComments.py            (line   86): OldDevLearningLinux: 0 new and 0 duplicate comments processed
-16:48:27 INFO     blUserComments.py            (line   60): Processing user: stp2007
-16:48:28 DEBUG    blUserComments.py            (line   68): params[before] = t1_dhcewk9
-16:48:29 INFO     blUserComments.py            (line   86): stp2007: 0 new and 0 duplicate comments processed
-16:48:29 INFO     blUserComments.py            (line  104): =====================================================
+17:46:14 DEBUG    mLogging.py                  (line   13): ************************************************************
+17:46:14 DEBUG    mLogging.py                  (line   14): "django_logger" initialized.
+17:46:14 DEBUG    mLogging.py                  (line   15):  at 2017-05-09 17:46:14.394939
+17:46:14 DEBUG    mLogging.py                  (line   17): ************************************************************
+17:46:14 DEBUG    mLogging.py                  (line   18): 
+17:46:38 INFO     blSubredditSubmissions.py    (line   93): =====================================================
+17:46:38 INFO     blSubredditSubmissions.py    (line   60): Processing subreddit: molw
+17:46:40 DEBUG    blSubredditSubmissions.py    (line   68): params[before] = t3_6a8idi
+17:46:40 INFO     blSubredditSubmissions.py    (line   86): molw: 0 new and 0 duplicate submissions processed
+17:46:40 INFO     blSubredditSubmissions.py    (line   60): Processing subreddit: politics
+17:46:40 DEBUG    blSubredditSubmissions.py    (line   68): params[before] = 
+17:47:08 INFO     blSubredditSubmissions.py    (line   86): politics: 962 new and 0 duplicate submissions processed
+17:47:08 INFO     blSubredditSubmissions.py    (line  104): =====================================================
