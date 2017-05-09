@@ -1,10 +1,11 @@
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from .models import user, userCommentsIndex, userCommentsRaw
+from mLogging import getmLoggerInstance
 from .constants import *
 import json
 import praw
-import pprint
+# import pprint
 
 # *****************************************************************************
 # if userCommentsIndex exists return it otherwise create it
@@ -18,7 +19,6 @@ def blUserComments_getUserCommentIndex(comment, user, aDict):
         uci.save()
     aDict['uci'] = uci
     return
-
 
 # *****************************************************************************
 # if blUserComments_saveUserCommentsRaw does not exist save it.
@@ -35,6 +35,7 @@ def blUserComments_saveUserCommentsRaw(comment, uci):
 
 # *****************************************************************************
 def blUserComments_getMostValidBeforeValue(user, reddit):
+    logger = getmLoggerInstance()
     youngestRV = ''
 
     for item in userCommentsIndex.objects.filter(user=user, deleted=False).order_by('-name'):
@@ -47,13 +48,14 @@ def blUserComments_getMostValidBeforeValue(user, reddit):
         else: # Update item as deleted.
             item.deleted = True
             item.save()
-            print("userCommentIndex %s flagged as deleted" % (item.name))
+            logger.debug("userCommentIndex %s flagged as deleted" % (item.name))
 
     return youngestRV
 
 # *****************************************************************************
 def blUserComments_updateCommentsForUser(user, argDict):
-    print("Processing user: %s" % (user.name))
+    logger = getmLoggerInstance()
+    logger.info("Processing user: %s" % (user.name))
 
     # create PRAW reddit instance
     reddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
@@ -61,7 +63,7 @@ def blUserComments_updateCommentsForUser(user, argDict):
     # get youngest userCommentsIndex in DB if there are any
     params={};
     params['before'] = blUserComments_getMostValidBeforeValue(user, reddit)
-    print ("params[before] = %s" % params['before'])
+    logger.debug("params[before] = %s" % params['before'])
 
     # iterate through comments saving them
     countNew = 0
@@ -80,7 +82,8 @@ def blUserComments_updateCommentsForUser(user, argDict):
 
 # *****************************************************************************
 def blUserComments_updateForAllUsers():
-    print("=====================================================")
+    logger = getmLoggerInstance()
+    logger.info("=====================================================")
     rv = "<B>PRAW</B> blUserComments_updateForAllUsers<BR>"
 
     users = user.objects.filter(poi=True)
@@ -91,7 +94,7 @@ def blUserComments_updateForAllUsers():
             argDict = {'rv': ""}
             blUserComments_updateCommentsForUser(us, argDict)
             rv += argDict['rv']
-    print("=====================================================")
+    logger.info("=====================================================")
     return HttpResponse(rv)
 
 

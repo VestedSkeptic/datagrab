@@ -8,7 +8,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
-import pprint
+# import pprint
 
 # *****************************************************************************
 # Update sys.path to allow importing python files from library and script directory
@@ -18,7 +18,7 @@ sys.path.insert(0, "/home/delta/work/scriptsPython") # first value is index, set
 # *****************************************************************************
 # Instantiate logging module
 from mLogging import mLogging_init, getmLoggerInstance
-mLogging_init("django_logger", "DEBUG", "out.txt")
+mLogging_init("django_logger", "INFO", "out.txt")
 logger = getmLoggerInstance()
 # logger.debug("sys.path = %s" % sys.path)
 

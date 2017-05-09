@@ -1,10 +1,11 @@
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from .models import subreddit, subredditSubmissionIndex, subredditSubmissionRaw
+from mLogging import getmLoggerInstance
 from .constants import *
 import json
 import praw
-import pprint
+# import pprint
 
 # *****************************************************************************
 # if subredditSubmissionIndex exists return it otherwise create it
@@ -34,6 +35,7 @@ def blSubredditSubmissions_savesubredditSubmissionRaw(submission, ssi):
 
 # *****************************************************************************
 def blSubredditSubmissions_getMostValidBeforeValue(subreddit, reddit):
+    logger = getmLoggerInstance()
     youngestRV = ''
 
     for item in subredditSubmissionIndex.objects.filter(subreddit=subreddit, deleted=False).order_by('-name'):
@@ -45,14 +47,15 @@ def blSubredditSubmissions_getMostValidBeforeValue(subreddit, reddit):
         else: # Update item as deleted.
             item.deleted = True
             item.save()
-            print("subredditSubmissionIndex %s flagged as deleted" % (item.name))
+            logger.debug("subredditSubmissionIndex %s flagged as deleted" % (item.name))
 
 
     return youngestRV
 
 # *****************************************************************************
 def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
-    print("Processing subreddit: %s" % (subreddit.name))
+    logger = getmLoggerInstance()
+    logger.info("Processing subreddit: %s" % (subreddit.name))
 
     # create PRAW reddit instance
     reddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
@@ -60,7 +63,7 @@ def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
     # get youngest subredditSubmissionIndex in DB if there are any
     params={};
     params['before'] = blSubredditSubmissions_getMostValidBeforeValue(subreddit, reddit)
-    print ("params[before] = %s" % params['before'])
+    logger.debug("params[before] = %s" % params['before'])
 
     # iterate through submissions saving them
     countNew = 0
@@ -79,7 +82,8 @@ def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
 
 # *****************************************************************************
 def blSubredditSubmissions_updateForAllSubreddits():
-    print("=====================================================")
+    logger = getmLoggerInstance()
+    logger.info("=====================================================")
     rv = "<B>PRAW</B> blSubredditSubmissions_updateForAllSubreddits<BR>"
 
     subreddits = subreddit.objects.all()
@@ -90,7 +94,7 @@ def blSubredditSubmissions_updateForAllSubreddits():
             argDict = {'rv': ""}
             blSubredditSubmissions_updateThreadsForSubreddits(su, argDict)
             rv += argDict['rv']
-    print("=====================================================")
+    logger.info("=====================================================")
     return HttpResponse(rv)
 
 

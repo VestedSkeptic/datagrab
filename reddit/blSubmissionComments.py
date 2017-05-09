@@ -1,16 +1,17 @@
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
-# from .models import subredditSubmissionRaw, user, userCommentsIndex, userCommentsRaw
 from .models import subredditSubmissionIndex, user, userCommentsIndex, userCommentsRaw
 from .blUserComments import blUserComments_getUserCommentIndex, blUserComments_saveUserCommentsRaw
+from mLogging import getmLoggerInstance
 from .constants import *
 import json
 import praw
-import pprint
+# import pprint
 
 # *****************************************************************************
 def blSubmissionComments_updateCommentsForSubmission(submission, argDict):
-    print("Processing submission: %s: %s" % (submission.subreddit.name, submission.name))
+    logger = getmLoggerInstance()
+    logger.info("Processing submission: %s: %s" % (submission.subreddit.name, submission.name))
 
     # create PRAW reddit instance
     reddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
@@ -197,7 +198,8 @@ def blSubmissionComments_updateCommentsForSubmission(submission, argDict):
 
 # *****************************************************************************
 def blSubmissionComments_updateForAllSubmissions():
-    print("=====================================================")
+    logger = getmLoggerInstance()
+    logger.info("=====================================================")
     rv = "<B>PRAW</B> blSubmissionComments_updateForAllSubmissions<BR>"
 
     submissions =subredditSubmissionIndex.objects.filter(deleted=False).order_by('subreddit__name')
@@ -210,7 +212,7 @@ def blSubmissionComments_updateForAllSubmissions():
             # blSubmissionComments_updateCommentsForSubmission_phase2_submissionIteration(sub, argDict)
             rv += argDict['rv']
 
-    print("=====================================================")
+    logger.info("=====================================================")
     return HttpResponse(rv)
 
 

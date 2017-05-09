@@ -4,9 +4,6 @@ from .blSubredditSubmissions import blSubredditSubmissions_updateForAllSubreddit
 from .blSubmissionComments import blSubmissionComments_updateForAllSubmissions
 from .models import *
 
-from mLogging import mLogging_init, getmLoggerInstance
-
-
 # *****************************************************************************
 def main(request):
     s  = ''
@@ -16,10 +13,6 @@ def main(request):
     s += '<br><a href="http://localhost:8000/reddit/praw/usfas/">update subreddit submissions</a><br>'
     s += '<br><a href="http://localhost:8000/reddit/praw/ucfas/">update submission comments</a><br>'
     s += displayDatabaseModelCounts()
-
-    logger = getmLoggerInstance()
-    logger.debug("VIEWS MAIN")
-
     return HttpResponse(s)
 
 # *****************************************************************************
