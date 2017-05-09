@@ -6,7 +6,6 @@ urlpatterns = [
     url(r'^praw/ucfau/$',   views.updateCommentsForAllUsers,            name='updateCommentsForAllUsers'),
     url(r'^praw/usfas/$',   views.updateSubmissionsForAllSubreddits,    name='updateSubmissionsForAllSubreddits'),
     url(r'^praw/ucfas/$',   views.updateCommentsForAllSubmissions,      name='updateCommentsForAllSubmissions'),
-    url(r'^cis/$',          views.checkInternetStatus,                  name='checkInternetStatus'),
 ]
 
 
