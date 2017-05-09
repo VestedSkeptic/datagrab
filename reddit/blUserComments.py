@@ -34,22 +34,24 @@ def blUserComments_saveUserCommentsRaw(comment, uci):
     return
 
 # *****************************************************************************
-def blUserComments_getMostValidBeforeValue(user, reddit):
+def blUserComments_getMostValidBeforeValue(user, prawReddit):
     logger = getmLoggerInstance()
     youngestRV = ''
 
     for item in userCommentsIndex.objects.filter(user=user, deleted=False).order_by('-name'):
-        # CAN I BATCH THIS QUERY UP TO GET MULTIPLE COMMENTS FROM REDDIT AT ONCE?
-        comment = reddit.comment(item.name[3:])
-        # if comment.author != None and comment.author.name.lower() == user.name.lower():
-        if comment.author != None:
-            youngestRV = item.name
-            break
-        else: # Update item as deleted.
-            item.deleted = True
-            item.save()
-            logger.debug("userCommentIndex %s flagged as deleted" % (item.name))
-
+        try:
+            # CAN I BATCH THIS QUERY UP TO GET MULTIPLE COMMENTS FROM REDDIT AT ONCE?
+            comment = prawReddit.comment(item.name[3:])
+            # if comment.author != None and comment.author.name.lower() == user.name.lower():
+            if comment.author != None:
+                youngestRV = item.name
+                break
+            else: # Update item as deleted.
+                item.deleted = True
+                item.save()
+                logger.debug("userCommentIndex %s flagged as deleted" % (item.name))
+        except praw.exceptions.APIException(error_type, message, field):
+            logger.error("PRAW APIException: error_type = %s, message = %s" % (error_type, message))
     return youngestRV
 
 # *****************************************************************************
@@ -57,25 +59,28 @@ def blUserComments_updateCommentsForUser(user, argDict):
     logger = getmLoggerInstance()
     logger.info("Processing user: %s" % (user.name))
 
-    # create PRAW reddit instance
-    reddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
+    # create prawReddit instance
+    prawReddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
 
     # get youngest userCommentsIndex in DB if there are any
     params={};
-    params['before'] = blUserComments_getMostValidBeforeValue(user, reddit)
+    params['before'] = blUserComments_getMostValidBeforeValue(user, prawReddit)
     logger.debug("params[before] = %s" % params['before'])
 
     # iterate through comments saving them
     countNew = 0
     countDuplicate = 0
-    for comment in reddit.redditor(user.name).comments.new(limit=None, params=params):
-        aDict = {'uci' : None, 'isNew' : True }
-        blUserComments_getUserCommentIndex(comment, user, aDict)
-        if aDict['isNew']:
-            blUserComments_saveUserCommentsRaw(comment, aDict['uci'])
-            countNew += 1
-        else:
-            countDuplicate += 1
+    try:
+        for comment in prawReddit.redditor(user.name).comments.new(limit=None, params=params):
+            aDict = {'uci' : None, 'isNew' : True }
+            blUserComments_getUserCommentIndex(comment, user, aDict)
+            if aDict['isNew']:
+                blUserComments_saveUserCommentsRaw(comment, aDict['uci'])
+                countNew += 1
+            else:
+                countDuplicate += 1
+    except praw.exceptions.APIException(error_type, message, field):
+        logger.error("PRAW APIException: error_type = %s, message = %s" % (error_type, message))
 
     argDict['rv'] += "<br><b>" + user.name + "</b>: " + str(countNew) + " new and " + str(countDuplicate) + " duplicate comments processed"
     return

@@ -34,21 +34,23 @@ def blSubredditSubmissions_savesubredditSubmissionRaw(submission, ssi):
     return
 
 # *****************************************************************************
-def blSubredditSubmissions_getMostValidBeforeValue(subreddit, reddit):
+def blSubredditSubmissions_getMostValidBeforeValue(subreddit, prawReddit):
     logger = getmLoggerInstance()
     youngestRV = ''
 
     for item in subredditSubmissionIndex.objects.filter(subreddit=subreddit, deleted=False).order_by('-name'):
-        # CAN I BATCH THIS QUERY UP TO GET MULTIPLE COMMENTS FROM REDDIT AT ONCE?
-        submission = reddit.submission(item.name[3:])
-        if submission.author != None:
-            youngestRV = item.name
-            break
-        else: # Update item as deleted.
-            item.deleted = True
-            item.save()
-            logger.debug("subredditSubmissionIndex %s flagged as deleted" % (item.name))
-
+        try:
+            # CAN I BATCH THIS QUERY UP TO GET MULTIPLE COMMENTS FROM REDDIT AT ONCE?
+            submission = prawReddit.submission(item.name[3:])
+            if submission.author != None:
+                youngestRV = item.name
+                break
+            else: # Update item as deleted.
+                item.deleted = True
+                item.save()
+                logger.debug("subredditSubmissionIndex %s flagged as deleted" % (item.name))
+        except praw.exceptions.APIException(error_type, message, field):
+            logger.error("PRAW APIException: error_type = %s, message = %s" % (error_type, message))
 
     return youngestRV
 
@@ -57,25 +59,28 @@ def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
     logger = getmLoggerInstance()
     logger.info("Processing subreddit: %s" % (subreddit.name))
 
-    # create PRAW reddit instance
-    reddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
+    # create prawReddit instance
+    prawReddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
 
     # get youngest subredditSubmissionIndex in DB if there are any
     params={};
-    params['before'] = blSubredditSubmissions_getMostValidBeforeValue(subreddit, reddit)
+    params['before'] = blSubredditSubmissions_getMostValidBeforeValue(subreddit, prawReddit)
     logger.debug("params[before] = %s" % params['before'])
 
     # iterate through submissions saving them
     countNew = 0
     countDuplicate = 0
-    for submission in reddit.subreddit(subreddit.name).new(limit=None, params=params):
-        aDict = {'ssi' : None, 'isNew' : True }
-        blSubredditSubmissions_getsubredditSubmissionIndex(submission, subreddit, aDict)
-        if aDict['isNew']:
-            blSubredditSubmissions_savesubredditSubmissionRaw(submission, aDict['ssi'])
-            countNew += 1
-        else:
-            countDuplicate += 1
+    try:
+        for submission in prawReddit.subreddit(subreddit.name).new(limit=None, params=params):
+            aDict = {'ssi' : None, 'isNew' : True }
+            blSubredditSubmissions_getsubredditSubmissionIndex(submission, subreddit, aDict)
+            if aDict['isNew']:
+                blSubredditSubmissions_savesubredditSubmissionRaw(submission, aDict['ssi'])
+                countNew += 1
+            else:
+                countDuplicate += 1
+    except praw.exceptions.APIException(error_type, message, field):
+        logger.error("PRAW APIException: error_type = %s, message = %s" % (error_type, message))
 
     argDict['rv'] += "<br><b>" + subreddit.name + "</b>: " + str(countNew) + " new and " + str(countDuplicate) + " duplicate submissions processed"
     return

@@ -1,13 +1,5 @@
-15:27:28 DEBUG    mLogging.py                  (line   13): ************************************************************
-15:27:28 DEBUG    mLogging.py                  (line   14): "django_logger" initialized.
-15:27:28 DEBUG    mLogging.py                  (line   15):  at 2017-05-09 15:27:28.617068
-15:27:28 DEBUG    mLogging.py                  (line   17): ************************************************************
-15:27:28 DEBUG    mLogging.py                  (line   18): 
-15:27:32 INFO     blSubredditSubmissions.py    (line   86): =====================================================
-15:27:32 INFO     blSubredditSubmissions.py    (line   58): Processing subreddit: molw
-15:27:34 DEBUG    blSubredditSubmissions.py    (line   66): params[before] = t3_68nhb3
-15:27:34 INFO     blSubredditSubmissions.py    (line   97): =====================================================
-15:27:35 INFO     blUserComments.py            (line   86): =====================================================
-15:27:35 INFO     blUserComments.py            (line   58): Processing user: OldDevLearningLinux
-15:27:37 DEBUG    blUserComments.py            (line   66): params[before] = t1_dh6hil0
-15:27:38 INFO     blUserComments.py            (line   97): =====================================================
+16:01:13 DEBUG    mLogging.py                  (line   13): ************************************************************
+16:01:13 DEBUG    mLogging.py                  (line   14): "django_logger" initialized.
+16:01:13 DEBUG    mLogging.py                  (line   15):  at 2017-05-09 16:01:13.180807
+16:01:13 DEBUG    mLogging.py                  (line   17): ************************************************************
+16:01:13 DEBUG    mLogging.py                  (line   18): 

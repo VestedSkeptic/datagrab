@@ -12,8 +12,8 @@ def blSubmissionComments_updateCommentsForSubmission(submission, argDict):
     logger = getmLoggerInstance()
     logger.info("Processing submission: %s: %s" % (submission.subreddit.name, submission.name))
 
-    # create PRAW reddit instance
-    reddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
+    # create PRAW prawReddit instance
+    prawReddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
 
     # THIS ISNT USING ANY KIND OF PROCESSED STATUS
     # get status of comments already processed by this user
@@ -93,10 +93,17 @@ def blSubmissionComments_updateCommentsForSubmission(submission, argDict):
     countDuplicate = 0
     countPostsWithNoAuthor = 0
 
+    # remember to wrap prawReddit calls in
+    # try:
+    #
+    #
+    # except praw.exceptions.APIException(error_type, message, field):
+    #     logger.error("PRAW APIException: error_type = %s, message = %s" % (error_type, message))
+
     # works: gets all
-    submissionObject = reddit.submission(id=submission.name[3:])
+    submissionObject = prawReddit.submission(id=submission.name[3:])
     # fails: "submission object has no attribute new"
-    # submissionObject = reddit.submission(id=submission.name[3:]).new(limit=None, params=params)
+    # submissionObject = prawReddit.submission(id=submission.name[3:]).new(limit=None, params=params)
 
 
     # TODO: Later review use of 0 value in limit. Should it be replaced with None?
@@ -151,12 +158,12 @@ def blSubmissionComments_updateCommentsForSubmission(submission, argDict):
     return
 
 # # *****************************************************************************
-# def blSubmissionComments_getMostValidBeforeValue(subreddit, reddit):
+# def blSubmissionComments_getMostValidBeforeValue(subreddit, prawReddit):
 #     youngestRV = ''
 #
 #     for item in subredditSubmissionIndex.objects.filter(subreddit=subreddit, deleted=False).order_by('-name'):
 #         # CAN I BATCH THIS QUERY UP TO GET MULTIPLE COMMENTS FROM REDDIT AT ONCE?
-#         submission = reddit.submission(item.name[3:])
+#         submission = prawReddit.submission(item.name[3:])
 #         if submission.author != None:
 #             youngestRV = item.name
 #             break
@@ -172,18 +179,18 @@ def blSubmissionComments_updateCommentsForSubmission(submission, argDict):
 # def blSubmissionComments_updateCommentsForSubmission_phase2_submissionIteration(subreddit, argDict):
 #     logger.info("Processing subreddit: %s" % (subreddit.name))
 #
-#     # create PRAW reddit instance
-#     reddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
+#     # create prawReddit instance
+#     prawReddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
 #
 #     # get youngest subredditSubmissionIndex in DB if there are any
 #     params={};
-#     params['before'] = blSubmissionComments_getMostValidBeforeValue(subreddit, reddit)
+#     params['before'] = blSubmissionComments_getMostValidBeforeValue(subreddit, prawReddit)
 #     logger.info ("params[before] = %s" % params['before'])
 #
 #     # iterate through submissions saving them
 #     countNew = 0
 #     countDuplicate = 0
-#     for submission in reddit.subreddit(subreddit.name).new(limit=None, params=params):
+#     for submission in prawReddit.subreddit(subreddit.name).new(limit=None, params=params):
 #         aDict = {'ssi' : None, 'isNew' : True }
 #         blSubredditSubmissions_getsubredditSubmissionIndex(submission, subreddit, aDict)
 #         if aDict['isNew']:
