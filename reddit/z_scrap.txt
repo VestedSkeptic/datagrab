@@ -1,8 +1,8 @@
 try:
 
 
-except praw.exceptions.APIException(error_type, message, field):
-    logger.error("PRAW APIException: error_type = %s, message = %s" % (error_type, message))
+except praw.exceptions.APIException as e:
+    logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
 
 
 

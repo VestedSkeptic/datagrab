@@ -50,8 +50,8 @@ def blUserComments_getMostValidBeforeValue(user, prawReddit):
                 item.deleted = True
                 item.save()
                 logger.debug("userCommentIndex %s flagged as deleted" % (item.name))
-        except praw.exceptions.APIException(error_type, message, field):
-            logger.error("PRAW APIException: error_type = %s, message = %s" % (error_type, message))
+        except praw.exceptions.APIException as e:
+            logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
     return youngestRV
 
 # *****************************************************************************
@@ -79,10 +79,12 @@ def blUserComments_updateCommentsForUser(user, argDict):
                 countNew += 1
             else:
                 countDuplicate += 1
-    except praw.exceptions.APIException(error_type, message, field):
-        logger.error("PRAW APIException: error_type = %s, message = %s" % (error_type, message))
+    except praw.exceptions.APIException as e:
+        logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
 
-    argDict['rv'] += "<br><b>" + user.name + "</b>: " + str(countNew) + " new and " + str(countDuplicate) + " duplicate comments processed"
+    s_temp = user.name + ": " + str(countNew) + " new and " + str(countDuplicate) + " duplicate comments processed"
+    logger.info(s_temp)
+    argDict['rv'] += "<br>" + s_temp
     return
 
 # *****************************************************************************

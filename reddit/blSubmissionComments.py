@@ -7,155 +7,155 @@ from .constants import *
 import json
 import praw
 
-# *****************************************************************************
-def blSubmissionComments_updateCommentsForSubmission(submission, argDict):
-    logger = getmLoggerInstance()
-    logger.info("Processing submission: %s: %s" % (submission.subreddit.name, submission.name))
-
-    # create PRAW prawReddit instance
-    prawReddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
-
-    # THIS ISNT USING ANY KIND OF PROCESSED STATUS
-    # get status of comments already processed by this user
-    # cs = blUserComments_getUsersCommentsProcessedStatus(user)
-    params={};
-    # NOTE: Not using youngest currently because using it:
-    #       * limits resuilts to 100 for some reason
-    #       * fails if youngest doesn't exist any more (or is too old)
-    # if cs.youngest != "":
-    #     params['before'] = cs.youngest;
-
-
-# TESTING
-# COMMENT #6: t1_dh6fz7q is youngest comment in lone MOLW submission SAVED IN DB.
-# COMMENT #7: t1_dh6hif7 is a newer comment in that submission.
-# COMMENT #8: t1_dh6hil0 is the newest comment in that thread.
-
-
-
-
-                                                    # Sort order and comment limit can be set with the comment_sort and comment_limit attributes before comments are fetched, including any call to replace_more():
-                                                    #
-                                                    # submission.comment_sort = 'new'
-                                                    # comments = submission.comments.list()
-
-
-# praw.helpers.comment_stream
-# praw.helpers.comment_stream
-# praw.helpers.comment_stream
-# praw.helpers.comment_stream
-# praw.helpers.comment_stream
-
-
-
-
-# def checkComments(comments):
-#   for comment in comments:
-#     logger.info comment.body
-#     checkComments(comment.replies)
+# # *****************************************************************************
+# def blSubmissionComments_updateCommentsForSubmission(submission, argDict):
+#     logger = getmLoggerInstance()
+#     logger.info("Processing submission: %s: %s" % (submission.subreddit.name, submission.name))
 #
-# def processSub(sub):
-#   sub.replace_more_comments(limit=None, threshold=0)
-#   checkComments(sub.comments)
+#     # create PRAW prawReddit instance
+#     prawReddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
+#
+#     # THIS ISNT USING ANY KIND OF PROCESSED STATUS
+#     # get status of comments already processed by this user
+#     # cs = blUserComments_getUsersCommentsProcessedStatus(user)
+#     params={};
+#     # NOTE: Not using youngest currently because using it:
+#     #       * limits resuilts to 100 for some reason
+#     #       * fails if youngest doesn't exist any more (or is too old)
+#     # if cs.youngest != "":
+#     #     params['before'] = cs.youngest;
 #
 #
-# #login and subreddit init stuff here
-# subs = mysubreddit.get_hot(limit=50)
-# for sub in subs:
-#   processSub(sub)
-
-# GET [/r/subreddit]/newreadrss support
-# This endpoint is a listing
+# # TESTING
+# # COMMENT #6: t1_dh6fz7q is youngest comment in lone MOLW submission SAVED IN DB.
+# # COMMENT #7: t1_dh6hif7 is a newer comment in that submission.
+# # COMMENT #8: t1_dh6hil0 is the newest comment in that thread.
 #
-# after                       fullname of a thing
-# before                      fullname of a thing
-# count                       a positive integer (default: 0)
-# limit                       the maximum number of items desired (default: 25, maximum: 100)
-# show                        (optional) the string all
-# sr_detail                   (optional) expand subreddits
-
-# submission = r.get_submission(thread)
-# process_comments(submission.comments)
 #
-# def process_comments(objects):
-#     for object in objects:
-#         if type(object).__name__ == "Comment":
-#             process_comments(object.replies) # Get replies of comment
 #
-#             # Do stuff with comment (object)
 #
-#         elif type(object).__name__ == "MoreComments":
-#             process_comments(object.comments()) # Get more comments at same level
-
-
-
-    countNew = 0
-    countDuplicate = 0
-    countPostsWithNoAuthor = 0
-
-    # remember to wrap prawReddit calls in
-    # try:
-    #
-    #
-    # except praw.exceptions.APIException(error_type, message, field):
-    #     logger.error("PRAW APIException: error_type = %s, message = %s" % (error_type, message))
-
-    # works: gets all
-    submissionObject = prawReddit.submission(id=submission.name[3:])
-    # fails: "submission object has no attribute new"
-    # submissionObject = prawReddit.submission(id=submission.name[3:]).new(limit=None, params=params)
-
-
-    # TODO: Later review use of 0 value in limit. Should it be replaced with None?
-    # 0 = remove all MoreComments
-    # None = no limit to number of MoreComments replaced [MAX = 32]
-
-    # works: gets all
-    submissionObject.comments.replace_more(limit=None)
-    # Fails: an unexpected keyword argument 'params'
-    # submissionObject.comments.replace_more(limit=None, params=params)
-
-
-    # for comment in submissionObject.comments.list():
-    #     # See if comment.author.name exists in class user(models.Model):
-    #     # If not add it with poi value set to false.
-    #
-    #     if comment.author == None:
-    #         countPostsWithNoAuthor += 1
-    #     else:
-    #         uuser = None
-    #         try:
-    #             uuser = user.objects.get(name=comment.author.name)
-    #         except ObjectDoesNotExist:
-    #             uuser = user(name=comment.author.name, poi=False)
-    #             uuser.save()
-    #
-    #         aDict = {'uci' : None, 'isNew' : True }
-    #         blUserComments_getUserCommentIndex(comment, uuser, aDict)
-    #         if aDict['isNew']:
-    #             blUserComments_saveUserCommentsRaw(comment, aDict['uci'])
-    #             countNew += 1
-    #         else:
-    #             countDuplicate += 1
-
-        # # logger.info(comment.body[0:40])
-        # # logger.info(comment.author.name)
-        # pprint.pprint(vars(comment))
-        # break
-
-    argDict['rv'] += "<br><b>" + \
-        submission.subreddit.name + \
-        ", " + \
-        submission.name + \
-        "</b>: " + \
-        str(countNew) + \
-        " new, " + \
-        str(countDuplicate) + \
-        " duplicated, " + \
-        str(countPostsWithNoAuthor) + \
-        " with no author."
-
-    return
+#                                                     # Sort order and comment limit can be set with the comment_sort and comment_limit attributes before comments are fetched, including any call to replace_more():
+#                                                     #
+#                                                     # submission.comment_sort = 'new'
+#                                                     # comments = submission.comments.list()
+#
+#
+# # praw.helpers.comment_stream
+# # praw.helpers.comment_stream
+# # praw.helpers.comment_stream
+# # praw.helpers.comment_stream
+# # praw.helpers.comment_stream
+#
+#
+#
+#
+# # def checkComments(comments):
+# #   for comment in comments:
+# #     logger.info comment.body
+# #     checkComments(comment.replies)
+# #
+# # def processSub(sub):
+# #   sub.replace_more_comments(limit=None, threshold=0)
+# #   checkComments(sub.comments)
+# #
+# #
+# # #login and subreddit init stuff here
+# # subs = mysubreddit.get_hot(limit=50)
+# # for sub in subs:
+# #   processSub(sub)
+#
+# # GET [/r/subreddit]/newreadrss support
+# # This endpoint is a listing
+# #
+# # after                       fullname of a thing
+# # before                      fullname of a thing
+# # count                       a positive integer (default: 0)
+# # limit                       the maximum number of items desired (default: 25, maximum: 100)
+# # show                        (optional) the string all
+# # sr_detail                   (optional) expand subreddits
+#
+# # submission = r.get_submission(thread)
+# # process_comments(submission.comments)
+# #
+# # def process_comments(objects):
+# #     for object in objects:
+# #         if type(object).__name__ == "Comment":
+# #             process_comments(object.replies) # Get replies of comment
+# #
+# #             # Do stuff with comment (object)
+# #
+# #         elif type(object).__name__ == "MoreComments":
+# #             process_comments(object.comments()) # Get more comments at same level
+#
+#
+#
+#     countNew = 0
+#     countDuplicate = 0
+#     countPostsWithNoAuthor = 0
+#
+#     # remember to wrap prawReddit calls in
+#     # try:
+#     #
+#     #
+    # except praw.exceptions.APIException as e:
+    #     logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
+#
+#     # works: gets all
+#     submissionObject = prawReddit.submission(id=submission.name[3:])
+#     # fails: "submission object has no attribute new"
+#     # submissionObject = prawReddit.submission(id=submission.name[3:]).new(limit=None, params=params)
+#
+#
+#     # TODO: Later review use of 0 value in limit. Should it be replaced with None?
+#     # 0 = remove all MoreComments
+#     # None = no limit to number of MoreComments replaced [MAX = 32]
+#
+#     # works: gets all
+#     submissionObject.comments.replace_more(limit=None)
+#     # Fails: an unexpected keyword argument 'params'
+#     # submissionObject.comments.replace_more(limit=None, params=params)
+#
+#
+#     # for comment in submissionObject.comments.list():
+#     #     # See if comment.author.name exists in class user(models.Model):
+#     #     # If not add it with poi value set to false.
+#     #
+#     #     if comment.author == None:
+#     #         countPostsWithNoAuthor += 1
+#     #     else:
+#     #         uuser = None
+#     #         try:
+#     #             uuser = user.objects.get(name=comment.author.name)
+#     #         except ObjectDoesNotExist:
+#     #             uuser = user(name=comment.author.name, poi=False)
+#     #             uuser.save()
+#     #
+#     #         aDict = {'uci' : None, 'isNew' : True }
+#     #         blUserComments_getUserCommentIndex(comment, uuser, aDict)
+#     #         if aDict['isNew']:
+#     #             blUserComments_saveUserCommentsRaw(comment, aDict['uci'])
+#     #             countNew += 1
+#     #         else:
+#     #             countDuplicate += 1
+#
+#         # # logger.info(comment.body[0:40])
+#         # # logger.info(comment.author.name)
+#         # pprint.pprint(vars(comment))
+#         # break
+#
+#     argDict['rv'] += "<br><b>" + \
+#         submission.subreddit.name + \
+#         ", " + \
+#         submission.name + \
+#         "</b>: " + \
+#         str(countNew) + \
+#         " new, " + \
+#         str(countDuplicate) + \
+#         " duplicated, " + \
+#         str(countPostsWithNoAuthor) + \
+#         " with no author."
+#
+#     return
 
 # # *****************************************************************************
 # def blSubmissionComments_getMostValidBeforeValue(subreddit, prawReddit):
@@ -203,6 +203,52 @@ def blSubmissionComments_updateCommentsForSubmission(submission, argDict):
 #     return
 
 # *****************************************************************************
+def getCommentsByCommentForest(submission, argDict, sortOrder):
+    logger = getmLoggerInstance()
+    logger.info("Processing submission: %s: %s: sortOrder = %s" % (submission.subreddit.name, submission.name, sortOrder))
+
+    # create PRAW prawReddit instance
+    prawReddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
+
+    countNew = 0
+    countDuplicate = 0
+    countPostsWithNoAuthor = 0
+
+    try:
+        submissionObject = prawReddit.submission(id=submission.name[3:])
+        submissionObject.comment_sort = sortOrder
+        submissionObject.comments.replace_more(limit=None)
+        for comment in submissionObject.comments.list():
+            # See if comment.author.name exists in class user(models.Model):
+            # If not add it with poi value set to false.
+            if comment.author == None:
+                countPostsWithNoAuthor += 1
+            else:
+                uuser = None
+                try:
+                    uuser = user.objects.get(name=comment.author.name)
+                    logger.debug("user %s exists" % (uuser.name))
+                except ObjectDoesNotExist:
+                    uuser = user(name=comment.author.name, poi=False)
+                    uuser.save()
+                    logger.debug("user %s created" % (uuser.name))
+
+                aDict = {'uci' : None, 'isNew' : True }
+                blUserComments_getUserCommentIndex(comment, uuser, aDict)
+                if aDict['isNew']:
+                    blUserComments_saveUserCommentsRaw(comment, aDict['uci'])
+                    countNew += 1
+                else:
+                    countDuplicate += 1
+    except praw.exceptions.APIException as e:
+        logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
+
+    s_temp = submission.subreddit.name + ", " + submission.name + ": " + str(countNew) + " new, " + str(countDuplicate) + " duplicated, " + str(countPostsWithNoAuthor) + " with no author."
+    logger.info(s_temp)
+    argDict['rv'] += "<br>" + s_temp
+    return
+
+# *****************************************************************************
 def blSubmissionComments_updateForAllSubmissions():
     logger = getmLoggerInstance()
     logger.info("=====================================================")
@@ -214,7 +260,9 @@ def blSubmissionComments_updateForAllSubmissions():
     else:
         for sub in submissions:
             argDict = {'rv': ""}
-            blSubmissionComments_updateCommentsForSubmission(sub, argDict)
+            # blSubmissionComments_updateCommentsForSubmission(sub, argDict)
+            getCommentsByCommentForest(sub, argDict, "new")
+            # getCommentsByCommentForest(sub, argDict, "old")
             # blSubmissionComments_updateCommentsForSubmission_phase2_submissionIteration(sub, argDict)
             rv += argDict['rv']
 

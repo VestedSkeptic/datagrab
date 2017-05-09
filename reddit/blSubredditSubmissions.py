@@ -79,10 +79,12 @@ def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
                 countNew += 1
             else:
                 countDuplicate += 1
-    except praw.exceptions.APIException(error_type, message, field):
-        logger.error("PRAW APIException: error_type = %s, message = %s" % (error_type, message))
+    except praw.exceptions.APIException as e:
+        logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
 
-    argDict['rv'] += "<br><b>" + subreddit.name + "</b>: " + str(countNew) + " new and " + str(countDuplicate) + " duplicate submissions processed"
+    s_temp = subreddit.name + ": " + str(countNew) + " new and " + str(countDuplicate) + " duplicate submissions processed"
+    logger.info(s_temp)
+    argDict['rv'] += "<br>" + s_temp
     return
 
 # *****************************************************************************
