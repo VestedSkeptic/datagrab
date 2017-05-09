@@ -1,0 +1,1 @@
+2017/05/09 17:17:31 - DEBUG - mLogging.py - line 83: "django_logger" initialized.

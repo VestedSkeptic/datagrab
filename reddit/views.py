@@ -3,7 +3,8 @@ from .blUserComments import blUserComments_updateForAllUsers
 from .blSubredditSubmissions import blSubredditSubmissions_updateForAllSubreddits
 from .blSubmissionComments import blSubmissionComments_updateForAllSubmissions
 from .models import *
-from checkInternetStatus import checkInternet
+
+from mLogging import mLogging_init, getmLoggerInstance
 
 
 # *****************************************************************************
@@ -16,7 +17,8 @@ def main(request):
     s += '<br><a href="http://localhost:8000/reddit/praw/ucfas/">update submission comments</a><br>'
     s += displayDatabaseModelCounts()
 
-    checkInternet("http://www.blue.com", True, 2, 1)
+    logger = getmLoggerInstance()
+    logger.debug("VIEWS MAIN")
 
     return HttpResponse(s)
 
