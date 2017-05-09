@@ -1,1 +1,5 @@
-2017/05/09 17:17:31 - DEBUG - mLogging.py - line 83: "django_logger" initialized.
+2017/05/09 14:24:36 - DEBUG - mLogging.py - line 13: ************************************************************
+2017/05/09 14:24:36 - DEBUG - mLogging.py - line 14: "django_logger" initialized.
+2017/05/09 14:24:36 - DEBUG - mLogging.py - line 15:  at 2017-05-09 14:24:36.603105
+2017/05/09 14:24:36 - DEBUG - mLogging.py - line 17: ************************************************************
+2017/05/09 14:24:36 - DEBUG - mLogging.py - line 18: 

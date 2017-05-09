@@ -10,31 +10,13 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 import os
 import pprint
 
-# # *****************************************************************************
-# # REF: http://stackoverflow.com/questions/279237/import-a-module-from-a-relative-path
-# # import os, sys, inspect
-# import sys, inspect
-# # realpath() will make your script run, even if you symlink it :)
-# cmd_folder = os.path.realpath(os.path.abspath(os.path.split(inspect.getfile( inspect.currentframe() ))[0]))
-# print("blue")
-# if cmd_folder not in sys.path:
-#     sys.path.insert(0, cmd_folder)
-#
-# # use this if you want to include modules from a subfolder
-# cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"subfolder")))
-# print("red")
-# if cmd_subfolder not in sys.path:
-#     sys.path.insert(0, cmd_subfolder)
-#
-# print("sys.path = %s" % (sys.path))
-
 # *****************************************************************************
-# FACILITATE IMPORTING FILES FROM MY SCRIPTS DIRECTORY
-# ABOVE COMMENTED OUT CODE IS A DIFFERENT PROBABLY BETTER SOLUTION WHICH I COULDNT
-# GET WORKING AND DIDNT CARE ABOUT TOO MUCH ATM
+# Update sys.path to allow importing python files from library and script directory
 import sys
 sys.path.insert(0, "/home/delta/work/scriptsPython") # first value is index, setting to zero puts this path in front of existing paths
 
+# *****************************************************************************
+# Instantiate logging module
 from mLogging import mLogging_init, getmLoggerInstance
 mLogging_init("django_logger", "DEBUG", "out.txt")
 logger = getmLoggerInstance()
@@ -137,7 +119,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Toronto'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
