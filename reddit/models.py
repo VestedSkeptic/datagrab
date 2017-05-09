@@ -43,6 +43,9 @@ class subredditSubmissionIndex(models.Model):
     subreddit   = models.ForeignKey(subreddit, on_delete=models.CASCADE,)
     name        = models.CharField(max_length=12)
     deleted     = models.BooleanField(default=False)
+    # PROBABLY WANT TO ADD BOOLEAN FIELD (DEFAULT = FALSE)
+    # SPECIFYING WHETHER THIS ITEM HAS GONE THROUGH  one time
+    # REDDIT.SUBMISSION -> SUBMISSION.OBJECT.COMMETNS. REPLACE -> SUBMISSIONOBJECTCOMMENTS
     def __str__(self):
         s = self.subreddit.name
         s += " [" + self.name + "]"

@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from .blUserComments import blUserComments_updateForAllUsers
 from .blSubredditSubmissions import blSubredditSubmissions_updateForAllSubreddits
 from .blSubmissionComments import blSubmissionComments_updateForAllSubmissions
+from .zHack import zHacks_checkInternetStatus
 from .models import *
 # from django.shortcuts import render
 
@@ -13,6 +14,7 @@ def main(request):
     # s += '<br><a href="http://localhost:8000/reddit/praw/ucfau/">update user comments</a><br>'
     # s += '<br><a href="http://localhost:8000/reddit/praw/usfas/">update subreddit submissions</a><br>'
     s += '<br><a href="http://localhost:8000/reddit/praw/ucfas/">update submission comments</a><br>'
+    s += '<br><br><a href="http://localhost:8000/reddit/cis/">check internet status</a><br>'
     s += displayDatabaseModelCounts()
     return HttpResponse(s)
 
@@ -64,3 +66,20 @@ def displayDatabaseModelCounts():
     s += '<BR>==========================='
 
     return s
+
+# *****************************************************************************
+def checkInternetStatus(request):
+    s = zHacks_checkInternetStatus()
+    return HttpResponse(s)
+
+
+
+
+
+
+
+
+
+
+
+
