@@ -8,7 +8,6 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
-# import pprint
 
 # *****************************************************************************
 # Update sys.path to allow importing python files from library and script directory

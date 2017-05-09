@@ -6,7 +6,6 @@ from mLogging import getmLoggerInstance
 from .constants import *
 import json
 import praw
-# import pprint
 
 # *****************************************************************************
 def blSubmissionComments_updateCommentsForSubmission(submission, argDict):
@@ -52,7 +51,7 @@ def blSubmissionComments_updateCommentsForSubmission(submission, argDict):
 
 # def checkComments(comments):
 #   for comment in comments:
-#     print comment.body
+#     logger.info comment.body
 #     checkComments(comment.replies)
 #
 # def processSub(sub):
@@ -132,8 +131,8 @@ def blSubmissionComments_updateCommentsForSubmission(submission, argDict):
     #         else:
     #             countDuplicate += 1
 
-        # # print(comment.body[0:40])
-        # # print(comment.author.name)
+        # # logger.info(comment.body[0:40])
+        # # logger.info(comment.author.name)
         # pprint.pprint(vars(comment))
         # break
 
@@ -164,14 +163,14 @@ def blSubmissionComments_updateCommentsForSubmission(submission, argDict):
 #         else: # Update item as deleted.
 #             item.deleted = True
 #             item.save()
-#             print("subredditSubmissionIndex %s flagged as deleted" % (item.name))
+#             logger.info("subredditSubmissionIndex %s flagged as deleted" % (item.name))
 #
 #
 #     return youngestRV
 #
 # # *****************************************************************************
 # def blSubmissionComments_updateCommentsForSubmission_phase2_submissionIteration(subreddit, argDict):
-#     print("Processing subreddit: %s" % (subreddit.name))
+#     logger.info("Processing subreddit: %s" % (subreddit.name))
 #
 #     # create PRAW reddit instance
 #     reddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
@@ -179,7 +178,7 @@ def blSubmissionComments_updateCommentsForSubmission(submission, argDict):
 #     # get youngest subredditSubmissionIndex in DB if there are any
 #     params={};
 #     params['before'] = blSubmissionComments_getMostValidBeforeValue(subreddit, reddit)
-#     print ("params[before] = %s" % params['before'])
+#     logger.info ("params[before] = %s" % params['before'])
 #
 #     # iterate through submissions saving them
 #     countNew = 0

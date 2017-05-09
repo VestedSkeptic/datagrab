@@ -7,7 +7,7 @@ import pprint
 reddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
 
 comment = reddit.redditor('stp2007').comments.new(limit=1).next()
-print(comment.name) # to make it non-lazy
+logger.info(comment.name) # to make it non-lazy
 pprint.pprint(vars(comment))
 
 # ----------------------------------------------------------------------------
@@ -67,7 +67,7 @@ pprint.pprint(vars(comment))
 # REDDITOR attributes
 # Ex
 # rUser = reddit.redditor('stp2007')
-# print(rUser.name) # to make it non-lazy
+# logger.info(rUser.name) # to make it non-lazy
 # pprint.pprint(vars(rUser))
 {
   '_fetched':           False,
@@ -155,7 +155,7 @@ pprint.pprint(vars(comment))
 # EX:
 # subreddit = reddit.subreddit('redditdev')
 # submission = subreddit.hot(limit=1).next()
-# print(submission.title)  # to make it non-lazy
+# logger.info(submission.title)  # to make it non-lazy
 # pprint.pprint(vars(submission))
 
 {
@@ -245,7 +245,7 @@ pprint.pprint(vars(comment))
 
 
 comment = reddit.redditor('stp2007').comments.new(limit=1).next()
-print(comment.name) # to make it non-lazy
+logger.info(comment.name) # to make it non-lazy
 pprint.pprint(vars(comment))
 
 # ----------------------------------------------------------------------------
