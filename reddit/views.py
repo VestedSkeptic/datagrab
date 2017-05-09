@@ -3,7 +3,8 @@ from .blUserComments import blUserComments_updateForAllUsers
 from .blSubredditSubmissions import blSubredditSubmissions_updateForAllSubreddits
 from .blSubmissionComments import blSubmissionComments_updateForAllSubmissions
 from .models import *
-# from django.shortcuts import render
+from checkInternetStatus import checkInternet
+
 
 # *****************************************************************************
 def main(request):
@@ -14,6 +15,9 @@ def main(request):
     s += '<br><a href="http://localhost:8000/reddit/praw/usfas/">update subreddit submissions</a><br>'
     s += '<br><a href="http://localhost:8000/reddit/praw/ucfas/">update submission comments</a><br>'
     s += displayDatabaseModelCounts()
+
+    checkInternet("http://www.blue.com", True, 2, 1)
+
     return HttpResponse(s)
 
 # *****************************************************************************
