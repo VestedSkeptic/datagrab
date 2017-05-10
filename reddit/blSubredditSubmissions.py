@@ -5,7 +5,7 @@ from mLogging import getmLoggerInstance
 from .constants import *
 import json
 import praw
-# import pprint
+import pprint
 
 # *****************************************************************************
 # if subredditSubmissionIndex exists return it otherwise create it
@@ -44,6 +44,11 @@ def blSubredditSubmissions_getMostValidBeforeValue(subreddit, prawReddit):
             submission = prawReddit.submission(item.name[3:])
             if submission.author != None:
                 youngestRV = item.name
+                # when before value is failing as it was in politics
+                # HERE examine what is in submission as I likely need a better
+                # test then if submission.author != NoneAdapter
+                # pprint.pprint(vars(submission))
+                logger.info(pprint.pformat(vars(submission)))
                 break
             else: # Update item as deleted.
                 item.deleted = True
@@ -57,7 +62,7 @@ def blSubredditSubmissions_getMostValidBeforeValue(subreddit, prawReddit):
 # *****************************************************************************
 def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
     logger = getmLoggerInstance()
-    logger.info("Processing subreddit: %s" % (subreddit.name))
+    # logger.info("Processing subreddit: %s" % (subreddit.name))
 
     # create prawReddit instance
     prawReddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)

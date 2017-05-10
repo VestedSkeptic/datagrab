@@ -58,7 +58,7 @@ class subredditSubmissionIndex(models.Model):
     def __str__(self):
         s = self.subreddit.name
         s += " [" + self.name + "]"
-        s += " [" + self.count + "]"
+        s += " [" + str(self.count) + "]"
         if self.cForestGot:
             s += " (cForestGot = True)"
         else:

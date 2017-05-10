@@ -205,7 +205,7 @@ import praw
 # *****************************************************************************
 def getCommentsByCommentForest(subIndex, argDict, sortOrder):
     logger = getmLoggerInstance()
-    logger.info("Processing subIndex: %s: %s: sortOrder = %s" % (subIndex.subreddit.name, subIndex.name, sortOrder))
+    # logger.debug("Processing subIndex: %s: %s: sortOrder = %s" % (subIndex.subreddit.name, subIndex.name, sortOrder))
 
     # create PRAW prawReddit instance
     prawReddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
@@ -226,7 +226,7 @@ def getCommentsByCommentForest(subIndex, argDict, sortOrder):
                 uuser = None
                 try:
                     uuser = user.objects.get(name=comment.author.name)
-                    logger.debug("user %s exists" % (uuser.name))
+                    # logger.debug("user %s exists" % (uuser.name))
                 except ObjectDoesNotExist:
                     uuser = user(name=comment.author.name, poi=False)
                     uuser.save()
@@ -246,11 +246,11 @@ def getCommentsByCommentForest(subIndex, argDict, sortOrder):
     saveSubIndex = False
     if sortOrder == "new":
         subIndex.cForestGot = True
-        logger.debug("subIndex: %s: %s: cForestGot set to True" % (subIndex.subreddit.name, subIndex.name))
+        logger.debug("%s: %s: cForestGot set to True" % (subIndex.subreddit.name, subIndex.name))
         saveSubIndex = True
     if countNew > 0:
         subIndex.count += countNew
-        logger.debug("subIndex: %s: %s: count set to %d" % (subIndex.subreddit.name, subIndex.name, subIndex.count))
+        logger.debug("%s: %s: count set to %d" % (subIndex.subreddit.name, subIndex.name, subIndex.count))
         saveSubIndex = True
     if saveSubIndex:
         subIndex.save()
@@ -264,13 +264,13 @@ def getCommentsByCommentForest(subIndex, argDict, sortOrder):
 def updateSubIndexComments(subIndex, argDict):
     logger = getmLoggerInstance()
     if not subIndex.cForestGot:
-        logger.debug("New commentForest updating sorted by new")
+        logger.info("%s: %s: New commentForest updating sorted by new" % (subIndex.subreddit.name, subIndex.name))
         getCommentsByCommentForest(subIndex, argDict, "new")
-    elif subIndex.count < 100:
-        logger.debug("Old small commentForest updating sorted by old")
-        getCommentsByCommentForest(subIndex, argDict, "old")
+    # elif subIndex.count < 10:
+    #     logger.debug("%s: %s: Old small commentForest updating sorted by old" % (subIndex.subreddit.name, subIndex.name))
+    #     getCommentsByCommentForest(subIndex, argDict, "old")
     else:
-        logger.debug("Old large commentForest updating by METHOD TO BE IMPLEMENTED LATER")
+        logger.debug("%s: %s: Old large commentForest updating by METHOD TO BE IMPLEMENTED LATER" % (subIndex.subreddit.name, subIndex.name))
 
 # *****************************************************************************
 def blSubmissionComments_updateForAllSubmissions():
