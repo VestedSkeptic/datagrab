@@ -13,6 +13,8 @@ def main(request):
     s += '<br><a href="http://localhost:8000/reddit/praw/usfas/">update subreddit submissions</a><br>'
     s += '<br><a href="http://localhost:8000/reddit/praw/ucfas/">update submission comments</a><br>'
     s += displayDatabaseModelCounts()
+    s += '<br><a href="http://localhost:8000/reddit/praw/dau/">delete all users</a><br>'
+    s += '<br><a href="http://localhost:8000/reddit/praw/das/">delete all subreddits</a><br>'
     return HttpResponse(s)
 
 # *****************************************************************************
@@ -61,10 +63,32 @@ def displayDatabaseModelCounts():
     s += '<BR>Subreddit Submissions = ' + str(subreddits_si)
     s += '<BR>Subreddit Submissions Deleted = ' + str(subreddits_si_deleted)
     s += '<BR>==========================='
-
+    s += '<BR>'
     return s
 
+# *****************************************************************************
+def deleteAllUsers(request):
+    # get all user objects and its count
+    uqs = user.objects.all()
+    uqsCount = uqs.count()
 
+    # delete all user objects
+    uqs.delete()
+
+    s = str(uqsCount) + " users deleted"
+    return HttpResponse(s)
+
+# *****************************************************************************
+def deleteAllSubreddits(request):
+    # get all subreddit objects and its count
+    sqs = subreddit.objects.all()
+    sqsCount = sqs.count()
+
+    # delete all subreddit objects
+    sqs.delete()
+
+    s = str(sqsCount) + " subreddit deleted"
+    return HttpResponse(s)
 
 
 

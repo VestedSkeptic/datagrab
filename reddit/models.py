@@ -21,6 +21,7 @@ class userCommentsIndex(models.Model):
     user        = models.ForeignKey(user, on_delete=models.CASCADE,)
     name        = models.CharField(max_length=12)
     parent_id   = models.CharField(max_length=12)
+    # link_id   = models.CharField(max_length=12)
     deleted     = models.BooleanField(default=False)
     def __str__(self):
         s = self.user.name

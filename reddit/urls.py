@@ -6,6 +6,8 @@ urlpatterns = [
     url(r'^praw/ucfau/$',   views.updateCommentsForAllUsers,            name='updateCommentsForAllUsers'),
     url(r'^praw/usfas/$',   views.updateSubmissionsForAllSubreddits,    name='updateSubmissionsForAllSubreddits'),
     url(r'^praw/ucfas/$',   views.updateCommentsForAllSubmissions,      name='updateCommentsForAllSubmissions'),
+    url(r'^praw/dau/$',     views.deleteAllUsers,                       name='deleteAllUsers'),
+    url(r'^praw/das/$',     views.deleteAllSubreddits,                  name='deleteAllSubreddits'),
 ]
 
 

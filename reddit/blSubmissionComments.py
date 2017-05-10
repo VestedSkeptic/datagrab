@@ -214,9 +214,14 @@ def getCommentsByCommentForest(subIndex, argDict, sortOrder):
     countDuplicate = 0
     countPostsWithNoAuthor = 0
     try:
+        params={};
+
         submissionObject = prawReddit.submission(id=subIndex.name[3:])
         submissionObject.comment_sort = sortOrder
+
         submissionObject.comments.replace_more(limit=None)
+        # submissionObject.comments(params=params).replace_more(limit=None)
+
         for comment in submissionObject.comments.list():
             # See if comment.author.name exists in class user(models.Model):
             # If not add it with poi value set to false.
@@ -230,7 +235,7 @@ def getCommentsByCommentForest(subIndex, argDict, sortOrder):
                 except ObjectDoesNotExist:
                     uuser = user(name=comment.author.name, poi=False)
                     uuser.save()
-                    logger.debug("user %s created" % (uuser.name))
+                    logger.trace("user %s created" % (uuser.name))
 
                 aDict = {'uci' : None, 'isNew' : True }
                 blUserComments_getUserCommentIndex(comment, uuser, aDict)
@@ -263,29 +268,49 @@ def getCommentsByCommentForest(subIndex, argDict, sortOrder):
 # *****************************************************************************
 def updateSubIndexComments(subIndex, argDict):
     logger = getmLoggerInstance()
+
     if not subIndex.cForestGot:
-        logger.info("%s: %s: New commentForest updating sorted by new" % (subIndex.subreddit.name, subIndex.name))
+        logger.trace("%s: %s: New commentForest updating sorted by new" % (subIndex.subreddit.name, subIndex.name))
         getCommentsByCommentForest(subIndex, argDict, "new")
+        argDict['modeCount']['Comment Forest New'] += 1
     # elif subIndex.count < 10:
     #     logger.debug("%s: %s: Old small commentForest updating sorted by old" % (subIndex.subreddit.name, subIndex.name))
     #     getCommentsByCommentForest(subIndex, argDict, "old")
+        # argDict['modeCount']['Comment Forest Old'] += 1
+                    # THIS HACK NOT VALID, SUBMISSION UPDATED AND HAS NEW COUNT NOW
+                    # elif subIndex.count == 260:  #HACK THERE IS ONE ITEM WITH 260 COUNT IN IT, USING IT TO TEST IMPLEMENTATION OF ...
+                    #     logger.debug("%s: %s: Old small commentForest updating sorted by old" % (subIndex.subreddit.name, subIndex.name))
+                    #     getCommentsByCommentForest(subIndex, argDict, "old")
+                    #     argDict['modeCount']['Comment Forest Old'] += 1
     else:
-        logger.debug("%s: %s: Old large commentForest updating by METHOD TO BE IMPLEMENTED LATER" % (subIndex.subreddit.name, subIndex.name))
+        logger.trace("%s: %s: Old large commentForest updating by METHOD TO BE IMPLEMENTED LATER" % (subIndex.subreddit.name, subIndex.name))
+        argDict['modeCount']['Method To Be Implemented Later'] += 1
 
 # *****************************************************************************
 def blSubmissionComments_updateForAllSubmissions():
     logger = getmLoggerInstance()
     logger.info("=====================================================")
+    logger.info("blSubmissionComments_updateForAllSubmissions()")
     rv = "<B>PRAW</B> blSubmissionComments_updateForAllSubmissions<BR>"
 
     submissionsIndexObjects =subredditSubmissionIndex.objects.filter(deleted=False).order_by('subreddit__name')
     if submissionsIndexObjects.count() == 0:
         rv += "<BR> No Submissions found"
     else:
+        argDict = {'rv': "", 'modeCount': {'Comment Forest New' : 0, 'Comment Forest Old' : 0, 'Method To Be Implemented Later' : 0, }}
         for subIndex in submissionsIndexObjects:
-            argDict = {'rv': ""}
             updateSubIndexComments(subIndex, argDict)
-            rv += argDict['rv']
+        rv += argDict['rv']
+
+        s_temp = "Comment Forest New count" + " = " + str(argDict['modeCount']['Comment Forest New'])
+        logger.info(s_temp)
+        rv += "<br>" + s_temp
+        s_temp = "Comment Forest Old count" + " = " + str(argDict['modeCount']['Comment Forest Old'])
+        logger.info(s_temp)
+        rv += "<br>" + s_temp
+        s_temp = "Method To Be Implemented Later count" + " = " + str(argDict['modeCount']['Method To Be Implemented Later'])
+        logger.info(s_temp)
+        rv += "<br>" + s_temp
 
     logger.info("=====================================================")
     return HttpResponse(rv)

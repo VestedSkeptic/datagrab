@@ -21,8 +21,8 @@ sys.path.insert(0, "/home/delta/work/scriptsPython") # first value is index, set
 from mLogging import mLogging_init #, getmLoggerInstance
 
 consoleLoggingLevel = logging.INFO
-# fileLoggingLevel    = logging.DEBUG
-fileLoggingLevel    = logging.TRACE
+fileLoggingLevel    = logging.DEBUG
+# fileLoggingLevel    = logging.TRACE
 
 mLogging_init("django_logger", consoleLoggingLevel, fileLoggingLevel, "out.txt")
 
