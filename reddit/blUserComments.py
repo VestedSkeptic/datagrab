@@ -15,7 +15,7 @@ def blUserComments_getUserCommentIndex(comment, user, aDict):
         uci = userCommentsIndex.objects.get(user=user, name=comment.name)
         aDict['isNew'] = False
     except ObjectDoesNotExist:
-        uci = userCommentsIndex(user=user, name=comment.name, parent_id=comment.parent_id)
+        uci = userCommentsIndex(user=user, name=comment.name, parent_id=comment.parent_id, submission_id=comment.link_id)
         uci.save()
     aDict['uci'] = uci
     return
