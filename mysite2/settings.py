@@ -9,21 +9,8 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
-# # *****************************************************************************
-# # Update sys.path to allow importing python files from library and script directory
-# import sys
-# sys.path.insert(0, "/home/delta/work/scriptsPython") # first value is index, setting to zero puts this path in front of existing paths
-#
-# # *****************************************************************************
-# # Instantiate logging module
-# from mLogging import mLogging_init, getmLoggerInstance
-# mLogging_init("django_logger", "INFO", "out.txt")
-# logger = getmLoggerInstance()
-# # logger.debug("sys.path = %s" % sys.path)
-#
-# # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/

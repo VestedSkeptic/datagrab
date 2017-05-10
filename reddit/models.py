@@ -6,17 +6,14 @@ from .constants import *
 class user(models.Model):
     name        = models.CharField(max_length=30)
     poi         = models.BooleanField(default=False)
-    # True if users comment history was previously retrieved with
-    # an empty before value
+    # True if users comment history was previously retrieved with an empty before value
     cHistoryGot = models.BooleanField(default=False)
     def __str__(self):
         s = self.name
         if self.poi:
             s += " (poi)"
-        if self.cHistoryGot:
-            s += " (cHistoryGot = True)"
-        else:
-            s += " (cHistoryGot = False)"
+        if self.cHistoryGot: s += " (cHistoryGot = True)"
+        else:                s += " (cHistoryGot = False)"
         return format(s)
 
 # *****************************************************************************
@@ -52,17 +49,12 @@ class subredditSubmissionIndex(models.Model):
     deleted     = models.BooleanField(default=False)
     cForestGot  = models.BooleanField(default=False)
     count       = models.PositiveIntegerField(default=0)
-    # PROBABLY WANT TO ADD BOOLEAN FIELD (DEFAULT = FALSE)
-    # SPECIFYING WHETHER THIS ITEM HAS GONE THROUGH  one time
-    # REDDIT.SUBMISSION -> SUBMISSION.OBJECT.COMMETNS. REPLACE -> SUBMISSIONOBJECTCOMMENTS
     def __str__(self):
         s = self.subreddit.name
         s += " [" + self.name + "]"
         s += " [" + str(self.count) + "]"
-        if self.cForestGot:
-            s += " (cForestGot = True)"
-        else:
-            s += " (cForestGot = False)"
+        if self.cForestGot: s += " (cForestGot = True)"
+        else:               s += " (cForestGot = False)"
         return format(s)
 
 # *****************************************************************************

@@ -48,7 +48,7 @@ def blSubredditSubmissions_getMostValidBeforeValue(subreddit, prawReddit):
                 # HERE examine what is in submission as I likely need a better
                 # test then if submission.author != NoneAdapter
                 # pprint.pprint(vars(submission))
-                logger.info(pprint.pformat(vars(submission)))
+                logger.trace(pprint.pformat(vars(submission)))
                 break
             else: # Update item as deleted.
                 item.deleted = True
