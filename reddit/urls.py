@@ -8,6 +8,8 @@ urlpatterns = [
     url(r'^praw/ucfas/$',   views.updateCommentsForAllSubmissions,      name='updateCommentsForAllSubmissions'),
     url(r'^praw/dau/$',     views.deleteAllUsers,                       name='deleteAllUsers'),
     url(r'^praw/das/$',     views.deleteAllSubreddits,                  name='deleteAllSubreddits'),
+
+    url(r'^praw/pch/(?P<hLevel>\w+)/$',     views.parseCommentHeirarchy,                name='parseCommentHeirarchy'),
 ]
 
 

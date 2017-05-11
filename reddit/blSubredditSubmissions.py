@@ -97,6 +97,7 @@ def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
 def blSubredditSubmissions_updateForAllSubreddits():
     logger = getmLoggerInstance()
     logger.info("=====================================================")
+    logger.info("blSubredditSubmissions_updateForAllSubreddits")
     rv = "<B>PRAW</B> blSubredditSubmissions_updateForAllSubreddits<BR>"
 
     subreddits = subreddit.objects.all()

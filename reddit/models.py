@@ -27,6 +27,7 @@ class userCommentsIndex(models.Model):
         s = self.user.name
         s += " [" + self.name + "]"
         s += " [submisson_id=" + self.submission_id + "]"
+        s += " [parent_id=" + self.parent_id + "]"
         return format(s)
 
 # *****************************************************************************

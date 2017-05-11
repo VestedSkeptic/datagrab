@@ -5,7 +5,7 @@ from mLogging import getmLoggerInstance
 from .constants import *
 import json
 import praw
-# import pprint
+import pprint
 
 # *****************************************************************************
 # if userCommentsIndex exists return it otherwise create it
@@ -102,6 +102,7 @@ def blUserComments_updateCommentsForUser(user, argDict):
 def blUserComments_updateForAllUsers():
     logger = getmLoggerInstance()
     logger.info("=====================================================")
+    logger.info("blUserComments_updateForAllUsers")
     rv = "<B>PRAW</B> blUserComments_updateForAllUsers<BR>"
 
     users = user.objects.filter(poi=True)
@@ -115,6 +116,64 @@ def blUserComments_updateForAllUsers():
     logger.info("=====================================================")
     return HttpResponse(rv)
 
+# *****************************************************************************
+def getDictOfCommentsAtLevel(submissionName, hLevel):
+    logger = getmLoggerInstance()
+    logger.info("submissioName = %s" %(submissionName))
+    logger.info("hLevel = %d" %(hLevel))
+
+    levelCount = 0
+    listOfParents = [submissionName]
+    resultsDict = {}
+
+    while levelCount <= hLevel:
+        logger.info("listOfParents = %s" % (pprint.pformat(listOfParents)))
+
+        # Get all userCommentsIndex which have a parent_id in listOfParents
+        qs = userCommentsIndex.objects.filter(submission_id=submissionName).filter(parent_id__in=listOfParents).order_by('name')
+        # qs = userCommentsIndex.objects.filter(parent_id__in=listOfParents).order_by('name')
+        logger.info("qs.count() = %d" % (qs.count()))
+
+        # clear listOfParents
+        del listOfParents[:]
+
+        for item in qs:
+            if (levelCount == hLevel):
+                resultsDict[item.name] = 0;
+            else:
+                listOfParents.append(item.name)
+
+
+            # logger.info("%s: (parent_id = %s) is in list %s " %(item.name, item.parent_id, pprint.pformat(listOfParents)))
+
+        levelCount += 1
+
+
+    logger.info("----------------------------------------------------")
+    logger.info("levelCount = %d" % (levelCount))
+    logger.info("hLevel = %d" % (hLevel))
+    logger.info("listOfParents = %s" % (pprint.pformat(listOfParents)))
+    logger.info("resultsDict = %s" % (pprint.pformat(resultsDict)))
+
+
+
+
+
+    return {}
+
+# *****************************************************************************
+def getHierarchyOfCommentsAtLevel(submissionName, hLevel):
+    logger = getmLoggerInstance()
+    logger.info("=====================================================")
+    logger.info("getHierarchyOfCommentsAtLevel")
+    rv = "<B>PRAW</B> getHierarchyOfCommentsAtLevel<BR>"
+
+    dictOfResults = getDictOfCommentsAtLevel(submissionName, hLevel)
+    logger.debug(pprint.pformat(dictOfResults))
+
+    logger.info("=====================================================")
+
+    return HttpResponse(rv)
 
 
 

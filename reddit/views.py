@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from .blUserComments import blUserComments_updateForAllUsers
+from .blUserComments import blUserComments_updateForAllUsers, getHierarchyOfCommentsAtLevel
 from .blSubredditSubmissions import blSubredditSubmissions_updateForAllSubreddits
 from .blSubmissionComments import blSubmissionComments_updateForAllSubmissions
 from .models import *
@@ -12,7 +12,23 @@ def main(request):
     s += '<br><a href="http://localhost:8000/reddit/praw/ucfau/">update user comments</a><br>'
     s += '<br><a href="http://localhost:8000/reddit/praw/usfas/">update subreddit submissions</a><br>'
     s += '<br><a href="http://localhost:8000/reddit/praw/ucfas/">update submission comments</a><br>'
-    s += displayDatabaseModelCounts()
+
+    s += '<br><b>ParseCommentHeirarchy: </b>'
+    s += '<a href="http://localhost:8000/reddit/praw/pch/0">0</a>, '
+    s += '<a href="http://localhost:8000/reddit/praw/pch/1">1</a>, '
+    s += '<a href="http://localhost:8000/reddit/praw/pch/2">2</a>, '
+    s += '<a href="http://localhost:8000/reddit/praw/pch/3">3</a>, '
+    s += '<a href="http://localhost:8000/reddit/praw/pch/4">4</a>, '
+    s += '<a href="http://localhost:8000/reddit/praw/pch/5">5</a>, '
+    s += '<a href="http://localhost:8000/reddit/praw/pch/6">6</a>, '
+    s += '<a href="http://localhost:8000/reddit/praw/pch/7">7</a>, '
+    s += '<a href="http://localhost:8000/reddit/praw/pch/8">8</a>, '
+    s += '<a href="http://localhost:8000/reddit/praw/pch/9">9</a>, '
+    s += '<a href="http://localhost:8000/reddit/praw/pch/10">10</a>, '
+    s += '<a href="http://localhost:8000/reddit/praw/pch/11">11</a>, '
+    s += '<a href="http://localhost:8000/reddit/praw/pch/12">12</a>, '
+
+    s += '<br>' + displayDatabaseModelCounts()
     s += '<br><a href="http://localhost:8000/reddit/praw/dau/">delete all users</a><br>'
     s += '<br><a href="http://localhost:8000/reddit/praw/das/">delete all subreddits</a><br>'
     return HttpResponse(s)
@@ -90,6 +106,17 @@ def deleteAllSubreddits(request):
     s = str(sqsCount) + " subreddit deleted"
     return HttpResponse(s)
 
+# *****************************************************************************
+def parseCommentHeirarchy(request, hLevel):
+
+    # for testing purposes get submissionIndex with MOST number of comments
+    sIndex = subredditSubmissionIndex.objects.filter(cForestGot=True).order_by('-count')
+
+    for item in sIndex:
+        s = getHierarchyOfCommentsAtLevel(item.name, int(hLevel))
+        break # as we are only doing one item for now
+
+    return HttpResponse(s)
 
 
 
