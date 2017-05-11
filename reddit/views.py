@@ -1,6 +1,6 @@
 from django.http import HttpResponse
-from .blUserComments import blUserComments_updateForAllUsers, getHierarchyOfCommentsAtLevel
-from .blSubredditSubmissions import blSubredditSubmissions_updateForAllSubreddits
+from .blUserComments import blUserComments_updateForAllUsers, getHierarchyOfCommentsAtLevel, blUserComments_deleteAll, blUserComments_addUser
+from .blSubredditSubmissions import blSubredditSubmissions_updateForAllSubreddits, blSubredditSubmissions_deleteAllSubreddits, blSubredditSubmissions_addSubreddit
 from .blSubmissionComments import blSubmissionComments_updateForAllSubmissions
 from .models import *
 
@@ -8,12 +8,12 @@ from .models import *
 def main(request):
     s  = ''
     s += '<br><b>PRAW</b><br>'
-    s += '<br><a href="http://localhost:8000/admin/reddit/">admin</a><br>'
-    s += '<br><a href="http://localhost:8000/reddit/praw/ucfau/">update user comments</a><br>'
-    s += '<br><a href="http://localhost:8000/reddit/praw/usfas/">update subreddit submissions</a><br>'
-    s += '<br><a href="http://localhost:8000/reddit/praw/ucfas/">update submission comments</a><br>'
+    s += '<br><a href="http://localhost:8000/admin/reddit/">admin</a>'
+    s += '<br><a href="http://localhost:8000/reddit/praw/ucfau/">update user comments</a>'
+    s += '<br><a href="http://localhost:8000/reddit/praw/usfas/">update subreddit submissions</a>'
+    s += '<br><a href="http://localhost:8000/reddit/praw/ucfas/">update submission comments</a>'
 
-    s += '<br><b>ParseCommentHeirarchy: </b>'
+    s += '<br><br><b>ParseCommentHeirarchy: </b>'
     s += '<a href="http://localhost:8000/reddit/praw/pch/0">0</a>, '
     s += '<a href="http://localhost:8000/reddit/praw/pch/1">1</a>, '
     s += '<a href="http://localhost:8000/reddit/praw/pch/2">2</a>, '
@@ -29,8 +29,15 @@ def main(request):
     s += '<a href="http://localhost:8000/reddit/praw/pch/12">12</a>, '
 
     s += '<br>' + displayDatabaseModelCounts()
-    s += '<br><a href="http://localhost:8000/reddit/praw/dau/">delete all users</a><br>'
-    s += '<br><a href="http://localhost:8000/reddit/praw/das/">delete all subreddits</a><br>'
+
+    s += '<br><b>Delete: '
+    s += ' <a href="http://localhost:8000/reddit/praw/dau/">users</a>'
+    s += ' <a href="http://localhost:8000/reddit/praw/das/">subreddits</a>'
+    s += ' <a href="http://localhost:8000/reddit/praw/da/">all</a><br>'
+    s += '<br><b>Add: '
+    s += ' <a href="http://localhost:8000/reddit/praw/auser/OldDevLearningPython">user OldDevLearningPython</a>'
+    s += ' <a href="http://localhost:8000/reddit/praw/asub/molw">subreddit molw</a>'
+    s += ' <a href="http://localhost:8000/reddit/praw/aboth/OldDevLearningPython/molw">both</a><br>'
     return HttpResponse(s)
 
 # *****************************************************************************
@@ -84,26 +91,19 @@ def displayDatabaseModelCounts():
 
 # *****************************************************************************
 def deleteAllUsers(request):
-    # get all user objects and its count
-    uqs = user.objects.all()
-    uqsCount = uqs.count()
-
-    # delete all user objects
-    uqs.delete()
-
-    s = str(uqsCount) + " users deleted"
+    s = blUserComments_deleteAll()
     return HttpResponse(s)
 
 # *****************************************************************************
 def deleteAllSubreddits(request):
-    # get all subreddit objects and its count
-    sqs = subreddit.objects.all()
-    sqsCount = sqs.count()
+    s = blSubredditSubmissions_deleteAllSubreddits()
+    return HttpResponse(s)
 
-    # delete all subreddit objects
-    sqs.delete()
-
-    s = str(sqsCount) + " subreddit deleted"
+# *****************************************************************************
+def deleteAll(request):
+    s = blUserComments_deleteAll()
+    s += "<br>"
+    s += blSubredditSubmissions_deleteAllSubreddits()
     return HttpResponse(s)
 
 # *****************************************************************************
@@ -116,6 +116,23 @@ def parseCommentHeirarchy(request, hLevel):
         s = getHierarchyOfCommentsAtLevel(item.name, int(hLevel))
         break # as we are only doing one item for now
 
+    return HttpResponse(s)
+
+# *****************************************************************************
+def addUser(request, uname):
+    s = blUserComments_addUser(uname)
+    return HttpResponse(s)
+
+# *****************************************************************************
+def addSub(request, sname):
+    s = blSubredditSubmissions_addSubreddit(sname)
+    return HttpResponse(s)
+
+# *****************************************************************************
+def addBoth(request, uname, sname):
+    s = blUserComments_addUser(uname)
+    s += "<br>"
+    s += blSubredditSubmissions_addSubreddit(sname)
     return HttpResponse(s)
 
 

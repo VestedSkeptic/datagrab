@@ -119,10 +119,31 @@ def blSubredditSubmissions_updateForAllSubreddits():
     logger.info("=====================================================")
     return HttpResponse(rv)
 
+# *****************************************************************************
+def blSubredditSubmissions_deleteAllSubreddits():
+    logger = getmLoggerInstance()
+    s = "blSubredditSubmissions_deleteAllSubreddits(): "
+    sqs = subreddit.objects.all()
+    sqsCount = sqs.count()
+    # delete all subreddit objects
+    sqs.delete()
+    s += str(sqsCount) + " subreddits deleted"
+    logger.info(s)
+    return s
 
-
-
-
+# *****************************************************************************
+def blSubredditSubmissions_addSubreddit(sname):
+    logger = getmLoggerInstance()
+    s = "blSubredditSubmissions_addSubreddit(" + sname + "): "
+    try:
+        subreddit.objects.get(name=sname)
+        s += "already exists"
+    except ObjectDoesNotExist:
+        sr = subreddit(name=sname)
+        sr.save()
+        s += "added"
+    logger.info(s)
+    return s
 
 
 

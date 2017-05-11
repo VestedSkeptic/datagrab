@@ -154,11 +154,6 @@ def getDictOfCommentsAtLevel(submissionName, hLevel):
     logger.info("hLevel = %d" % (hLevel))
     logger.info("listOfParents = %s" % (pprint.pformat(listOfParents)))
     logger.info("resultsDict = %s" % (pprint.pformat(resultsDict)))
-
-
-
-
-
     return {}
 
 # *****************************************************************************
@@ -174,6 +169,32 @@ def getHierarchyOfCommentsAtLevel(submissionName, hLevel):
     logger.info("=====================================================")
 
     return HttpResponse(rv)
+
+# *****************************************************************************
+def blUserComments_deleteAll():
+    logger = getmLoggerInstance()
+    s = "blUserComments_deleteAll(): "
+    uqs = user.objects.all()
+    uqsCount = uqs.count()
+    # delete all user objects
+    uqs.delete()
+    s += str(uqsCount) + " users deleted"
+    logger.info(s)
+    return s
+
+# *****************************************************************************
+def blUserComments_addUser(uname):
+    logger = getmLoggerInstance()
+    s = "blUserComments_addUser(" + uname + "): "
+    try:
+        user.objects.get(name=uname)
+        s += "already exists"
+    except ObjectDoesNotExist:
+        us = user(name=uname, poi=True)
+        us.save()
+        s += "added"
+    logger.info(s)
+    return s
 
 
 
