@@ -24,12 +24,20 @@ def blSubredditSubmissions_getsubredditSubmissionIndex(submission, subreddit, aD
 # if subredditSubmissionRaw does not exist save it.
 # TODO else compare appropriate fields, if any differences record appropriately
 def blSubredditSubmissions_savesubredditSubmissionRaw(submission, ssi):
+    # logger = getmLoggerInstance()
     stRaw = None
     try:
         stRaw = subredditSubmissionRaw.objects.get(ssi=ssi)
     except ObjectDoesNotExist:
-        # vars converts submission to json dict which can be saved to DB
+        # # vars converts submission to json dict which can be saved to DB
+        # ts = submission
+        # logger.debug("ts.subreddit type = %s " % (type(ts.subreddit)))
+        # logger.debug("ts.author type = %s" % (type(ts.author)))
+        # logger.debug("ts._reddit type = %s" % (type(ts._reddit)))
+
         stRaw = subredditSubmissionRaw(ssi=ssi, data=vars(submission))
+        # stRaw = subredditSubmissionRaw(ssi=ssi, data=json.dumps(vars(submission)))
+        # stRaw = subredditSubmissionRaw(ssi=ssi, data=json.dumps(submission))
         stRaw.save()
     return
 

@@ -6,8 +6,7 @@ from .constants import *
 class user(models.Model):
     name            = models.CharField(max_length=30)
     poi             = models.BooleanField(default=False)
-    # True if users comment history was previously retrieved with an empty before value
-    cHistoryGot = models.BooleanField(default=False)
+    cHistoryGot     = models.BooleanField(default=False)
     def __str__(self):
         s = self.name
         if self.poi:
@@ -66,11 +65,17 @@ class subredditSubmissionRaw(models.Model):
     data            = models.TextField()
     def __str__(self):
         s = self.ssi.subreddit.name
+        s += ": " + self.data
         return format(s)
 
 
 
 
+
+
+# , 'subreddit': Subreddit(display_name='molw')
+# , 'author': Redditor(name='OldDevLearningLinux')
+# , '_reddit': <praw.reddit.Reddit object at 0x7f13453b1ad0>
 
 
 
