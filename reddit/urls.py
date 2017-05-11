@@ -10,11 +10,15 @@ urlpatterns = [
     url(r'^praw/das/$',     views.deleteAllSubreddits,                  name='deleteAllSubreddits'),
     url(r'^praw/da/$',      views.deleteAll,                            name='deleteAll'),
 
-    url(r'^praw/auser/(?P<uname>\w+)/$', views.addUser,                  name='addUser'),
-    url(r'^praw/asub/(?P<sname>\w+)/$',  views.addSub,                   name='addSub'),
-    url(r'^praw/aboth/(?P<uname>\w+)/(?P<sname>\w+)/$', views.addBoth,   name='addBoth'),
+    url(r'^praw/auser/(?P<uname>\w+)/$', views.addUser,                 name='addUser'),
+    url(r'^praw/asub/(?P<sname>\w+)/$',  views.addSub,                  name='addSub'),
+    url(r'^praw/aboth/(?P<uname>\w+)/(?P<sname>\w+)/$', views.addBoth,  name='addBoth'),
 
     url(r'^praw/pch/(?P<hLevel>\w+)/$', views.parseCommentHeirarchy,    name='parseCommentHeirarchy'),
+
+    url(r'^praw/ssfe/$',    views.deleteAllSSFE,                        name='deleteAllSSFE'),
+
+    url(r'^praw/usrsfe/$',  views.updateSSFE,                           name='updateSSFE'),
 ]
 
 

@@ -1,13 +1,12 @@
 from django.http import HttpResponse
 from .blUserComments import blUserComments_updateForAllUsers, getHierarchyOfCommentsAtLevel, blUserComments_deleteAll, blUserComments_addUser
-from .blSubredditSubmissions import blSubredditSubmissions_updateForAllSubreddits, blSubredditSubmissions_deleteAllSubreddits, blSubredditSubmissions_addSubreddit
+from .blSubredditSubmissions import blSubredditSubmissions_updateForAllSubreddits, blSubredditSubmissions_deleteAllSubreddits, blSubredditSubmissions_addSubreddit, blSubredditSubmissions_deleteAll_SSFE, blSubredditSubmissions_updateAll_SSFE
 from .blSubmissionComments import blSubmissionComments_updateForAllSubmissions
 from .models import *
 
 # *****************************************************************************
 def main(request):
     s  = ''
-    s += '<br><b>PRAW</b><br>'
     s += '<br><a href="http://localhost:8000/admin/reddit/">admin</a>'
     s += '<br><a href="http://localhost:8000/reddit/praw/ucfau/">update user comments</a>'
     s += '<br><a href="http://localhost:8000/reddit/praw/usfas/">update subreddit submissions</a>'
@@ -28,16 +27,23 @@ def main(request):
     s += '<a href="http://localhost:8000/reddit/praw/pch/11">11</a>, '
     s += '<a href="http://localhost:8000/reddit/praw/pch/12">12</a>, '
 
+    s += '<br>'
+    s += '<br><a href="http://localhost:8000/reddit/praw/usrsfe/">update subredditSubmissionFieldsExtracted</a>'
+
     s += '<br>' + displayDatabaseModelCounts()
 
     s += '<br><b>Delete: '
     s += ' <a href="http://localhost:8000/reddit/praw/dau/">users</a>'
     s += ' <a href="http://localhost:8000/reddit/praw/das/">subreddits</a>'
-    s += ' <a href="http://localhost:8000/reddit/praw/da/">all</a><br>'
+    s += ' <a href="http://localhost:8000/reddit/praw/da/">all</a>'
     s += '<br><b>Add: '
     s += ' <a href="http://localhost:8000/reddit/praw/auser/OldDevLearningPython">user OldDevLearningPython</a>'
     s += ' <a href="http://localhost:8000/reddit/praw/asub/molw">subreddit molw</a>'
-    s += ' <a href="http://localhost:8000/reddit/praw/aboth/OldDevLearningPython/molw">both</a><br>'
+    s += ' <a href="http://localhost:8000/reddit/praw/aboth/OldDevLearningPython/molw">both</a>'
+    s += '<br><b>Delete: '
+    s += ' <a href="http://localhost:8000/reddit/praw/ssfe/">subredditSubmissionFieldsExtracted</a>'
+    # s += ' <a href="http://localhost:8000/reddit/praw/das/">subreddits</a>'
+    # s += ' <a href="http://localhost:8000/reddit/praw/da/">all</a><br>'
     return HttpResponse(s)
 
 # *****************************************************************************
@@ -135,8 +141,15 @@ def addBoth(request, uname, sname):
     s += blSubredditSubmissions_addSubreddit(sname)
     return HttpResponse(s)
 
+# *****************************************************************************
+def deleteAllSSFE(request):
+    s = blSubredditSubmissions_deleteAll_SSFE()
+    return HttpResponse(s)
 
-
+# *****************************************************************************
+def updateSSFE(request):
+    s = blSubredditSubmissions_updateAll_SSFE()
+    return HttpResponse(s)
 
 
 

@@ -174,10 +174,10 @@ def getHierarchyOfCommentsAtLevel(submissionName, hLevel):
 def blUserComments_deleteAll():
     logger = getmLoggerInstance()
     s = "blUserComments_deleteAll(): "
-    uqs = user.objects.all()
-    uqsCount = uqs.count()
+    qs = user.objects.all()
+    uqsCount = qs.count()
     # delete all user objects
-    uqs.delete()
+    qs.delete()
     s += str(uqsCount) + " users deleted"
     logger.info(s)
     return s

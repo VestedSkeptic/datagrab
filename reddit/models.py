@@ -68,8 +68,33 @@ class subredditSubmissionRaw(models.Model):
         s += ": " + self.data
         return format(s)
 
+# *****************************************************************************
+class subredditSubmissionFieldsExtracted(models.Model):
+    ssi             = models.OneToOneField(subredditSubmissionIndex, primary_key=True)
 
+    author          = models.CharField(max_length=21)
+    created_utc     = models.DateTimeField()
+    is_self         = models.BooleanField()
+    title           = models.CharField(max_length=301)
+    selftext        = models.TextField()
 
+    def __str__(self):
+        s = self.ssi.subreddit.name
+        s += ": " + self.title
+        return format(s)
+
+# *****************************************************************************
+def getDictOfClassModelFieldNames(classModel):
+    rvDict = {}
+    fields = classModel._meta.get_fields()
+    for field in fields:
+        rvDict[field.name] = None
+    return rvDict
+
+# *****************************************************************************
+def getFieldValueFromRawData(fieldName, rawData):
+    rv = None
+    return rv
 
 
 

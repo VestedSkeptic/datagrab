@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
-from .models import subreddit, subredditSubmissionIndex, subredditSubmissionRaw
+from .models import subreddit, subredditSubmissionIndex, subredditSubmissionRaw, subredditSubmissionFieldsExtracted, getDictOfClassModelFieldNames, getFieldValueFromRawData
 from mLogging import getmLoggerInstance
 from .constants import *
 import json
@@ -123,10 +123,10 @@ def blSubredditSubmissions_updateForAllSubreddits():
 def blSubredditSubmissions_deleteAllSubreddits():
     logger = getmLoggerInstance()
     s = "blSubredditSubmissions_deleteAllSubreddits(): "
-    sqs = subreddit.objects.all()
-    sqsCount = sqs.count()
+    qs = subreddit.objects.all()
+    sqsCount = qs.count()
     # delete all subreddit objects
-    sqs.delete()
+    qs.delete()
     s += str(sqsCount) + " subreddits deleted"
     logger.info(s)
     return s
@@ -145,7 +145,62 @@ def blSubredditSubmissions_addSubreddit(sname):
     logger.info(s)
     return s
 
+# *****************************************************************************
+def blSubredditSubmissions_deleteAll_SSFE():
+    logger = getmLoggerInstance()
+    s = "blSubredditSubmissions_deleteAll_SSFE(): "
+    qs = subredditSubmissionFieldsExtracted.objects.all()
+    sqsCount = qs.count()
+    # delete all subredditSubmissionFieldsExtracted objects
+    qs.delete()
+    s += str(sqsCount) + " deleted"
+    logger.info(s)
+    return s
 
+# *****************************************************************************
+def blSubredditSubmissions_updateAll_SSFE():
+    logger = getmLoggerInstance()
+    s = "blSubredditSubmissions_updateAll_SSFE(): "
+
+    qs = subredditSubmissionRaw.objects.all()
+
+    rawCount = qs.count()
+    countExists = 0
+    countNew = 0
+    for rawSubmissonItem in qs:
+        try:
+            subredditSubmissionFieldsExtracted.objects.get(ssi=rawSubmissonItem.ssi)
+            countExists += 1
+        except ObjectDoesNotExist:
+            fnDict = getDictOfClassModelFieldNames(subredditSubmissionFieldsExtracted)
+            # if ssi is in fnDict remove it
+            if 'ssi' in fnDict: del fnDict['ssi']
+            # logger.info(pprint.pformat(fnDict))
+
+            # get values for each field from
+            for k in fnDict:
+                # logger.info(k)
+                fnDict[k] = getFieldValueFromRawData(k, rawSubmissonItem.data)
+                logger.info("BLUEBLUEBLUE: %s" % (rawSubmissonItem.data))
+
+                if fnDict[k] == None:
+                    # data retreival failed
+                    pass
+
+
+
+            # sr = subreddit(**fnDict)
+            # sr.save()
+            countNew += 1
+
+
+
+    s += "rawCount = " + str(rawCount)
+    s += ", countExists = " + str(countExists)
+    s += ", countNew = " + str(countNew)
+
+    logger.info(s)
+    return s
 
 
 
