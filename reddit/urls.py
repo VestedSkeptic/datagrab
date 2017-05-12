@@ -1,5 +1,6 @@
 from django.conf.urls import url
 from . import views
+from . import vBase
 
 urlpatterns = [
     url(r'^praw/$',         views.main,                                 name='main'),
@@ -19,6 +20,17 @@ urlpatterns = [
     url(r'^praw/ssfe/$',    views.deleteAllSSFE,                        name='deleteAllSSFE'),
 
     url(r'^praw/usrsfe/$',  views.updateSSFE,                           name='updateSSFE'),
+
+
+
+
+
+
+
+
+    url(r'^vBase/main/$',                   vBase.main,                 name='vBase_main'),
+    url(r'^vBase/main/(?P<xData>\w+)/$',    vBase.main,                 name='vBase_main'),
+    url(r'^vBase/test/$',                   vBase.test,                 name='vBase_test'),
 ]
 
 
