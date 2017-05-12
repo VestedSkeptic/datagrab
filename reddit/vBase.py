@@ -19,33 +19,24 @@ from mLogging import getmLoggerInstance
 # *****************************************************************************
 def main(request, xData=None):
     logger = getmLoggerInstance()
-    s  = 'vBase.main:<br>'
+    vs  = 'vBase.main:'
 
 
-    moreData = request.session.get(xData, None)
-    if moreData:
-        s += moreData
-        del request.session[xData]
-    # logger.info("moreData = %s" % (moreData))
+    moreData = request.session.get(xData, '')
+    vs += moreData
 
-
-
-    s += '<br><a href="http://localhost:8000/reddit/vBase/test">vBase test</a>'
-    return HttpResponse(s)
+    vs += '<br><a href="http://localhost:8000/reddit/vBase/test">vBase test</a>'
+    return HttpResponse(vs)
 
 # *****************************************************************************
 def test(request):
-    s  = 'vBase.tests:<br>'
-    s += '<br>'
+    vs  = '<br>vBase.tests:'
+    vs += "<br>EXTRA DATA PASSED THROUGH SESSION from test"
+    vs += "<br>line 2"
+    vs += "<br>line 3"
 
     sessionKey = 'blue'
-
-    request.session[sessionKey] = "<br>EXTRA DATA PASSED THROUGH SESSION"
-    request.session[sessionKey] += "<br>line 2"
-    request.session[sessionKey] += "<br>line 3"
-
-
-
+    request.session[sessionKey] = vs
     return redirect('vBase_main', xData=sessionKey)
 
 

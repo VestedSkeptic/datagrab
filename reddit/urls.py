@@ -28,9 +28,9 @@ urlpatterns = [
 
 
 
-    url(r'^vBase/main/$',                   vBase.main,                 name='vBase_main'),
-    url(r'^vBase/main/(?P<xData>\w+)/$',    vBase.main,                 name='vBase_main'),
-    url(r'^vBase/test/$',                   vBase.test,                 name='vBase_test'),
+    url(r'^vBase/main/$',                       vBase.main,             name='vBase_main'),
+    url(r'^vBase/main/xData/(?P<xData>\w+)/$',  vBase.main,             name='vBase_main'),
+    url(r'^vBase/test/$',                       vBase.test,             name='vBase_test'),
 ]
 
 
