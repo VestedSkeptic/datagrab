@@ -40,7 +40,9 @@ def test(request):
 
     sessionKey = 'blue'
 
-    request.session[sessionKey] = "EXTRA DATA PASSED THROUGH SESSION"
+    request.session[sessionKey] = "<br>EXTRA DATA PASSED THROUGH SESSION"
+    request.session[sessionKey] += "<br>line 2"
+    request.session[sessionKey] += "<br>line 3"
 
 
 
