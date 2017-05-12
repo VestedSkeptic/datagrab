@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 from django.db import models
-from .constants import *
+# from .constants import *
 
 # *****************************************************************************
 class user(models.Model):

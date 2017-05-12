@@ -3,7 +3,6 @@ mysite2env/*
 *.pyo
 __pycache__
 migrations
-.tags*
 .fuse*
 out.txt
 
