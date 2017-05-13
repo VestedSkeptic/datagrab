@@ -18,7 +18,7 @@ def list(request):
 
     sessionKey = 'blue'
     request.session[sessionKey] = vs
-    return redirect('vBase_main', xData=sessionKey)
+    return redirect('vBase.main', xData=sessionKey)
 
 # *****************************************************************************
 def add(request, name):
@@ -34,7 +34,7 @@ def add(request, name):
 
     sessionKey = 'blue'
     request.session[sessionKey] = vs
-    return redirect('vBase_main', xData=sessionKey)
+    return redirect('vBase.main', xData=sessionKey)
 
 
 # *****************************************************************************
@@ -48,7 +48,7 @@ def delAll(request):
 
     sessionKey = 'blue'
     request.session[sessionKey] = vs
-    return redirect('vBase_main', xData=sessionKey)
+    return redirect('vBase.main', xData=sessionKey)
 
 
 

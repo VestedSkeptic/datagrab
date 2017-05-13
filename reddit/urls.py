@@ -30,16 +30,16 @@ urlpatterns = [
 
 
 
-    url(r'^vBase/main/$',                       vBase.main,             name='vBase_main'),
-    url(r'^vBase/main/xData/(?P<xData>\w+)/$',  vBase.main,             name='vBase_main'),
+    url(r'^vBase/main/$',                       vBase.main,             name='vBase.main'),
+    url(r'^vBase/main/xData/(?P<xData>\w+)/$',  vBase.main,             name='vBase.main'),
 
-    url(r'^vUser/list/$',                       vUser.list,             name='vUser_list'),
-    url(r'^vUser/add/(?P<name>\w+)/$',          vUser.add,              name='vUser_add'),
-    url(r'^vUser/delAll/$',                     vUser.delAll,           name='vUser_delAll'),
+    url(r'^vUser/list/$',                       vUser.list,             name='vUser.list'),
+    url(r'^vUser/add/(?P<name>\w+)/$',          vUser.add,              name='vUser.add'),
+    url(r'^vUser/delAll/$',                     vUser.delAll,           name='vUser.delAll'),
 
-    url(r'^vSubreddit/list/$',                  vSubreddit.list,        name='vSubreddit_list'),
-    url(r'^vSubreddit/add/(?P<name>\w+)/$',     vSubreddit.add,         name='vSubreddit_add'),
-    url(r'^vSubreddit/delAll/$',                vSubreddit.delAll,      name='vSubreddit_delAll'),
+    url(r'^vSubreddit/list/$',                  vSubreddit.list,        name='vSubreddit.list'),
+    url(r'^vSubreddit/add/(?P<name>\w+)/$',     vSubreddit.add,         name='vSubreddit.add'),
+    url(r'^vSubreddit/delAll/$',                vSubreddit.delAll,      name='vSubreddit.delAll'),
 ]
 
 
