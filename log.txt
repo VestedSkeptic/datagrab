@@ -1,0 +1,52 @@
+09:16:11 I cLogger.py         (line   98): ************************************************************
+09:16:11 I cLogger.py         (line   99): Initialized             : WorkingLogger
+09:16:11 I cLogger.py         (line  100): Time                    : 2017-05-13 09:16:11.340057
+09:16:11 I cLogger.py         (line  101): Base Logger Level       : TRACE
+09:16:11 I cLogger.py         (line  102): Console Handler Level   : INFO
+09:16:11 I cLogger.py         (line  103): File Handler Level      : TRACE
+09:16:11 I cLogger.py         (line  104): Logger Info Level       : INFO
+09:16:11 I cLogger.py         (line  105): Method Info Level       : TRACE
+09:16:11 I cLogger.py         (line  106): ************************************************************
+09:16:11 I cLogger.py         (line  107): 
+09:16:12 T cLogger.py         (line  127): -------------------------------------
+09:16:12 T cLogger.py         (line  128): FileName       : vBase.py
+09:16:12 T cLogger.py         (line  129): MethodName     : main
+09:16:12 T cLogger.py         (line  133): request        : <WSGIRequest: GET '/reddit/vBase/main/'>
+09:16:12 T cLogger.py         (line  133): xData          : None
+09:16:14 T cLogger.py         (line  127): -------------------------------------
+09:16:14 T cLogger.py         (line  128): FileName       : vSubreddit.py
+09:16:14 T cLogger.py         (line  129): MethodName     : list
+09:16:14 T cLogger.py         (line  133): request        : <WSGIRequest: GET '/reddit/vSubreddit/list/'>
+09:16:14 T cLogger.py         (line  127): -------------------------------------
+09:16:14 T cLogger.py         (line  128): FileName       : vBase.py
+09:16:14 T cLogger.py         (line  129): MethodName     : main
+09:16:14 T cLogger.py         (line  133): request        : <WSGIRequest: GET '/reddit/vBase/main/xData/blue/'>
+09:16:14 T cLogger.py         (line  133): xData          : blue
+09:16:17 T cLogger.py         (line  127): -------------------------------------
+09:16:17 T cLogger.py         (line  128): FileName       : vSubreddit.py
+09:16:17 T cLogger.py         (line  129): MethodName     : add
+09:16:17 T cLogger.py         (line  133): request        : <WSGIRequest: GET '/reddit/vSubreddit/add/Molw/'>
+09:16:17 T cLogger.py         (line  133): name           : Molw
+09:16:17 T cLogger.py         (line  127): -------------------------------------
+09:16:17 T cLogger.py         (line  128): FileName       : vBase.py
+09:16:17 T cLogger.py         (line  129): MethodName     : main
+09:16:17 T cLogger.py         (line  133): request        : <WSGIRequest: GET '/reddit/vBase/main/xData/blue/'>
+09:16:17 T cLogger.py         (line  133): xData          : blue
+09:16:19 T cLogger.py         (line  127): -------------------------------------
+09:16:19 T cLogger.py         (line  128): FileName       : vSubreddit.py
+09:16:19 T cLogger.py         (line  129): MethodName     : list
+09:16:19 T cLogger.py         (line  133): request        : <WSGIRequest: GET '/reddit/vSubreddit/list/'>
+09:16:19 T cLogger.py         (line  127): -------------------------------------
+09:16:19 T cLogger.py         (line  128): FileName       : vBase.py
+09:16:19 T cLogger.py         (line  129): MethodName     : main
+09:16:19 T cLogger.py         (line  133): request        : <WSGIRequest: GET '/reddit/vBase/main/xData/blue/'>
+09:16:19 T cLogger.py         (line  133): xData          : blue
+09:16:21 T cLogger.py         (line  127): -------------------------------------
+09:16:21 T cLogger.py         (line  128): FileName       : vSubreddit.py
+09:16:21 T cLogger.py         (line  129): MethodName     : delAll
+09:16:21 T cLogger.py         (line  133): request        : <WSGIRequest: GET '/reddit/vSubreddit/delAll/'>
+09:16:21 T cLogger.py         (line  127): -------------------------------------
+09:16:21 T cLogger.py         (line  128): FileName       : vBase.py
+09:16:21 T cLogger.py         (line  129): MethodName     : main
+09:16:21 T cLogger.py         (line  133): request        : <WSGIRequest: GET '/reddit/vBase/main/xData/blue/'>
+09:16:21 T cLogger.py         (line  133): xData          : blue

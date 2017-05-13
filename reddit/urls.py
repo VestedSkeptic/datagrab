@@ -2,6 +2,7 @@ from django.conf.urls import url
 from . import views
 from . import vBase
 from . import vUser
+from . import vSubreddit
 
 urlpatterns = [
     url(r'^praw/$',         views.main,                                 name='main'),
@@ -32,9 +33,13 @@ urlpatterns = [
     url(r'^vBase/main/$',                       vBase.main,             name='vBase_main'),
     url(r'^vBase/main/xData/(?P<xData>\w+)/$',  vBase.main,             name='vBase_main'),
 
-    url(r'^vUser/list/$',                       vUser.list,             name='vBase_list'),
-    url(r'^vUser/add/(?P<name>\w+)/$',          vUser.add,              name='vBase_add'),
-    url(r'^vUser/delAll/$',                     vUser.delAll,           name='vBase_delAll'),
+    url(r'^vUser/list/$',                       vUser.list,             name='vUser_list'),
+    url(r'^vUser/add/(?P<name>\w+)/$',          vUser.add,              name='vUser_add'),
+    url(r'^vUser/delAll/$',                     vUser.delAll,           name='vUser_delAll'),
+
+    url(r'^vSubreddit/list/$',                  vSubreddit.list,        name='vSubreddit_list'),
+    url(r'^vSubreddit/add/(?P<name>\w+)/$',     vSubreddit.add,         name='vSubreddit_add'),
+    url(r'^vSubreddit/delAll/$',                vSubreddit.delAll,      name='vSubreddit_delAll'),
 ]
 
 

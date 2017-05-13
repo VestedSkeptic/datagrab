@@ -10,9 +10,15 @@ def main(request, xData=None):
     moreData = request.session.get(xData, '')
     vs += moreData
 
-    vs += '<br><a href="http://localhost:8000/reddit/vUser/list">vUser list</a>'
-    vs += '<br><a href="http://localhost:8000/reddit/vUser/add/OldDevLearningLinux">vUser add</a>'
-    vs += '<br><a href="http://localhost:8000/reddit/vUser/delAll">vUser delAll</a>'
+    vs += '<br><b>vUser</b>:'
+    vs += ' <a href="http://localhost:8000/reddit/vUser/list">list</a>'
+    vs += ' <a href="http://localhost:8000/reddit/vUser/add/OldDevLearningLinux">add</a>'
+    vs += ' <a href="http://localhost:8000/reddit/vUser/delAll">delAll</a>'
+
+    vs += '<br><b>vSubreddit</b>:'
+    vs += ' <a href="http://localhost:8000/reddit/vSubreddit/list">list</a>'
+    vs += ' <a href="http://localhost:8000/reddit/vSubreddit/add/Molw">add</a>'
+    vs += ' <a href="http://localhost:8000/reddit/vSubreddit/delAll">delAll</a>'
     return HttpResponse(vs)
 
 

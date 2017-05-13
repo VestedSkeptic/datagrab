@@ -13,8 +13,8 @@ reddit.config.clog.addTraceLoggingLevel()
 reddit.config.clog.generateFuncDict()
 reddit.config.clog.addConsoleLogger(cLogger.cLoggerLevel_INFO)
 reddit.config.clog.addFileLogger("log.txt", cLogger.cLoggerLevel_TRACE)
-reddit.config.clog.dumpLoggerInfo()
 reddit.config.clog.setLoggerInfoLevel(cLogger.cLoggerLevel_INFO)
 reddit.config.clog.setMethodInfoLevel(cLogger.cLoggerLevel_TRACE)
+reddit.config.clog.dumpLoggerInfo()
 
 
