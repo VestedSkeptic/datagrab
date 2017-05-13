@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from . import views
 from . import vBase
+from . import vUser
 
 urlpatterns = [
     url(r'^praw/$',         views.main,                                 name='main'),
@@ -30,7 +31,10 @@ urlpatterns = [
 
     url(r'^vBase/main/$',                       vBase.main,             name='vBase_main'),
     url(r'^vBase/main/xData/(?P<xData>\w+)/$',  vBase.main,             name='vBase_main'),
-    url(r'^vBase/test/$',                       vBase.test,             name='vBase_test'),
+
+    url(r'^vUser/list/$',                       vUser.list,             name='vBase_list'),
+    url(r'^vUser/add/(?P<name>\w+)/$',          vUser.add,              name='vBase_add'),
+    url(r'^vUser/delAll/$',                     vUser.delAll,           name='vBase_delAll'),
 ]
 
 

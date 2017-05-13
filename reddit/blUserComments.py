@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from .models import user, userCommentsIndex, userCommentsRaw
-from mLogging import getmLoggerInstance
+import config
 from .constants import *
 import json
 import praw
@@ -35,14 +35,13 @@ def blUserComments_saveUserCommentsRaw(comment, uci):
 
 # *****************************************************************************
 def blUserComments_getMostValidBeforeValue(user, prawReddit, forceGetAllHistory=False):
-    logger = getmLoggerInstance()
     youngestRV = ''
 
     if not user.cHistoryGot:
         forceGetAllHistory = True
         user.cHistoryGot = True
         user.save()
-        logger.debug("user %s cHistoryGot set to True" % (user.name))
+        config.clog.logger.debug("user %s cHistoryGot set to True" % (user.name))
 
     if not forceGetAllHistory:
         qs = userCommentsIndex.objects.filter(user=user, deleted=False).order_by('-name')
@@ -57,18 +56,17 @@ def blUserComments_getMostValidBeforeValue(user, prawReddit, forceGetAllHistory=
                 else: # Update item as deleted.
                     item.deleted = True
                     item.save()
-                    logger.debug("userCommentIndex %s flagged as deleted" % (item.name))
+                    config.clog.logger.debug("userCommentIndex %s flagged as deleted" % (item.name))
             except praw.exceptions.APIException as e:
-                logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
+                config.clog.logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
     else:
-        logger.debug("cHistoryGot set to True")
+        config.clog.logger.debug("cHistoryGot set to True")
 
     return youngestRV
 
 # *****************************************************************************
 def blUserComments_updateCommentsForUser(user, argDict):
-    logger = getmLoggerInstance()
-    logger.info("Processing user: %s" % (user.name))
+    config.clog.logger.info("Processing user: %s" % (user.name))
 
     # create prawReddit instance
     prawReddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
@@ -76,7 +74,7 @@ def blUserComments_updateCommentsForUser(user, argDict):
     # get youngest userCommentsIndex in DB if there are any
     params={};
     params['before'] = blUserComments_getMostValidBeforeValue(user, prawReddit)
-    logger.debug("params[before] = %s" % params['before'])
+    config.clog.logger.debug("params[before] = %s" % params['before'])
 
     # iterate through comments saving them
     countNew = 0
@@ -94,15 +92,14 @@ def blUserComments_updateCommentsForUser(user, argDict):
         logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
 
     s_temp = user.name + ": " + str(countNew) + " new and " + str(countDuplicate) + " duplicate comments processed"
-    logger.info(s_temp)
+    config.clog.logger.info(s_temp)
     argDict['rv'] += "<br>" + s_temp
     return
 
 # *****************************************************************************
 def blUserComments_updateForAllUsers():
-    logger = getmLoggerInstance()
-    logger.info("=====================================================")
-    logger.info("blUserComments_updateForAllUsers")
+    config.clog.logger.info("=====================================================")
+    config.clog.logger.info("blUserComments_updateForAllUsers")
     rv = "<B>PRAW</B> blUserComments_updateForAllUsers<BR>"
 
     users = user.objects.filter(poi=True)
@@ -113,26 +110,25 @@ def blUserComments_updateForAllUsers():
             argDict = {'rv': ""}
             blUserComments_updateCommentsForUser(us, argDict)
             rv += argDict['rv']
-    logger.info("=====================================================")
+    config.clog.logger.info("=====================================================")
     return HttpResponse(rv)
 
 # *****************************************************************************
 def getDictOfCommentsAtLevel(submissionName, hLevel):
-    logger = getmLoggerInstance()
-    logger.info("submissioName = %s" %(submissionName))
-    logger.info("hLevel = %d" %(hLevel))
+    config.clog.logger.info("submissioName = %s" %(submissionName))
+    config.clog.logger.info("hLevel = %d" %(hLevel))
 
     levelCount = 0
     listOfParents = [submissionName]
     resultsDict = {}
 
     while levelCount <= hLevel:
-        logger.info("listOfParents = %s" % (pprint.pformat(listOfParents)))
+        config.clog.logger.info("listOfParents = %s" % (pprint.pformat(listOfParents)))
 
         # Get all userCommentsIndex which have a parent_id in listOfParents
         qs = userCommentsIndex.objects.filter(submission_id=submissionName).filter(parent_id__in=listOfParents).order_by('name')
         # qs = userCommentsIndex.objects.filter(parent_id__in=listOfParents).order_by('name')
-        logger.info("qs.count() = %d" % (qs.count()))
+        config.clog.logger.info("qs.count() = %d" % (qs.count()))
 
         # clear listOfParents
         del listOfParents[:]
@@ -144,47 +140,44 @@ def getDictOfCommentsAtLevel(submissionName, hLevel):
                 listOfParents.append(item.name)
 
 
-            # logger.info("%s: (parent_id = %s) is in list %s " %(item.name, item.parent_id, pprint.pformat(listOfParents)))
+            # config.clog.logger.info("%s: (parent_id = %s) is in list %s " %(item.name, item.parent_id, pprint.pformat(listOfParents)))
 
         levelCount += 1
 
 
-    logger.info("----------------------------------------------------")
-    logger.info("levelCount = %d" % (levelCount))
-    logger.info("hLevel = %d" % (hLevel))
-    logger.info("listOfParents = %s" % (pprint.pformat(listOfParents)))
-    logger.info("resultsDict = %s" % (pprint.pformat(resultsDict)))
+    config.clog.logger.info("----------------------------------------------------")
+    config.clog.logger.info("levelCount = %d" % (levelCount))
+    config.clog.logger.info("hLevel = %d" % (hLevel))
+    config.clog.logger.info("listOfParents = %s" % (pprint.pformat(listOfParents)))
+    config.clog.logger.info("resultsDict = %s" % (pprint.pformat(resultsDict)))
     return {}
 
 # *****************************************************************************
 def getHierarchyOfCommentsAtLevel(submissionName, hLevel):
-    logger = getmLoggerInstance()
-    logger.info("=====================================================")
-    logger.info("getHierarchyOfCommentsAtLevel")
+    config.clog.logger.info("=====================================================")
+    config.clog.logger.info("getHierarchyOfCommentsAtLevel")
     rv = "<B>PRAW</B> getHierarchyOfCommentsAtLevel<BR>"
 
     dictOfResults = getDictOfCommentsAtLevel(submissionName, hLevel)
-    logger.debug(pprint.pformat(dictOfResults))
+    config.clog.logger.debug(pprint.pformat(dictOfResults))
 
-    logger.info("=====================================================")
+    config.clog.logger.info("=====================================================")
 
     return HttpResponse(rv)
 
 # *****************************************************************************
 def blUserComments_deleteAll():
-    logger = getmLoggerInstance()
     s = "blUserComments_deleteAll(): "
     qs = user.objects.all()
     uqsCount = qs.count()
     # delete all user objects
     qs.delete()
     s += str(uqsCount) + " users deleted"
-    logger.info(s)
+    config.clog.logger.info(s)
     return s
 
 # *****************************************************************************
 def blUserComments_addUser(uname):
-    logger = getmLoggerInstance()
     s = "blUserComments_addUser(" + uname + "): "
     try:
         user.objects.get(name=uname)
@@ -193,7 +186,7 @@ def blUserComments_addUser(uname):
         us = user(name=uname, poi=True)
         us.save()
         s += "added"
-    logger.info(s)
+    config.clog.logger.info(s)
     return s
 
 

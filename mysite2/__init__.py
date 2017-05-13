@@ -1,35 +1,20 @@
+# *****************************************************************************
+# Update sys.path to allow importing python files from libPython directory
+import sys
+sys.path.insert(0, "/home/delta/work/libPython")
 
 # *****************************************************************************
-# ADD A CUSTOM LOGGING LEVEL -> logging.TRACE
-import logging
-logging.TRACE = 9
-logging.addLevelName(logging.TRACE, "TRACE")
+# Set up logger
+import reddit.config
+import cLogger
 
-def trace(self, message, *args, **kws):
-    # Yes, logger takes its '*args' as 'args'.
-    if self.isEnabledFor(logging.TRACE):
-        self._log(logging.TRACE, message, args, **kws)
-logging.Logger.trace = trace
+reddit.config.clog = cLogger.cLogger("WorkingLogger")
+reddit.config.clog.addTraceLoggingLevel()
+reddit.config.clog.generateFuncDict()
+reddit.config.clog.addConsoleLogger(cLogger.cLoggerLevel_INFO)
+reddit.config.clog.addFileLogger("log.txt", cLogger.cLoggerLevel_TRACE)
+reddit.config.clog.dumpLoggerInfo()
+reddit.config.clog.setLoggerInfoLevel(cLogger.cLoggerLevel_INFO)
+reddit.config.clog.setMethodInfoLevel(cLogger.cLoggerLevel_TRACE)
 
-# *****************************************************************************
-# Update sys.path to allow importing python files from library and script directory
-import sys, os
-sys.path.insert(0, "/home/delta/work/scriptsPython") # first value is index, setting to zero puts this path in front of existing paths
 
-# *****************************************************************************
-# Instantiate logging module
-from mLogging import mLogging_init #, getmLoggerInstance
-
-consoleLoggingLevel = logging.INFO
-fileLoggingLevel    = logging.DEBUG
-# fileLoggingLevel    = logging.TRACE
-
-mLogging_init("django_logger", consoleLoggingLevel, fileLoggingLevel, "out.txt")
-
-# logger = getmLoggerInstance()
-# logger.trace('trace message')
-# logger.debug('debug message')
-# logger.info('info message')
-# logger.warn('warn message')
-# logger.error('error message')
-# logger.critical('critical message')
