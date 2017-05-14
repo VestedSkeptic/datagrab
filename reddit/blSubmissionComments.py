@@ -286,7 +286,7 @@ import pprint
 
 # *****************************************************************************
 def getCommentsByCommentForest(subIndex, argDict, sortOrder):
-    config.clog.logger.debug("%s: %s: sortOrder = %s" % (subIndex.subreddit.name, subIndex.name, sortOrder))
+    clog.logger.debug("%s: %s: sortOrder = %s" % (subIndex.subreddit.name, subIndex.name, sortOrder))
 
     # create PRAW prawReddit instance
     prawReddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
@@ -311,11 +311,11 @@ def getCommentsByCommentForest(subIndex, argDict, sortOrder):
                 uuser = None
                 try:
                     uuser = user.objects.get(name=comment.author.name)
-                    # config.clog.logger.debug("user %s exists" % (uuser.name))
+                    # clog.logger.debug("user %s exists" % (uuser.name))
                 except ObjectDoesNotExist:
                     uuser = user(name=comment.author.name, poi=False)
                     uuser.save()
-                    config.clog.logger.trace("user %s created" % (uuser.name))
+                    clog.logger.trace("user %s created" % (uuser.name))
 
                 aDict = {'uci' : None, 'isNew' : True }
                 blUserComments_getUserCommentIndex(comment, uuser, aDict)
@@ -325,49 +325,49 @@ def getCommentsByCommentForest(subIndex, argDict, sortOrder):
                 else:
                     countDuplicate += 1
     except praw.exceptions.APIException as e:
-        config.clog.logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
+        clog.logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
 
     # Update subIndex appropriately
     saveSubIndex = False
     if sortOrder == "new":
         subIndex.cForestGot = True
-        config.clog.logger.trace("%s: %s: cForestGot set to True" % (subIndex.subreddit.name, subIndex.name))
+        clog.logger.trace("%s: %s: cForestGot set to True" % (subIndex.subreddit.name, subIndex.name))
         saveSubIndex = True
     if countNew > 0:
         subIndex.count += countNew
-        config.clog.logger.trace("%s: %s: count set to %d" % (subIndex.subreddit.name, subIndex.name, subIndex.count))
+        clog.logger.trace("%s: %s: count set to %d" % (subIndex.subreddit.name, subIndex.name, subIndex.count))
         saveSubIndex = True
     if saveSubIndex:
         subIndex.save()
 
     s_temp = subIndex.subreddit.name + ", " + subIndex.name + ": " + str(countNew) + " new, " + str(countDuplicate) + " duplicated, " + str(countPostsWithNoAuthor) + " with no author."
-    config.clog.logger.info(s_temp)
+    clog.logger.info(s_temp)
     argDict['rv'] += "<br>" + s_temp
     return
 
 # *****************************************************************************
 def updateSubIndexComments(subIndex, argDict):
     if not subIndex.cForestGot:
-        config.clog.logger.trace("%s: %s: New commentForest updating sorted by new" % (subIndex.subreddit.name, subIndex.name))
+        clog.logger.trace("%s: %s: New commentForest updating sorted by new" % (subIndex.subreddit.name, subIndex.name))
         getCommentsByCommentForest(subIndex, argDict, "new")
         argDict['modeCount']['Comment Forest New'] += 1
     # elif subIndex.count < 10:
-    #     config.clog.logger.debug("%s: %s: Old small commentForest updating sorted by old" % (subIndex.subreddit.name, subIndex.name))
+    #     clog.logger.debug("%s: %s: Old small commentForest updating sorted by old" % (subIndex.subreddit.name, subIndex.name))
     #     getCommentsByCommentForest(subIndex, argDict, "old")
         # argDict['modeCount']['Comment Forest Old'] += 1
                     # THIS HACK NOT VALID, SUBMISSION UPDATED AND HAS NEW COUNT NOW
                     # elif subIndex.count == 260:  #HACK THERE IS ONE ITEM WITH 260 COUNT IN IT, USING IT TO TEST IMPLEMENTATION OF ...
-                    #     config.clog.logger.debug("%s: %s: Old small commentForest updating sorted by old" % (subIndex.subreddit.name, subIndex.name))
+                    #     clog.logger.debug("%s: %s: Old small commentForest updating sorted by old" % (subIndex.subreddit.name, subIndex.name))
                     #     getCommentsByCommentForest(subIndex, argDict, "old")
                     #     argDict['modeCount']['Comment Forest Old'] += 1
     else:
-        config.clog.logger.trace("%s: %s: Old large commentForest updating by METHOD TO BE IMPLEMENTED LATER" % (subIndex.subreddit.name, subIndex.name))
+        clog.logger.trace("%s: %s: Old large commentForest updating by METHOD TO BE IMPLEMENTED LATER" % (subIndex.subreddit.name, subIndex.name))
         argDict['modeCount']['Method To Be Implemented Later'] += 1
 
 # *****************************************************************************
 def blSubmissionComments_updateForAllSubmissions():
-    config.clog.logger.info("=====================================================")
-    config.clog.logger.info("blSubmissionComments_updateForAllSubmissions()")
+    clog.logger.info("=====================================================")
+    clog.logger.info("blSubmissionComments_updateForAllSubmissions()")
     rv = "<B>PRAW</B> blSubmissionComments_updateForAllSubmissions<BR>"
 
     submissionsIndexObjects =subredditSubmissionIndex.objects.filter(deleted=False).order_by('subreddit__name')
@@ -380,16 +380,16 @@ def blSubmissionComments_updateForAllSubmissions():
         rv += argDict['rv']
 
         s_temp = "Comment Forest New count" + " = " + str(argDict['modeCount']['Comment Forest New'])
-        config.clog.logger.info(s_temp)
+        clog.logger.info(s_temp)
         rv += "<br>" + s_temp
         s_temp = "Comment Forest Old count" + " = " + str(argDict['modeCount']['Comment Forest Old'])
-        config.clog.logger.info(s_temp)
+        clog.logger.info(s_temp)
         rv += "<br>" + s_temp
         s_temp = "Method To Be Implemented Later count" + " = " + str(argDict['modeCount']['Method To Be Implemented Later'])
-        config.clog.logger.info(s_temp)
+        clog.logger.info(s_temp)
         rv += "<br>" + s_temp
 
-    config.clog.logger.info("=====================================================")
+    clog.logger.info("=====================================================")
     return HttpResponse(rv)
 
 

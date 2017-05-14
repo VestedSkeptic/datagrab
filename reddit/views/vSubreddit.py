@@ -1,12 +1,12 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.core.exceptions import ObjectDoesNotExist
-import config
-from .models import mSubreddit
+from ..config import clog
+from ..models import mSubreddit
 
 # *****************************************************************************
 def list(request):
-    config.clog.dumpMethodInfo()
+    clog.dumpMethodInfo()
     qs = mSubreddit.objects.all()
     vs = "<br>mSubreddit.list: "
 
@@ -22,7 +22,7 @@ def list(request):
 
 # *****************************************************************************
 def add(request, name):
-    config.clog.dumpMethodInfo()
+    clog.dumpMethodInfo()
     vs = "<br>mSubreddit.add: " + name
     try:
         mSubreddit.objects.get(name=name)
@@ -39,7 +39,7 @@ def add(request, name):
 
 # *****************************************************************************
 def delAll(request):
-    config.clog.dumpMethodInfo()
+    clog.dumpMethodInfo()
     vs = "<br>mSubreddit.delAll: "
 
     qs = mSubreddit.objects.all()
@@ -52,20 +52,23 @@ def delAll(request):
 
 # *****************************************************************************
 def update(request):
-    mi = config.clog.dumpMethodInfo()
-    config.clog.logger.info(mi)
+    mi = clog.dumpMethodInfo()
+    clog.logger.info(mi)
 
-    rv = mi
+    vs = mi
 
     qs = mSubreddit.objects.all()
     if qs.count() > 0:
         for iSubreddit in qs:
-            argDict = {'rv': ""}
+            argDict = {'vs': ""}
             iSubreddit.updateThreads(argDict)
-            rv += argDict['rv']
+            vs += argDict['vs']
     else:
-        rv += " No mSubreddits found"
-    return HttpResponse(rv)
+        vs += " No mSubreddits found"
+
+    sessionKey = 'blue'
+    request.session[sessionKey] = vs
+    return redirect('vBase.main', xData=sessionKey)
 
 
 

@@ -1,10 +1,10 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect
-import config
+from ..config import clog
 
 # *****************************************************************************
 def main(request, xData=None):
-    config.clog.dumpMethodInfo()
+    clog.dumpMethodInfo()
 
     vs  = 'vBase.main:'
     moreData = request.session.get(xData, '')

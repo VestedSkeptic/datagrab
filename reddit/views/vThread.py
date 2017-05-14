@@ -1,12 +1,12 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.core.exceptions import ObjectDoesNotExist
-import config
-from .models import mThread
+from ..config import clog
+from ..models import mThread
 
 # *****************************************************************************
 def list(request):
-    config.clog.dumpMethodInfo()
+    clog.dumpMethodInfo()
     qs = mThread.objects.all()
     vs = "<br>mThread.list: "
 
@@ -22,7 +22,7 @@ def list(request):
 
 # *****************************************************************************
 def delAll(request):
-    config.clog.dumpMethodInfo()
+    clog.dumpMethodInfo()
     vs = "<br>mThread.delAll: "
 
     qs = mThread.objects.all()

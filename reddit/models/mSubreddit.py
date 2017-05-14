@@ -2,7 +2,8 @@ from __future__ import unicode_literals
 from django.db import models
 from .mBase import mBase
 # from .mThread import mThread
-from .. import config
+# from .. import config
+from ..config import clog
 
 # *****************************************************************************
 class mSubreddit(mBase, models.Model):
@@ -15,20 +16,20 @@ class mSubreddit(mBase, models.Model):
 
     # --------------------------------------------------------------------------
     def getBestBeforeValue(self, prawReddit):
-        mi = config.clog.dumpMethodInfo()
-        config.clog.logger.info(mi + " METHOD NOT COMPLETED")
+        mi = clog.dumpMethodInfo()
+        clog.logger.info(mi + " METHOD NOT COMPLETED")
         return ''
 
     # --------------------------------------------------------------------------
     def updateThreads(self, argDict):
-        mi = config.clog.dumpMethodInfo()
-        config.clog.logger.info(mi)
+        mi = clog.dumpMethodInfo()
+        clog.logger.info(mi)
 
         prawReddit = self.getPrawRedditInstance()
 
         params={};
         params['before'] = self.getBestBeforeValue(prawReddit)
-        config.clog.logger.debug("params[before] = %s" % params['before'])
+        clog.logger.debug("params[before] = %s" % params['before'])
 
 
         return

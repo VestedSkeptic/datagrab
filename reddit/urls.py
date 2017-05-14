@@ -1,9 +1,9 @@
 from django.conf.urls import url
-from . import views
-from . import vBase
-from . import vUser
-from . import vSubreddit
-from . import vThread
+from .views import views
+from .views import vBase
+from .views import vUser
+from .views import vSubreddit
+from .views import vThread
 
 urlpatterns = [
     url(r'^praw/$',         views.main,                                 name='main'),

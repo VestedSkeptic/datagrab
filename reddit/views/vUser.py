@@ -1,12 +1,12 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.core.exceptions import ObjectDoesNotExist
-import config
-from .models import mUser
+from ..config import clog
+from ..models import mUser
 
 # *****************************************************************************
 def list(request):
-    config.clog.dumpMethodInfo()
+    clog.dumpMethodInfo()
     qs = mUser.objects.all()
     vs = "<br>mUser.list: "
 
@@ -22,7 +22,7 @@ def list(request):
 
 # *****************************************************************************
 def add(request, name):
-    config.clog.dumpMethodInfo()
+    clog.dumpMethodInfo()
     vs = "<br>mUser.add: " + name
     try:
         mUser.objects.get(name=name)
@@ -39,7 +39,7 @@ def add(request, name):
 
 # *****************************************************************************
 def delAll(request):
-    config.clog.dumpMethodInfo()
+    clog.dumpMethodInfo()
     vs = "<br>mUser.delAll: "
 
     qs = mUser.objects.all()

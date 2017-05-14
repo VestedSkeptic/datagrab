@@ -1,8 +1,8 @@
 from django.http import HttpResponse
-from .blUserComments import blUserComments_updateForAllUsers, getHierarchyOfCommentsAtLevel, blUserComments_deleteAll, blUserComments_addUser
-from .blSubredditSubmissions import blSubredditSubmissions_updateForAllSubreddits, blSubredditSubmissions_deleteAllSubreddits, blSubredditSubmissions_addSubreddit, blSubredditSubmissions_deleteAll_SSFE, blSubredditSubmissions_updateAll_SSFE
-from .blSubmissionComments import blSubmissionComments_updateForAllSubmissions
-from .models import *
+from ..blUserComments import blUserComments_updateForAllUsers, getHierarchyOfCommentsAtLevel, blUserComments_deleteAll, blUserComments_addUser
+from ..blSubredditSubmissions import blSubredditSubmissions_updateForAllSubreddits, blSubredditSubmissions_deleteAllSubreddits, blSubredditSubmissions_addSubreddit, blSubredditSubmissions_deleteAll_SSFE, blSubredditSubmissions_updateAll_SSFE
+from ..blSubmissionComments import blSubmissionComments_updateForAllSubmissions
+from  ..models import *
 
 # *****************************************************************************
 def main(request):

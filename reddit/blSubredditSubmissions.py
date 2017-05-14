@@ -30,9 +30,9 @@ def blSubredditSubmissions_savesubredditSubmissionRaw(submission, ssi):
     except ObjectDoesNotExist:
         # # vars converts submission to json dict which can be saved to DB
         # ts = submission
-        # config.clog.logger.debug("ts.subreddit type = %s " % (type(ts.subreddit)))
-        # config.clog.logger.debug("ts.author type = %s" % (type(ts.author)))
-        # config.clog.logger.debug("ts._reddit type = %s" % (type(ts._reddit)))
+        # clog.logger.debug("ts.subreddit type = %s " % (type(ts.subreddit)))
+        # clog.logger.debug("ts.author type = %s" % (type(ts.author)))
+        # clog.logger.debug("ts._reddit type = %s" % (type(ts._reddit)))
 
         stRaw = subredditSubmissionRaw(ssi=ssi, data=vars(submission))
         # stRaw = subredditSubmissionRaw(ssi=ssi, data=json.dumps(vars(submission)))
@@ -54,20 +54,20 @@ def blSubredditSubmissions_getMostValidBeforeValue(subreddit, prawReddit):
                 # HERE examine what is in submission as I likely need a better
                 # test then if submission.author != NoneAdapter
                 # pprint.pprint(vars(submission))
-                config.clog.logger.trace(pprint.pformat(vars(submission)))
+                clog.logger.trace(pprint.pformat(vars(submission)))
                 break
             else: # Update item as deleted.
                 item.deleted = True
                 item.save()
-                config.clog.logger.debug("subredditSubmissionIndex %s flagged as deleted" % (item.name))
+                clog.logger.debug("subredditSubmissionIndex %s flagged as deleted" % (item.name))
         except praw.exceptions.APIException(error_type, message, field):
-            config.clog.logger.error("PRAW APIException: error_type = %s, message = %s" % (error_type, message))
+            clog.logger.error("PRAW APIException: error_type = %s, message = %s" % (error_type, message))
 
     return youngestRV
 
 # *****************************************************************************
 def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
-    # config.clog.logger.info("Processing subreddit: %s" % (subreddit.name))
+    # clog.logger.info("Processing subreddit: %s" % (subreddit.name))
 
     # create prawReddit instance
     prawReddit = praw.Reddit(client_id=CONST_CLIENT_ID, client_secret=CONST_SECRET, user_agent=CONST_USER_AGENT, username=CONST_DEV_USERNAME, password=CONST_DEV_PASSWORD)
@@ -75,7 +75,7 @@ def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
     # get youngest subredditSubmissionIndex in DB if there are any
     params={};
     params['before'] = blSubredditSubmissions_getMostValidBeforeValue(subreddit, prawReddit)
-    config.clog.logger.debug("params[before] = %s" % params['before'])
+    clog.logger.debug("params[before] = %s" % params['before'])
 
     # iterate through submissions saving them
     countNew = 0
@@ -87,21 +87,21 @@ def blSubredditSubmissions_updateThreadsForSubreddits(subreddit, argDict):
             if aDict['isNew']:
                 blSubredditSubmissions_savesubredditSubmissionRaw(submission, aDict['ssi'])
                 countNew += 1
-                config.clog.logger.debug("Added submission: %s" % (submission.title[:40]))
+                clog.logger.debug("Added submission: %s" % (submission.title[:40]))
             else:
                 countDuplicate += 1
     except praw.exceptions.APIException as e:
-        config.clog.logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
+        clog.logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
 
     s_temp = subreddit.name + ": " + str(countNew) + " new and " + str(countDuplicate) + " duplicate submissions processed"
-    config.clog.logger.info(s_temp)
+    clog.logger.info(s_temp)
     argDict['rv'] += "<br>" + s_temp
     return
 
 # *****************************************************************************
 def blSubredditSubmissions_updateForAllSubreddits():
-    config.clog.logger.info("=====================================================")
-    config.clog.logger.info("blSubredditSubmissions_updateForAllSubreddits")
+    clog.logger.info("=====================================================")
+    clog.logger.info("blSubredditSubmissions_updateForAllSubreddits")
     rv = "<B>PRAW</B> blSubredditSubmissions_updateForAllSubreddits<BR>"
 
     subreddits = subreddit.objects.all()
@@ -112,7 +112,7 @@ def blSubredditSubmissions_updateForAllSubreddits():
             argDict = {'rv': ""}
             blSubredditSubmissions_updateThreadsForSubreddits(su, argDict)
             rv += argDict['rv']
-    config.clog.logger.info("=====================================================")
+    clog.logger.info("=====================================================")
     return HttpResponse(rv)
 
 # *****************************************************************************
@@ -123,7 +123,7 @@ def blSubredditSubmissions_deleteAllSubreddits():
     # delete all subreddit objects
     qs.delete()
     s += str(sqsCount) + " subreddits deleted"
-    config.clog.logger.info(s)
+    clog.logger.info(s)
     return s
 
 # *****************************************************************************
@@ -136,7 +136,7 @@ def blSubredditSubmissions_addSubreddit(sname):
         sr = subreddit(name=sname)
         sr.save()
         s += "added"
-    config.clog.logger.info(s)
+    clog.logger.info(s)
     return s
 
 # *****************************************************************************
@@ -147,7 +147,7 @@ def blSubredditSubmissions_deleteAll_SSFE():
     # delete all subredditSubmissionFieldsExtracted objects
     qs.delete()
     s += str(sqsCount) + " deleted"
-    config.clog.logger.info(s)
+    clog.logger.info(s)
     return s
 
 # *****************************************************************************
@@ -167,13 +167,13 @@ def blSubredditSubmissions_updateAll_SSFE():
             fnDict = getDictOfClassModelFieldNames(subredditSubmissionFieldsExtracted)
             # if ssi is in fnDict remove it
             if 'ssi' in fnDict: del fnDict['ssi']
-            # config.clog.logger.info(pprint.pformat(fnDict))
+            # clog.logger.info(pprint.pformat(fnDict))
 
             # get values for each field from
             for k in fnDict:
-                # config.clog.logger.info(k)
+                # clog.logger.info(k)
                 fnDict[k] = getFieldValueFromRawData(k, rawSubmissonItem.data)
-                config.clog.logger.info("BLUEBLUEBLUE: %s" % (rawSubmissonItem.data))
+                clog.logger.info("BLUEBLUEBLUE: %s" % (rawSubmissonItem.data))
 
                 if fnDict[k] == None:
                     # data retreival failed
@@ -191,7 +191,7 @@ def blSubredditSubmissions_updateAll_SSFE():
     s += ", countExists = " + str(countExists)
     s += ", countNew = " + str(countNew)
 
-    config.clog.logger.info(s)
+    cong.clog.logger.info(s)
     return s
 
 

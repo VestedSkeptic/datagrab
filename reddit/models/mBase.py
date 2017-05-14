@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models
-from .. import config
+# from .. import config
+from ..config import clog
 import praw
 
 CONST_CLIENT_ID                                         = "kcksu9E4VgC0TQ"
@@ -28,8 +29,8 @@ class mBase(models.Model):
     # -------------------------------------------------------------------------
     @staticmethod
     def getPrawRedditInstance():
-        mi = config.clog.dumpMethodInfo()
-        config.clog.logger.info(mi)
+        mi = clog.dumpMethodInfo()
+        clog.logger.info(mi)
 
         prawReddit = praw.Reddit(
             client_id=CONST_CLIENT_ID,
