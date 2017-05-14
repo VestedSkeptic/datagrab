@@ -56,10 +56,6 @@ def update(request):
         s_temp = "Method To Be Implemented Later count" + " = " + str(argDict['modeCount']['Method To Be Implemented Later'])
         clog.logger.info(s_temp)
         # rv += "<br>" + s_temp
-
-
-
-
     else:
         vs += " No mthreads found"
 
