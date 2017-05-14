@@ -19,6 +19,12 @@ def main(request, xData=None):
     vs += ' <a href="http://localhost:8000/reddit/vSubreddit/list">list</a>'
     vs += ' <a href="http://localhost:8000/reddit/vSubreddit/add/Molw">add</a>'
     vs += ' <a href="http://localhost:8000/reddit/vSubreddit/delAll">delAll</a>'
+
+    vs += '<br><b>vSubmission</b>:'
+    vs += ' <a href="http://localhost:8000/reddit/vSubmission/list">list</a>'
+    vs += ' <a href="http://localhost:8000/reddit/vSubmission/delAll">delAll</a>'
+    vs += ' <a href="http://localhost:8000/reddit/vSubmission/update">update</a>'
+
     return HttpResponse(vs)
 
 

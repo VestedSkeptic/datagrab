@@ -3,6 +3,7 @@ from . import views
 from . import vBase
 from . import vUser
 from . import vSubreddit
+from . import vSubmission
 
 urlpatterns = [
     url(r'^praw/$',         views.main,                                 name='main'),
@@ -40,6 +41,10 @@ urlpatterns = [
     url(r'^vSubreddit/list/$',                  vSubreddit.list,        name='vSubreddit.list'),
     url(r'^vSubreddit/add/(?P<name>\w+)/$',     vSubreddit.add,         name='vSubreddit.add'),
     url(r'^vSubreddit/delAll/$',                vSubreddit.delAll,      name='vSubreddit.delAll'),
+
+    url(r'^vSubmission/list/$',                 vSubmission.list,       name='vSubmission.list'),
+    url(r'^vSubmission/delAll/$',               vSubmission.delAll,     name='vSubmission.delAll'),
+    url(r'^vSubmission/update/$',               vSubmission.update,     name='vSubmission.update'),
 ]
 
 
