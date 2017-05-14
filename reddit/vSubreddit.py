@@ -50,8 +50,22 @@ def delAll(request):
     request.session[sessionKey] = vs
     return redirect('vBase.main', xData=sessionKey)
 
+# *****************************************************************************
+def update(request):
+    mi = config.clog.dumpMethodInfo()
+    config.clog.logger.info(mi)
 
+    rv = mi
 
+    qs = mSubreddit.objects.all()
+    if qs.count() > 0:
+        for iSubreddit in qs:
+            argDict = {'rv': ""}
+            iSubreddit.updateThreads(argDict)
+            rv += argDict['rv']
+    else:
+        rv += " No mSubreddits found"
+    return HttpResponse(rv)
 
 
 

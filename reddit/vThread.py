@@ -20,23 +20,6 @@ def list(request):
     request.session[sessionKey] = vs
     return redirect('vBase.main', xData=sessionKey)
 
-# # *****************************************************************************
-# def add(request, name):
-#     config.clog.dumpMethodInfo()
-#     vs = "<br>mThread.add: " + name
-#     try:
-#         mThread.objects.get(name=name)
-#         vs += " already exists"
-#     except ObjectDoesNotExist:
-#         user = mThread(name=name, poi=True)
-#         user.save()
-#         vs += " added"
-#
-#     sessionKey = 'blue'
-#     request.session[sessionKey] = vs
-#     return redirect('vBase.main', xData=sessionKey)
-
-
 # *****************************************************************************
 def delAll(request):
     config.clog.dumpMethodInfo()
@@ -50,22 +33,6 @@ def delAll(request):
     request.session[sessionKey] = vs
     return redirect('vBase.main', xData=sessionKey)
 
-# *****************************************************************************
-def update():
-    config.clog.dumpMethodInfo()
-    config.clog.logger.info("=====================================================")
-
-
-    subreddits = subreddit.objects.all()
-    if subreddits.count() == 0:
-        rv += "<BR> No subreddits found"
-    else:
-        for su in subreddits:
-            argDict = {'rv': ""}
-            blSubredditSubmissions_updateThreadsForSubreddits(su, argDict)
-            rv += argDict['rv']
-    config.clog.logger.info("=====================================================")
-    return HttpResponse(rv)
 
 
 

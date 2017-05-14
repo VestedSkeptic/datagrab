@@ -41,10 +41,10 @@ urlpatterns = [
     url(r'^vSubreddit/list/$',                  vSubreddit.list,        name='vSubreddit.list'),
     url(r'^vSubreddit/add/(?P<name>\w+)/$',     vSubreddit.add,         name='vSubreddit.add'),
     url(r'^vSubreddit/delAll/$',                vSubreddit.delAll,      name='vSubreddit.delAll'),
+    url(r'^vSubreddit/update/$',                vSubreddit.update,      name='vSubreddit.update'),
 
     url(r'^vThread/list/$',                 vThread.list,       name='vThread.list'),
     url(r'^vThread/delAll/$',               vThread.delAll,     name='vThread.delAll'),
-    url(r'^vThread/update/$',               vThread.update,     name='vThread.update'),
 ]
 
 

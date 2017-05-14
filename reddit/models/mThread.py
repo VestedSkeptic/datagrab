@@ -20,7 +20,7 @@ class mThread(mBase, models.Model):
 
 # *****************************************************************************
 # class subredditSubmissionRaw(models.Model):
-class mSubmissionRaw(models.Model):
+class mThreadRaw(models.Model):
     index           = models.OneToOneField(mThread, primary_key=True)
     data            = models.TextField()
     def __str__(self):
@@ -30,7 +30,7 @@ class mSubmissionRaw(models.Model):
 
 # *****************************************************************************
 # class subredditSubmissionFieldsExtracted(models.Model):
-class mSubmissionExtracted(models.Model):
+class mThreadExtracted(models.Model):
     index           = models.OneToOneField(mThread, primary_key=True)
 
     author          = models.CharField(max_length=21)
