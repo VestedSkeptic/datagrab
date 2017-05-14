@@ -2,13 +2,13 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.core.exceptions import ObjectDoesNotExist
 from ..config import clog
-from ..models import mSubreddit
+from ..models import msubreddit
 
 # *****************************************************************************
 def list(request):
     clog.dumpMethodInfo()
-    qs = mSubreddit.objects.all()
-    vs = "<br>mSubreddit.list: "
+    qs = msubreddit.objects.all()
+    vs = "<br>msubreddit.list: "
 
     if qs.count() == 0:
         vs += "No items to list"
@@ -18,37 +18,37 @@ def list(request):
 
     sessionKey = 'blue'
     request.session[sessionKey] = vs
-    return redirect('vBase.main', xData=sessionKey)
+    return redirect('vbase.main', xData=sessionKey)
 
 # *****************************************************************************
 def add(request, name):
     clog.dumpMethodInfo()
-    vs = "<br>mSubreddit.add: " + name
+    vs = "<br>msubreddit.add: " + name
     try:
-        mSubreddit.objects.get(name=name)
+        msubreddit.objects.get(name=name)
         vs += " already exists"
     except ObjectDoesNotExist:
-        user = mSubreddit(name=name, poi=True)
+        user = msubreddit(name=name, poi=True)
         user.save()
         vs += " added"
 
     sessionKey = 'blue'
     request.session[sessionKey] = vs
-    return redirect('vBase.main', xData=sessionKey)
+    return redirect('vbase.main', xData=sessionKey)
 
 
 # *****************************************************************************
 def delAll(request):
     clog.dumpMethodInfo()
-    vs = "<br>mSubreddit.delAll: "
+    vs = "<br>msubreddit.delAll: "
 
-    qs = mSubreddit.objects.all()
-    vs += str(qs.count()) + " mSubreddits deleted"
+    qs = msubreddit.objects.all()
+    vs += str(qs.count()) + " msubreddits deleted"
     qs.delete()
 
     sessionKey = 'blue'
     request.session[sessionKey] = vs
-    return redirect('vBase.main', xData=sessionKey)
+    return redirect('vbase.main', xData=sessionKey)
 
 # *****************************************************************************
 def update(request):
@@ -57,18 +57,18 @@ def update(request):
 
     vs = mi
 
-    qs = mSubreddit.objects.all()
+    qs = msubreddit.objects.all()
     if qs.count() > 0:
         for iSubreddit in qs:
             argDict = {'vs': ""}
             iSubreddit.updateThreads(argDict)
             vs += argDict['vs']
     else:
-        vs += " No mSubreddits found"
+        vs += " No msubreddits found"
 
     sessionKey = 'blue'
     request.session[sessionKey] = vs
-    return redirect('vBase.main', xData=sessionKey)
+    return redirect('vbase.main', xData=sessionKey)
 
 
 

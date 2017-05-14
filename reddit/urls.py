@@ -1,9 +1,9 @@
 from django.conf.urls import url
 from .views import views
-from .views import vBase
-from .views import vUser
-from .views import vSubreddit
-from .views import vThread
+from .views import vbase
+from .views import vuser
+from .views import vsubreddit
+from .views import vthread
 
 urlpatterns = [
     url(r'^praw/$',         views.main,                                 name='main'),
@@ -31,20 +31,20 @@ urlpatterns = [
 
 
 
-    url(r'^vBase/main/$',                       vBase.main,             name='vBase.main'),
-    url(r'^vBase/main/xData/(?P<xData>\w+)/$',  vBase.main,             name='vBase.main'),
+    url(r'^vbase/main/$',                       vbase.main,             name='vbase.main'),
+    url(r'^vbase/main/xData/(?P<xData>\w+)/$',  vbase.main,             name='vbase.main'),
 
-    url(r'^vUser/list/$',                       vUser.list,             name='vUser.list'),
-    url(r'^vUser/add/(?P<name>\w+)/$',          vUser.add,              name='vUser.add'),
-    url(r'^vUser/delAll/$',                     vUser.delAll,           name='vUser.delAll'),
+    url(r'^vuser/list/$',                       vuser.list,             name='vuser.list'),
+    url(r'^vuser/add/(?P<name>\w+)/$',          vuser.add,              name='vuser.add'),
+    url(r'^vuser/delAll/$',                     vuser.delAll,           name='vuser.delAll'),
 
-    url(r'^vSubreddit/list/$',                  vSubreddit.list,        name='vSubreddit.list'),
-    url(r'^vSubreddit/add/(?P<name>\w+)/$',     vSubreddit.add,         name='vSubreddit.add'),
-    url(r'^vSubreddit/delAll/$',                vSubreddit.delAll,      name='vSubreddit.delAll'),
-    url(r'^vSubreddit/update/$',                vSubreddit.update,      name='vSubreddit.update'),
+    url(r'^vsubreddit/list/$',                  vsubreddit.list,        name='vsubreddit.list'),
+    url(r'^vsubreddit/add/(?P<name>\w+)/$',     vsubreddit.add,         name='vsubreddit.add'),
+    url(r'^vsubreddit/delAll/$',                vsubreddit.delAll,      name='vsubreddit.delAll'),
+    url(r'^vsubreddit/update/$',                vsubreddit.update,      name='vsubreddit.update'),
 
-    url(r'^vThread/list/$',                 vThread.list,       name='vThread.list'),
-    url(r'^vThread/delAll/$',               vThread.delAll,     name='vThread.delAll'),
+    url(r'^vthread/list/$',                 vthread.list,       name='vthread.list'),
+    url(r'^vthread/delAll/$',               vthread.delAll,     name='vthread.delAll'),
 ]
 
 

@@ -1,11 +1,11 @@
 from __future__ import unicode_literals
 from django.db import models
-from .mBase import mBase
-from .mSubreddit import mSubreddit
+from .mbase import mbase
+from .msubreddit import msubreddit
 
 # *****************************************************************************
-class mThread(mBase, models.Model):
-    subreddit       = models.ForeignKey(mSubreddit, on_delete=models.CASCADE,)
+class mthread(mbase, models.Model):
+    subreddit       = models.ForeignKey(msubreddit, on_delete=models.CASCADE,)
     name            = models.CharField(max_length=12)
     deleted         = models.BooleanField(default=False)
     cForestGot      = models.BooleanField(default=False)
@@ -20,8 +20,8 @@ class mThread(mBase, models.Model):
 
 # *****************************************************************************
 # class subredditSubmissionRaw(models.Model):
-class mThreadRaw(models.Model):
-    index           = models.OneToOneField(mThread, primary_key=True)
+class mthreadRaw(models.Model):
+    index           = models.OneToOneField(mthread, primary_key=True)
     data            = models.TextField()
     def __str__(self):
         s = self.index.subreddit.name
@@ -30,8 +30,8 @@ class mThreadRaw(models.Model):
 
 # *****************************************************************************
 # class subredditSubmissionFieldsExtracted(models.Model):
-class mThreadExtracted(models.Model):
-    index           = models.OneToOneField(mThread, primary_key=True)
+class mthreadExtracted(models.Model):
+    index           = models.OneToOneField(mthread, primary_key=True)
 
     author          = models.CharField(max_length=21)
     created_utc     = models.DateTimeField()

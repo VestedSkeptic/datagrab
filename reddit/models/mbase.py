@@ -12,10 +12,10 @@ CONST_DEV_PASSWORD                                      = "899823wef"
 CONST_USER_AGENT                                        = "test app by /u/OldDevLearningLinux, ver 0.01"
 
 # *****************************************************************************
-class mBase(models.Model):
+class mbase(models.Model):
     pass
     def __str__(self):
-        return format("mBase")
+        return format("mbase")
 
     # -------------------------------------------------------------------------
     @staticmethod

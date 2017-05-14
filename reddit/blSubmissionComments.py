@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from .models import subredditSubmissionIndex, user, userCommentsIndex, userCommentsRaw
 from .blUserComments import blUserComments_getUserCommentIndex, blUserComments_saveUserCommentsRaw
-import config
+from .config import clog
 from .constants import *
 import json
 import praw

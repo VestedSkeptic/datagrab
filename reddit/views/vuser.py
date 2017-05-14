@@ -2,13 +2,13 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.core.exceptions import ObjectDoesNotExist
 from ..config import clog
-from ..models import mUser
+from ..models import muser
 
 # *****************************************************************************
 def list(request):
     clog.dumpMethodInfo()
-    qs = mUser.objects.all()
-    vs = "<br>mUser.list: "
+    qs = muser.objects.all()
+    vs = "<br>muser.list: "
 
     if qs.count() == 0:
         vs += "No items to list"
@@ -18,37 +18,37 @@ def list(request):
 
     sessionKey = 'blue'
     request.session[sessionKey] = vs
-    return redirect('vBase.main', xData=sessionKey)
+    return redirect('vbase.main', xData=sessionKey)
 
 # *****************************************************************************
 def add(request, name):
     clog.dumpMethodInfo()
-    vs = "<br>mUser.add: " + name
+    vs = "<br>muser.add: " + name
     try:
-        mUser.objects.get(name=name)
+        muser.objects.get(name=name)
         vs += " already exists"
     except ObjectDoesNotExist:
-        user = mUser(name=name, poi=True)
+        user = muser(name=name, poi=True)
         user.save()
         vs += " added"
 
     sessionKey = 'blue'
     request.session[sessionKey] = vs
-    return redirect('vBase.main', xData=sessionKey)
+    return redirect('vbase.main', xData=sessionKey)
 
 
 # *****************************************************************************
 def delAll(request):
     clog.dumpMethodInfo()
-    vs = "<br>mUser.delAll: "
+    vs = "<br>muser.delAll: "
 
-    qs = mUser.objects.all()
-    vs += str(qs.count()) + " mUsers deleted"
+    qs = muser.objects.all()
+    vs += str(qs.count()) + " musers deleted"
     qs.delete()
 
     sessionKey = 'blue'
     request.session[sessionKey] = vs
-    return redirect('vBase.main', xData=sessionKey)
+    return redirect('vbase.main', xData=sessionKey)
 
 
 

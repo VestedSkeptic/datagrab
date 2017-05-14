@@ -2,13 +2,13 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.core.exceptions import ObjectDoesNotExist
 from ..config import clog
-from ..models import mThread
+from ..models import mthread
 
 # *****************************************************************************
 def list(request):
     clog.dumpMethodInfo()
-    qs = mThread.objects.all()
-    vs = "<br>mThread.list: "
+    qs = mthread.objects.all()
+    vs = "<br>mthread.list: "
 
     if qs.count() == 0:
         vs += "No items to list"
@@ -18,20 +18,20 @@ def list(request):
 
     sessionKey = 'blue'
     request.session[sessionKey] = vs
-    return redirect('vBase.main', xData=sessionKey)
+    return redirect('vbase.main', xData=sessionKey)
 
 # *****************************************************************************
 def delAll(request):
     clog.dumpMethodInfo()
-    vs = "<br>mThread.delAll: "
+    vs = "<br>mthread.delAll: "
 
-    qs = mThread.objects.all()
+    qs = mthread.objects.all()
     vs += str(qs.count()) + " mSubmissions deleted"
     qs.delete()
 
     sessionKey = 'blue'
     request.session[sessionKey] = vs
-    return redirect('vBase.main', xData=sessionKey)
+    return redirect('vbase.main', xData=sessionKey)
 
 
 

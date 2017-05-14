@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from .models import user, userCommentsIndex, userCommentsRaw
-import config
+from .config import clog
 from .constants import *
 import json
 import praw

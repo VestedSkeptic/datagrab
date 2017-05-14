@@ -1,12 +1,12 @@
 from __future__ import unicode_literals
 from django.db import models
-from .mBase import mBase
-# from .mThread import mThread
+from .mbase import mbase
+# from .mthread import mthread
 # from .. import config
 from ..config import clog
 
 # *****************************************************************************
-class mSubreddit(mBase, models.Model):
+class msubreddit(mbase, models.Model):
     name            = models.CharField(max_length=30)
     poi             = models.BooleanField(default=False)
     def __str__(self):

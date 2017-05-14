@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
 from django.db import models
-from .mBase import mBase
+from .mbase import mbase
 
 # *****************************************************************************
-class mUser(mBase, models.Model):
+class muser(mbase, models.Model):
     name            = models.CharField(max_length=30)
     poi             = models.BooleanField(default=False)
     cHistoryGot     = models.BooleanField(default=False)
