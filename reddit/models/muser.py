@@ -14,6 +14,7 @@ class muser(mbase, models.Model):
         else:                s += " (cHistoryGot = False)"
         return format(s)
 
+
 # # ----------------------------------------------------------------------------
 # # REDDITOR attributes
 # # Ex
