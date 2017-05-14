@@ -55,7 +55,6 @@ def delAll(request):
     request.session[sessionKey] = vs
     return redirect('vbase.main', xData=sessionKey)
 
-
 # *****************************************************************************
 def update(request):
     mi = clog.dumpMethodInfo()

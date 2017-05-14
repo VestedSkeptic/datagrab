@@ -31,7 +31,7 @@ class mbase(models.Model):
     @staticmethod
     def getPrawRedditInstance():
         mi = clog.dumpMethodInfo()
-        clog.logger.info(mi)
+        # clog.logger.info(mi)
 
         prawReddit = praw.Reddit(
             client_id=CONST_CLIENT_ID,

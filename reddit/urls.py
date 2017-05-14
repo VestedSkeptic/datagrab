@@ -44,8 +44,9 @@ urlpatterns = [
     url(r'^vsubreddit/delAll/$',                vsubreddit.delAll,      name='vsubreddit.delAll'),
     url(r'^vsubreddit/update/$',                vsubreddit.update,      name='vsubreddit.update'),
 
-    url(r'^vthread/list/$',                 vthread.list,       name='vthread.list'),
-    url(r'^vthread/delAll/$',               vthread.delAll,     name='vthread.delAll'),
+    url(r'^vthread/list/$',                     vthread.list,           name='vthread.list'),
+    url(r'^vthread/delAll/$',                   vthread.delAll,         name='vthread.delAll'),
+    url(r'^vthread/update/$',                   vthread.update,         name='vthread.update'),
 ]
 
 
