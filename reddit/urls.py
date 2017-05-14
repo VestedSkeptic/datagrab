@@ -3,7 +3,7 @@ from . import views
 from . import vBase
 from . import vUser
 from . import vSubreddit
-from . import vSubmission
+from . import vThread
 
 urlpatterns = [
     url(r'^praw/$',         views.main,                                 name='main'),
@@ -42,9 +42,9 @@ urlpatterns = [
     url(r'^vSubreddit/add/(?P<name>\w+)/$',     vSubreddit.add,         name='vSubreddit.add'),
     url(r'^vSubreddit/delAll/$',                vSubreddit.delAll,      name='vSubreddit.delAll'),
 
-    url(r'^vSubmission/list/$',                 vSubmission.list,       name='vSubmission.list'),
-    url(r'^vSubmission/delAll/$',               vSubmission.delAll,     name='vSubmission.delAll'),
-    url(r'^vSubmission/update/$',               vSubmission.update,     name='vSubmission.update'),
+    url(r'^vThread/list/$',                 vThread.list,       name='vThread.list'),
+    url(r'^vThread/delAll/$',               vThread.delAll,     name='vThread.delAll'),
+    url(r'^vThread/update/$',               vThread.update,     name='vThread.update'),
 ]
 
 

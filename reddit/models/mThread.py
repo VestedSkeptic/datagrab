@@ -4,7 +4,7 @@ from .mBase import mBase
 from .mSubreddit import mSubreddit
 
 # *****************************************************************************
-class mSubmission(mBase, models.Model):
+class mThread(mBase, models.Model):
     subreddit       = models.ForeignKey(mSubreddit, on_delete=models.CASCADE,)
     name            = models.CharField(max_length=12)
     deleted         = models.BooleanField(default=False)
@@ -21,7 +21,7 @@ class mSubmission(mBase, models.Model):
 # *****************************************************************************
 # class subredditSubmissionRaw(models.Model):
 class mSubmissionRaw(models.Model):
-    index           = models.OneToOneField(mSubmission, primary_key=True)
+    index           = models.OneToOneField(mThread, primary_key=True)
     data            = models.TextField()
     def __str__(self):
         s = self.index.subreddit.name
@@ -31,7 +31,7 @@ class mSubmissionRaw(models.Model):
 # *****************************************************************************
 # class subredditSubmissionFieldsExtracted(models.Model):
 class mSubmissionExtracted(models.Model):
-    index           = models.OneToOneField(mSubmission, primary_key=True)
+    index           = models.OneToOneField(mThread, primary_key=True)
 
     author          = models.CharField(max_length=21)
     created_utc     = models.DateTimeField()

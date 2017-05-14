@@ -2,13 +2,13 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.core.exceptions import ObjectDoesNotExist
 import config
-from .models import mSubmission
+from .models import mThread
 
 # *****************************************************************************
 def list(request):
     config.clog.dumpMethodInfo()
-    qs = mSubmission.objects.all()
-    vs = "<br>mSubmission.list: "
+    qs = mThread.objects.all()
+    vs = "<br>mThread.list: "
 
     if qs.count() == 0:
         vs += "No items to list"
@@ -23,12 +23,12 @@ def list(request):
 # # *****************************************************************************
 # def add(request, name):
 #     config.clog.dumpMethodInfo()
-#     vs = "<br>mSubmission.add: " + name
+#     vs = "<br>mThread.add: " + name
 #     try:
-#         mSubmission.objects.get(name=name)
+#         mThread.objects.get(name=name)
 #         vs += " already exists"
 #     except ObjectDoesNotExist:
-#         user = mSubmission(name=name, poi=True)
+#         user = mThread(name=name, poi=True)
 #         user.save()
 #         vs += " added"
 #
@@ -40,9 +40,9 @@ def list(request):
 # *****************************************************************************
 def delAll(request):
     config.clog.dumpMethodInfo()
-    vs = "<br>mSubmission.delAll: "
+    vs = "<br>mThread.delAll: "
 
-    qs = mSubmission.objects.all()
+    qs = mThread.objects.all()
     vs += str(qs.count()) + " mSubmissions deleted"
     qs.delete()
 
