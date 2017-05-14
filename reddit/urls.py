@@ -37,6 +37,7 @@ urlpatterns = [
     url(r'^vuser/list/$',                       vuser.list,             name='vuser.list'),
     url(r'^vuser/add/(?P<name>\w+)/$',          vuser.add,              name='vuser.add'),
     url(r'^vuser/delAll/$',                     vuser.delAll,           name='vuser.delAll'),
+    url(r'^vuser/update/$',                     vuser.update,           name='vuser.update'),
 
     url(r'^vsubreddit/list/$',                  vsubreddit.list,        name='vsubreddit.list'),
     url(r'^vsubreddit/add/(?P<name>\w+)/$',     vsubreddit.add,         name='vsubreddit.add'),

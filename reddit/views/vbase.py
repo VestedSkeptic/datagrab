@@ -45,6 +45,7 @@ def main(request, xData=None):
     vs += ' <a href="http://localhost:8000/reddit/vuser/list">list</a>'
     vs += ' <a href="http://localhost:8000/reddit/vuser/add/OldDevLearningLinux">add</a>'
     vs += ' <a href="http://localhost:8000/reddit/vuser/delAll">delAll</a>'
+    vs += ' <a href="http://localhost:8000/reddit/vuser/update">update</a>'
 
     vs += '<br><b>vsubreddit</b>:'
     vs += ' <a href="http://localhost:8000/reddit/vsubreddit/list">list</a>'
