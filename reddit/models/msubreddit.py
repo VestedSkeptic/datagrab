@@ -14,22 +14,3 @@ class msubreddit(mbase, models.Model):
         if self.poi: s += " (poi)"
         return format(s)
 
-    # --------------------------------------------------------------------------
-    def getBestBeforeValue(self, prawReddit):
-        mi = clog.dumpMethodInfo()
-        clog.logger.info(mi + " METHOD NOT COMPLETED")
-        return ''
-
-    # --------------------------------------------------------------------------
-    def updateThreads(self, argDict):
-        mi = clog.dumpMethodInfo()
-        clog.logger.info(mi)
-
-        prawReddit = self.getPrawRedditInstance()
-
-        params={};
-        params['before'] = self.getBestBeforeValue(prawReddit)
-        clog.logger.debug("params[before] = %s" % params['before'])
-
-
-        return

@@ -3,6 +3,7 @@ from django.shortcuts import redirect
 from django.core.exceptions import ObjectDoesNotExist
 from ..config import clog
 from ..models import msubreddit
+from ..blue import bthread
 
 # *****************************************************************************
 def list(request):
@@ -54,14 +55,14 @@ def delAll(request):
 def update(request):
     mi = clog.dumpMethodInfo()
     clog.logger.info(mi)
-
     vs = mi
 
     qs = msubreddit.objects.all()
     if qs.count() > 0:
-        for iSubreddit in qs:
+        for i_msubreddit in qs:
             argDict = {'vs': ""}
-            iSubreddit.updateThreads(argDict)
+            # i_msubreddit.updateThreads(argDict)
+            bthread.updateSubredditThreads(i_msubreddit)
             vs += argDict['vs']
     else:
         vs += " No msubreddits found"

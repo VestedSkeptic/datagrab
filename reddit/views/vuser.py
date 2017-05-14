@@ -6,10 +6,11 @@ from ..models import muser
 
 # *****************************************************************************
 def list(request):
-    clog.dumpMethodInfo()
-    qs = muser.objects.all()
-    vs = "<br>muser.list: "
+    mi = clog.dumpMethodInfo()
+    clog.logger.info(mi)
+    vs = ''
 
+    qs = muser.objects.all()
     if qs.count() == 0:
         vs += "No items to list"
 
@@ -22,8 +23,10 @@ def list(request):
 
 # *****************************************************************************
 def add(request, name):
-    clog.dumpMethodInfo()
-    vs = "<br>muser.add: " + name
+    mi = clog.dumpMethodInfo()
+    clog.logger.info(mi)
+    vs = mi
+
     try:
         muser.objects.get(name=name)
         vs += " already exists"
@@ -39,8 +42,9 @@ def add(request, name):
 
 # *****************************************************************************
 def delAll(request):
-    clog.dumpMethodInfo()
-    vs = "<br>muser.delAll: "
+    mi = clog.dumpMethodInfo()
+    clog.logger.info(mi)
+    vs = mi
 
     qs = muser.objects.all()
     vs += str(qs.count()) + " musers deleted"

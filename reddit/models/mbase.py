@@ -1,7 +1,8 @@
 from __future__ import unicode_literals
 from django.db import models
-# from .. import config
+from .. import config
 from ..config import clog
+# from config import clog
 import praw
 
 CONST_CLIENT_ID                                         = "kcksu9E4VgC0TQ"
@@ -39,6 +40,7 @@ class mbase(models.Model):
             username=CONST_DEV_USERNAME,
             password=CONST_DEV_PASSWORD
         )
+        return prawReddit
 
 
 
