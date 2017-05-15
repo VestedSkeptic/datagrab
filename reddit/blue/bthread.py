@@ -5,16 +5,16 @@ import praw
 
 # *****************************************************************************
 # if mthread exists return it otherwise create it
-def getmthread(submission, subreddit, aDict):
+def getmthread(prawThread, i_msubreddit, aDict):
     mi = clog.dumpMethodInfo()
     # clog.logger.info(mi)
 
     ssi = None
     try:
-        ssi = mthread.objects.get(subreddit=subreddit, name=submission.name)
+        ssi = mthread.objects.get(subreddit=i_msubreddit, name=prawThread.name)
         aDict['isNew'] = False
     except ObjectDoesNotExist:
-        ssi = mthread(subreddit=subreddit, name=submission.name)
+        ssi = mthread(subreddit=i_msubreddit, name=prawThread.name)
         ssi.save()
     aDict['ssi'] = ssi
     return
@@ -69,13 +69,13 @@ def updateSubredditThreads(i_msubreddit):
     countNew = 0
     countDuplicate = 0
     try:
-        for thread in prawReddit.subreddit(i_msubreddit.name).new(limit=None, params=params):
+        for prawThread in prawReddit.subreddit(i_msubreddit.name).new(limit=None, params=params):
             aDict = {'ssi' : None, 'isNew' : True }
-            getmthread(thread, i_msubreddit, aDict)
+            getmthread(prawThread, i_msubreddit, aDict)
             if aDict['isNew']:
-                savesmthreadRaw(thread, aDict['ssi'])
+                savesmthreadRaw(prawThread, aDict['ssi'])
                 countNew += 1
-                clog.logger.debug("Added thread: %s" % (thread.title[:40]))
+                clog.logger.debug("Added prawThread: %s" % (prawThread.title[:40]))
             else:
                 countDuplicate += 1
     except praw.exceptions.APIException as e:
