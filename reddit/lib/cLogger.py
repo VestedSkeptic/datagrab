@@ -164,9 +164,9 @@ class cLogger(object):
     # )
     # inspect.stack()[1][0]
     def dumpMethodInfo(self):
-        mPtr = self.getMethodPtr(self.methodInfoLevel)
         methodName = inspect.stack()[1][3]
-        fileName = inspect.stack()[1][1].rpartition('/')[2] # right partition string by backslash and return third part of tuple
+        fileNameWithType = inspect.stack()[1][1].rpartition('/')[2] # right partition string by backslash and return third part of tuple
+        fileName = fileNameWithType.partition('.')[0]
 
         os = "%-20s: " % (fileName + "." + methodName + "()")
         args, _, _, values = inspect.getargvalues(inspect.stack()[1][0])
@@ -177,6 +177,9 @@ class cLogger(object):
             firstIteration = False
             os += "%s=%s" % (i, values[i])
         if not firstIteration: os += ")"
+
+        # Full methodInfo to TRACE
+        mPtr = self.getMethodPtr(cLoggerLevel_TRACE)
         mPtr(os)
 
         return methodName + "(): "

@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from django.db import models
 from .mbase import mbase
 from .muser import muser
+from ..config import clog
 
 # *****************************************************************************
 class mcomment(mbase, models.Model):
@@ -11,6 +12,9 @@ class mcomment(mbase, models.Model):
     subreddit       = models.CharField(max_length=12)
     deleted         = models.BooleanField(default=False)
     def __str__(self):
+        # mi = clog.dumpMethodInfo()
+        # clog.logger.info(mi)
+
         s = self.user.name
         # s += " [" + self.name + "]"
         # s += " [submisson_id=" + self.submission_id + "]"
@@ -22,6 +26,9 @@ class mcommentRaw(mbase, models.Model):
     index           = models.OneToOneField(mcomment, primary_key=True)   # was uci
     data            = models.TextField()
     def __str__(self):
+        # mi = clog.dumpMethodInfo()
+        # clog.logger.info(mi)
+
         s = self.index.user
         # s += " [" + self.data + "]"
         return format(s)

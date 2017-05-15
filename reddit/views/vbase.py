@@ -5,17 +5,16 @@ from ..models import mcomment, msubreddit, mthread, muser
 
 # *****************************************************************************
 def displayDatabaseModelCounts():
+    mi = clog.dumpMethodInfo()
+    # clog.logger.info(mi)
+
     users_poi               = muser.objects.filter(poi=True).count()
     users_notPoi            = muser.objects.filter(poi=False).count()
-
     users_ci                = mcomment.objects.filter(deleted=False).count()
     users_ci_deleted        = mcomment.objects.filter(deleted=True).count()
-
     subreddits              = msubreddit.objects.all().count()
-
     subreddits_si           = mthread.objects.filter(deleted=False).count()
     subreddits_si_deleted   = mthread.objects.filter(deleted=True).count()
-
     s = ''
     s += '<BR>==========================='
     s += '<BR>musers poi = ' + str(users_poi)
@@ -34,12 +33,12 @@ def displayDatabaseModelCounts():
 
 # *****************************************************************************
 def main(request, xData=None):
-    clog.dumpMethodInfo()
+    mi = clog.dumpMethodInfo()
+    clog.logger.info(mi)
 
-    vs  = 'vbase.main:'
+    vs  = ''
     moreData = request.session.get(xData, '')
     vs += moreData
-
 
     vs += '<br><b>vuser</b>:'
     vs += ' <a href="http://localhost:8000/reddit/vuser/list">list</a>'

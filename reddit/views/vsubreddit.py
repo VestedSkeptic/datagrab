@@ -7,32 +7,36 @@ from ..blue import bthread
 
 # *****************************************************************************
 def list(request):
-    clog.dumpMethodInfo()
-    qs = msubreddit.objects.all()
-    vs = "<br>msubreddit.list: "
+    mi = clog.dumpMethodInfo()
+    clog.logger.info(mi)
 
+    vs = ''
+    qs = msubreddit.objects.all()
     if qs.count() == 0:
         vs += "No items to list"
-
     for item in qs:
         vs += item.name + ", "
 
+    clog.logger.info(vs)
     sessionKey = 'blue'
     request.session[sessionKey] = vs
     return redirect('vbase.main', xData=sessionKey)
 
 # *****************************************************************************
 def add(request, name):
-    clog.dumpMethodInfo()
-    vs = "<br>msubreddit.add: " + name
+    mi = clog.dumpMethodInfo()
+    clog.logger.info(mi)
+
+    vs = ''
     try:
         msubreddit.objects.get(name=name)
-        vs += " already exists"
+        vs += "already exists"
     except ObjectDoesNotExist:
         user = msubreddit(name=name, poi=True)
         user.save()
-        vs += " added"
+        vs += "added"
 
+    clog.logger.info(vs)
     sessionKey = 'blue'
     request.session[sessionKey] = vs
     return redirect('vbase.main', xData=sessionKey)
@@ -40,13 +44,15 @@ def add(request, name):
 
 # *****************************************************************************
 def delAll(request):
-    clog.dumpMethodInfo()
-    vs = "<br>msubreddit.delAll: "
+    mi = clog.dumpMethodInfo()
+    clog.logger.info(mi)
 
+    vs = ''
     qs = msubreddit.objects.all()
     vs += str(qs.count()) + " msubreddits deleted"
     qs.delete()
 
+    clog.logger.info(vs)
     sessionKey = 'blue'
     request.session[sessionKey] = vs
     return redirect('vbase.main', xData=sessionKey)
@@ -55,18 +61,18 @@ def delAll(request):
 def update(request):
     mi = clog.dumpMethodInfo()
     clog.logger.info(mi)
-    vs = mi
 
+    vs = ''
     qs = msubreddit.objects.all()
     if qs.count() > 0:
         for i_msubreddit in qs:
             argDict = {'vs': ""}
-            # i_msubreddit.updateThreads(argDict)
             bthread.updateSubredditThreads(i_msubreddit)
             vs += argDict['vs']
     else:
         vs += " No msubreddits found"
 
+    clog.logger.info(vs)
     sessionKey = 'blue'
     request.session[sessionKey] = vs
     return redirect('vbase.main', xData=sessionKey)

@@ -19,6 +19,9 @@ class mbase(models.Model):
     # -------------------------------------------------------------------------
     @staticmethod
     def getDictOfClassFieldNames(classModel):
+        mi = clog.dumpMethodInfo()
+        clog.logger.info(mi)
+
         rvDict = {}
         fields = classModel._meta.get_fields()
         for field in fields:

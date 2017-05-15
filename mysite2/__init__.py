@@ -14,8 +14,8 @@ reddit.config.clog.generateFuncDict()
 reddit.config.clog.addConsoleLogger(cLogger.cLoggerLevel_INFO, "hConsole")
 reddit.config.clog.addFileLogger("/home/delta/work/mysite2/logs/out.txt", cLogger.cLoggerLevel_DEBUG, "hFile out", cLogger.cLoggerArchive_True)
 reddit.config.clog.addFileLogger("/home/delta/work/mysite2/logs/trace.txt", cLogger.cLoggerLevel_TRACE, "hFile trace", cLogger.cLoggerArchive_False)
-reddit.config.clog.setLoggerInfoLevel(cLogger.cLoggerLevel_INFO)
-reddit.config.clog.setMethodInfoLevel(cLogger.cLoggerLevel_TRACE)
+reddit.config.clog.setLoggerInfoLevel(cLogger.cLoggerLevel_TRACE)
+reddit.config.clog.setMethodInfoLevel(cLogger.cLoggerLevel_DEBUG)
 reddit.config.clog.dumpLoggerInfo()
 
 

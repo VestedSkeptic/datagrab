@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from django.db import models
 from mbase import mbase
 from msubreddit import msubreddit
+from ..config import clog
 
 # *****************************************************************************
 # subredditSubmissionIndex
@@ -11,7 +12,11 @@ class mthread(mbase, models.Model):
     deleted         = models.BooleanField(default=False)
     cForestGot      = models.BooleanField(default=False)
     count           = models.PositiveIntegerField(default=0)
+
     def __str__(self):
+        # mi = clog.dumpMethodInfo()
+        # clog.logger.info(mi)
+
         s = self.subreddit.name
         s += " [" + self.name + "]"
         s += " [" + str(self.count) + "]"
@@ -24,7 +29,11 @@ class mthread(mbase, models.Model):
 class mthreadRaw(models.Model):
     index           = models.OneToOneField(mthread, primary_key=True)
     data            = models.TextField()
+
     def __str__(self):
+        # mi = clog.dumpMethodInfo()
+        # clog.logger.info(mi)
+
         s = self.index.subreddit.name
         s += ": " + self.data
         return format(s)
@@ -40,6 +49,9 @@ class mthreadExtracted(models.Model):
     selftext        = models.TextField()
 
     def __str__(self):
+        # mi = clog.dumpMethodInfo()
+        # clog.logger.info(mi)
+
         s = self.index.subreddit.name
         s += ": " + self.title
         return format(s)
