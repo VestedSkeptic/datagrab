@@ -7,7 +7,7 @@ import praw
 # if mthread exists return it otherwise create it
 def getmthread(submission, subreddit, aDict):
     mi = clog.dumpMethodInfo()
-    clog.logger.info(mi)
+    # clog.logger.info(mi)
 
     ssi = None
     try:
@@ -24,7 +24,7 @@ def getmthread(submission, subreddit, aDict):
 # TODO else compare appropriate fields, if any differences record appropriately
 def savesmthreadRaw(submission, ssi):
     mi = clog.dumpMethodInfo()
-    clog.logger.info(mi)
+    # clog.logger.info(mi)
 
     stRaw = None
     try:
@@ -48,7 +48,7 @@ def savesmthreadRaw(submission, ssi):
 # --------------------------------------------------------------------------
 def getBestBeforeValue(prawReddit):
     mi = clog.dumpMethodInfo()
-    clog.logger.info(mi)
+    # clog.logger.info(mi)
 
     clog.logger.info("METHOD NOT COMPLETED")
     return ''
@@ -60,9 +60,6 @@ def updateSubredditThreads(i_msubreddit):
 
     vs = ''
     prawReddit = i_msubreddit.getPrawRedditInstance()
-    # prawReddit = getPrawRedditInstance()
-
-    print("prawReddit = %s" % (prawReddit))
 
     params={};
     params['before'] = getBestBeforeValue(prawReddit)

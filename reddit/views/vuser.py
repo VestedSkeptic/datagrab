@@ -27,7 +27,7 @@ def add(request, name):
     mi = clog.dumpMethodInfo()
     clog.logger.info(mi)
 
-    vs = ''
+    vs = name + ' '
     try:
         muser.objects.get(name=name)
         vs += "already exists"

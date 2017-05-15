@@ -49,7 +49,7 @@ def savesmcommentRaw(comment, ssi):
 # --------------------------------------------------------------------------
 def getBestBeforeValue(i_muser, prawReddit):
     mi = clog.dumpMethodInfo()
-    clog.logger.info(mi)
+    # clog.logger.info(mi)
 
     clog.logger.info("METHOD NOT COMPLETED")
     return ''

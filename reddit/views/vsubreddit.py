@@ -27,7 +27,7 @@ def add(request, name):
     mi = clog.dumpMethodInfo()
     clog.logger.info(mi)
 
-    vs = ''
+    vs = name + ' '
     try:
         msubreddit.objects.get(name=name)
         vs += "already exists"
@@ -65,12 +65,13 @@ def update(request):
     vs = ''
     qs = msubreddit.objects.all()
     if qs.count() > 0:
+        vs += "%d msubreddits found" % (qs.count())
         for i_msubreddit in qs:
             argDict = {'vs': ""}
             bthread.updateSubredditThreads(i_msubreddit)
             vs += argDict['vs']
     else:
-        vs += " No msubreddits found"
+        vs += "No msubreddits found"
 
     clog.logger.info(vs)
     sessionKey = 'blue'

@@ -40,18 +40,21 @@ def main(request, xData=None):
     moreData = request.session.get(xData, '')
     vs += moreData
 
-    vs += '<br><b>vuser</b>:'
-    vs += ' <a href="http://localhost:8000/reddit/vuser/list">list</a>'
-    vs += ' <a href="http://localhost:8000/reddit/vuser/add/OldDevLearningLinux">add</a>'
-    vs += ' <a href="http://localhost:8000/reddit/vuser/delAll">delAll</a>'
-    vs += ' <a href="http://localhost:8000/reddit/vuser/update">update</a>'
+    vs += '<br><b>vuser</b>: '
+    vs += '  <a href="http://localhost:8000/reddit/vuser/list">list</a>'
+    vs += ', <a href="http://localhost:8000/reddit/vuser/delAll">delAll</a>'
+    vs += ', <a href="http://localhost:8000/reddit/vuser/update">update</a>'
+    vs += '<br><b>vuser add</b>: '
+    vs += '  <a href="http://localhost:8000/reddit/vuser/add/OldDevLearningLinux">OldDevLearningLinux</a>'
+    vs += ', <a href="http://localhost:8000/reddit/vuser/add/RoadsideBandit">RoadsideBandit</a>'
 
-    vs += '<br><b>vsubreddit</b>:'
-    vs += ' <a href="http://localhost:8000/reddit/vsubreddit/list">list</a>'
-    vs += ' <a href="http://localhost:8000/reddit/vsubreddit/add/Molw">add MOLW</a>'
-    vs += ' <a href="http://localhost:8000/reddit/vsubreddit/add/redditdev">add redditdev</a>'
-    vs += ' <a href="http://localhost:8000/reddit/vsubreddit/delAll">delAll</a>'
-    vs += ' <a href="http://localhost:8000/reddit/vsubreddit/update">update threads</a>'
+    vs += '<br><b>vsubreddit</b>: '
+    vs += '  <a href="http://localhost:8000/reddit/vsubreddit/list">list</a>'
+    vs += ', <a href="http://localhost:8000/reddit/vsubreddit/delAll">delAll</a>'
+    vs += ', <a href="http://localhost:8000/reddit/vsubreddit/update">update threads</a>'
+    vs += '<br><b>vsubreddit add</b>: '
+    vs += '  <a href="http://localhost:8000/reddit/vsubreddit/add/Molw">Molw</a>'
+    vs += ', <a href="http://localhost:8000/reddit/vsubreddit/add/politics">Politics</a>'
 
     vs += '<br><b>vthread</b>:'
     vs += ' <a href="http://localhost:8000/reddit/vthread/list">list</a>'
