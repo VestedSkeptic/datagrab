@@ -113,7 +113,7 @@ def getCommentsByCommentForest(i_mthread, argDict, sortOrder):
         for comment in submissionObject.comments.list():
             clog.logger.debug("comment = %s" % (comment))
             # See if comment.author.name exists in class user(models.Model):
-            # If not add it with poi value set to false.
+            # If not add it with ppoi value set to false.
             if comment.author == None:
                 countPostsWithNoAuthor += 1
             else:
@@ -122,7 +122,7 @@ def getCommentsByCommentForest(i_mthread, argDict, sortOrder):
                     i_muser = muser.objects.get(name=comment.author.name)
                     clog.logger.debug("muser %s exists" % (i_muser.name))
                 except ObjectDoesNotExist:
-                    i_muser = muser(name=comment.author.name, poi=False)
+                    i_muser = muser(name=comment.author.name, ppoi=False)
                     i_muser.save()
                     clog.logger.trace("muser %s created" % (i_muser.name))
 

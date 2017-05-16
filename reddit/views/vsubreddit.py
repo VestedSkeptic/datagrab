@@ -4,6 +4,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from ..config import clog
 from ..models import msubreddit
 from ..blue import bthread
+import praw
+import pprint
 
 # *****************************************************************************
 def list(request):
@@ -27,16 +29,19 @@ def add(request, name):
     mi = clog.dumpMethodInfo()
     clog.logger.info(mi)
 
-    vs = name + ' '
-    try:
-        msubreddit.objects.get(name=name)
-        vs += "already exists"
-    except ObjectDoesNotExist:
-        user = msubreddit(name=name, poi=True)
-        user.save()
-        vs += "added"
+    vs = name
 
+    prawReddit = msubreddit.getPrawRedditInstance()
+    prawSubreddit = prawReddit.subreddit(name)
+
+    i_msubreddit = msubreddit.objects.addOrUpdate(name, prawSubreddit)
+    clog.logger.debug("i_msubreddit = %s" % (pprint.pformat(vars(i_msubreddit))))
+
+    if i_msubreddit.addOrUpdateTempField == "new":             vs += " added"
+    if i_msubreddit.addOrUpdateTempField == "oldUnchanged":    vs += " oldUnchanged"
+    if i_msubreddit.addOrUpdateTempField == "oldChanged":      vs += " oldChanged"
     clog.logger.info(vs)
+
     sessionKey = 'blue'
     request.session[sessionKey] = vs
     return redirect('vbase.main', xData=sessionKey)

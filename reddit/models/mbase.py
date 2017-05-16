@@ -55,14 +55,14 @@ class mbase(models.Model):
         elif redditUser == None:                         return '[None]'
         else:                                            return redditUser              # will also return values of '[deleted]' or ''[removed]'
 
-    # # -------------------------------------------------------------------------
-    # # if None will return ''
-    # def getStringOrNoneAsEmptyString(self, inputString):
-    #     mi = clog.dumpMethodInfo()
-    #     clog.logger.info(mi)
-    #
-    #     if inputString == None: return ''
-    #     else:                   return inputString
+    # -------------------------------------------------------------------------
+    # if None will return ''
+    def getStringOrNoneAsEmptyString(self, inputString):
+        mi = clog.dumpMethodInfo()
+        # clog.logger.info(mi)
+
+        if inputString == None: return ''
+        else:                   return inputString
 
     # -------------------------------------------------------------------------
     def addRedditFields(self, prawData, redditFieldDict):

@@ -8,8 +8,8 @@ def displayDatabaseModelCounts():
     mi = clog.dumpMethodInfo()
     # clog.logger.info(mi)
 
-    users_poi               = muser.objects.filter(poi=True).count()
-    users_notPoi            = muser.objects.filter(poi=False).count()
+    users_poi               = muser.objects.filter(ppoi=True).count()
+    users_notPoi            = muser.objects.filter(ppoi=False).count()
     users_ci                = mcomment.objects.filter(deleted=False).count()
     users_ci_deleted        = mcomment.objects.filter(deleted=True).count()
     subreddits              = msubreddit.objects.all().count()
@@ -17,8 +17,8 @@ def displayDatabaseModelCounts():
     subreddits_si_deleted   = mthread.objects.filter(pdeleted=True).count()
     s = ''
     s += '<BR>==========================='
-    s += '<BR>musers poi = ' + str(users_poi)
-    s += '<BR>musers !poi = ' + str(users_notPoi)
+    s += '<BR>musers ppoi = ' + str(users_poi)
+    s += '<BR>musers !ppoi = ' + str(users_notPoi)
     s += '<BR>'
     s += '<BR>mcomments = ' + str(users_ci)
     s += '<BR>mcomments deleted = ' + str(users_ci_deleted)

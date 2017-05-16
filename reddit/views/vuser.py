@@ -32,7 +32,7 @@ def add(request, name):
         muser.objects.get(name=name)
         vs += "already exists"
     except ObjectDoesNotExist:
-        user = muser(name=name, poi=True)
+        user = muser(name=name, ppoi=True)
         user.save()
         vs += "added"
 

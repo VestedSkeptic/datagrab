@@ -7,13 +7,13 @@ from ..config import clog
 # *****************************************************************************
 class muser(mbase, models.Model):
     name            = models.CharField(max_length=30)
-    poi             = models.BooleanField(default=False)
+    ppoi             = models.BooleanField(default=False)
     cHistoryGot     = models.BooleanField(default=False)
     def __str__(self):
         # mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
         s = self.name
-        if self.poi: s += " (poi)"
+        if self.ppoi: s += " (ppoi)"
         if self.cHistoryGot: s += " (cHistoryGot = True)"
         else:                s += " (cHistoryGot = False)"
         return format(s)
