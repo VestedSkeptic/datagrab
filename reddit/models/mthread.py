@@ -33,9 +33,9 @@ class mthread(mbase, models.Model):
     subreddit       = models.ForeignKey(msubreddit, on_delete=models.CASCADE,)
     name            = models.CharField(max_length=12)
     # rename following as properties, ex: pdeleted, pforestgot, pcount
-    deleted         = models.BooleanField(default=False)
-    cForestGot      = models.BooleanField(default=False)
-    count           = models.PositiveIntegerField(default=0)
+    pdeleted        = models.BooleanField(default=False)
+    pforestgot      = models.BooleanField(default=False)
+    pcount          = models.PositiveIntegerField(default=0)
     # rename following as reddit fields: ex" redited, rdomain, etc.
     rauthor          = models.CharField(max_length=21, default='', blank=True)
     rdowns           = models.IntegerField(default=0)
@@ -53,9 +53,9 @@ class mthread(mbase, models.Model):
 
         s = self.subreddit.name
         s += " [" + self.name + "]"
-        s += " [" + str(self.count) + "]"
-        if self.cForestGot: s += " (cForestGot = True)"
-        else:               s += " (cForestGot = False)"
+        s += " [" + str(self.pcount) + "]"
+        if self.pforestgot: s += " (pforestgot = True)"
+        else:               s += " (pforestgot = False)"
         return format(s)
 
     # -------------------------------------------------------------------------

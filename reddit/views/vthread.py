@@ -49,7 +49,7 @@ def update(request):
     clog.logger.info(mi)
 
     vs = ''
-    qs = mthread.objects.filter(deleted=False).order_by('subreddit__name')
+    qs = mthread.objects.filter(pdeleted=False).order_by('subreddit__name')
     if qs.count() > 0:
         for i_mthread in qs:
             argDict = {'rv': "", 'modeCount': {'Comment Forest New' : 0, 'Comment Forest Old' : 0, 'Method To Be Implemented Later' : 0, }}

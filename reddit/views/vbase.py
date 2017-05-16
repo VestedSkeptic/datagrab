@@ -13,8 +13,8 @@ def displayDatabaseModelCounts():
     users_ci                = mcomment.objects.filter(deleted=False).count()
     users_ci_deleted        = mcomment.objects.filter(deleted=True).count()
     subreddits              = msubreddit.objects.all().count()
-    subreddits_si           = mthread.objects.filter(deleted=False).count()
-    subreddits_si_deleted   = mthread.objects.filter(deleted=True).count()
+    subreddits_si           = mthread.objects.filter(pdeleted=False).count()
+    subreddits_si_deleted   = mthread.objects.filter(pdeleted=True).count()
     s = ''
     s += '<BR>==========================='
     s += '<BR>musers poi = ' + str(users_poi)

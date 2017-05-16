@@ -142,8 +142,8 @@ def getCommentsByCommentForest(i_mthread, argDict, sortOrder):
     # Update i_mthread appropriately
     saveSubIndex = False
     if sortOrder == "new":
-        i_mthread.cForestGot = True
-        clog.logger.trace("%s: %s: cForestGot set to True" % (i_mthread.subreddit.name, i_mthread.name))
+        i_mthread.pforestgot = True
+        clog.logger.trace("%s: %s: pforestgot set to True" % (i_mthread.subreddit.name, i_mthread.name))
         saveSubIndex = True
     if countNew > 0:
         i_mthread.count += countNew
@@ -163,7 +163,7 @@ def updateThreadComments(i_mthread, argDict):
     clog.logger.info(mi)
 
     vs = ''
-    if not i_mthread.cForestGot:
+    if not i_mthread.pforestgot:
         clog.logger.trace("%s: %s: New commentForest updating sorted by new" % (i_mthread.subreddit.name, i_mthread.name))
         getCommentsByCommentForest(i_mthread, argDict, "new")
         argDict['modeCount']['Comment Forest New'] += 1
