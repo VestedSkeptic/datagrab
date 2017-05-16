@@ -12,10 +12,11 @@ class mthreadManager(models.Manager):
         clog.logger.info(mi)
 
         try:
-            i_mthread = self.get(subreddit=i_msubreddit, name=prawThread.name)
-            # i_mthread.updateRedditFields(prawThread)
+            i_mthread = self.get(subreddit=i_msubreddit, fullname=prawThread.name)
+            redditFieldDict = i_mthread.getRedditFieldDict()
+            i_mthread.updateRedditFields(prawThread, redditFieldDict)
         except ObjectDoesNotExist:
-            i_mthread = self.create(subreddit=i_msubreddit, name=prawThread.name)
+            i_mthread = self.create(subreddit=i_msubreddit, fullname=prawThread.name)
             redditFieldDict = i_mthread.getRedditFieldDict()
             i_mthread.addRedditFields(prawThread, redditFieldDict)
         i_mthread.save()
@@ -31,7 +32,7 @@ class mthreadManager(models.Manager):
 # *****************************************************************************
 class mthread(mbase, models.Model):
     subreddit       = models.ForeignKey(msubreddit, on_delete=models.CASCADE,)
-    name            = models.CharField(max_length=12)
+    fullname        = models.CharField(max_length=12)
     # rename following as properties, ex: pdeleted, pforestgot, pcount
     pdeleted        = models.BooleanField(default=False)
     pforestgot      = models.BooleanField(default=False)
@@ -45,18 +46,6 @@ class mthread(mbase, models.Model):
     ris_self         = models.BooleanField(default=False)
 
     objects = mthreadManager()
-
-    # -------------------------------------------------------------------------
-    def __str__(self):
-        # mi = clog.dumpMethodInfo()
-        # clog.logger.info(mi)
-
-        s = self.subreddit.name
-        s += " [" + self.name + "]"
-        s += " [" + str(self.pcount) + "]"
-        if self.pforestgot: s += " (pforestgot = True)"
-        else:               s += " (pforestgot = False)"
-        return format(s)
 
     # -------------------------------------------------------------------------
     def getRedditFieldDict(self):
@@ -75,6 +64,66 @@ class mthread(mbase, models.Model):
         }
         return redditFieldDict
 
+
+# '_comments_by_id': {},
+#   '_fetched': False,
+#   '_flair': None,
+#   '_info_params': {},
+#   '_mod': None,
+#   '_reddit': <praw.reddit.Reddit object at 0x7fee4ac8beb8>,
+#   'approved_by': None,
+#   'archived': False,
+#   'author_flair_css_class': None,
+#   'author_flair_text': None,
+#   'banned_by': None,
+#   'brand_safe': True,
+#   'can_gild': True,
+#   'clicked': False,
+#   'comment_limit': 2048,
+#   'comment_sort': 'best',
+#   'contest_mode': False,
+#   'created_utc': 1493534605.0,
+#   'created': 1493563405.0,
+#   'distinguished': None,
+#   'domain': 'self.redditdev',
+#   'edited': False,
+#   'gilded': 0,
+#   'hidden': False,
+#   'hide_score': False,
+#   'id': '68e6pp',
+#   'likes': None,
+#   'link_flair_css_class': None,
+#   'link_flair_text': None,
+#   'locked': False,
+#   'media_embed': {},
+#   'media': None,
+#   'mod_reports': [],
+#   'name': 't3_68e6pp',
+#   'num_comments': 0,
+#   'num_reports': None,
+#   'over_18': False,
+#   'permalink': '/r/redditdev/comments/68e6pp/praw_450_released/',
+#   'quarantine': False,
+#   'removal_reason': None,
+#   'report_reasons': None,
+#   'saved': False,
+#   'score': 18,
+#   'secure_media_embed': {},
+#   'secure_media': None,
+#   'selftext_html': '<!-- SC_OFF --><div class="md"><p>Notable additions:</p>\n',
+#   'spoiler': False,
+#   'stickied': True,
+#   'subreddit_id': 't5_2qizd',
+#   'subreddit_name_prefixed': 'r/redditdev',
+#   'subreddit_type': 'public',
+#   'subreddit': Subreddit(display_name='redditdev'),
+#   'suggested_sort': None,
+#   'thumbnail': '',
+#   'url': 'https://www.reddit.com/r/redditdev/comments/68e6pp/praw_450_released/',
+#   'user_reports': [],
+#   'view_count': None,
+#   'visited': False
+
     # -------------------------------------------------------------------------
     def getRedditAuthorName(self, author):
         mi = clog.dumpMethodInfo()
@@ -83,6 +132,17 @@ class mthread(mbase, models.Model):
         if author == None or author == '[deleted]' or author == '[removed]': return author
         else:                                                                return author.name
 
+    # -------------------------------------------------------------------------
+    def __str__(self):
+        # mi = clog.dumpMethodInfo()
+        # clog.logger.info(mi)
+
+        s = self.subreddit.name
+        s += " [" + self.fullname + "]"
+        s += " [" + str(self.pcount) + "]"
+        if self.pforestgot: s += " (pforestgot = True)"
+        else:               s += " (pforestgot = False)"
+        return format(s)
 
 
 # # ----------------------------------------------------------------------------

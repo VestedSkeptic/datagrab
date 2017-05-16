@@ -56,6 +56,27 @@ class mbase(models.Model):
             if convertMethodPtr: setattr(self, mFieldName, convertMethodPtr(redditValue))
             else:                setattr(self, mFieldName, redditValue)
 
+    # -------------------------------------------------------------------------
+    def updateRedditFields(self, prawData, redditFieldDict):
+        mi = clog.dumpMethodInfo()
+        clog.logger.info(mi)
+
+        clog.logger.info("METHOD NOT COMPLETED")
+
+        for mFieldName in redditFieldDict:
+            redditFieldName     = redditFieldDict[mFieldName][0]  # ex: author
+            convertMethodPtr    = redditFieldDict[mFieldName][1]  # ex: self.getRedditAuthorName
+            redditValue         = getattr(prawData, redditFieldName)  # ex: prawData.author
+
+            # Instead of only putting value in self
+            # - get current value in self
+            # - see if different then new value
+            # - if different archive/backup current value
+            # - then replace current value with new value
+
+            # if convertMethodPtr: setattr(self, mFieldName, convertMethodPtr(redditValue))
+            # else:                setattr(self, mFieldName, redditValue)
+
 
 
 

@@ -92,7 +92,7 @@ def getCommentsByCommentForest(i_mthread, argDict, sortOrder):
     mi = clog.dumpMethodInfo()
     clog.logger.info(mi)
 
-    clog.logger.debug("%s: %s: sortOrder = %s" % (i_mthread.subreddit.name, i_mthread.name, sortOrder))
+    clog.logger.debug("%s: %s: sortOrder = %s" % (i_mthread.subreddit.name, i_mthread.fullname, sortOrder))
 
     # create PRAW prawReddit instance
     prawReddit = i_mthread.getPrawRedditInstance()
@@ -103,7 +103,7 @@ def getCommentsByCommentForest(i_mthread, argDict, sortOrder):
     try:
         params={};
 
-        submissionObject = prawReddit.submission(id=i_mthread.name[3:])
+        submissionObject = prawReddit.submission(id=i_mthread.fullname[3:])
         clog.logger.debug("submissionObject = %s" % (submissionObject))
 
         submissionObject.comment_sort = sortOrder
@@ -143,16 +143,16 @@ def getCommentsByCommentForest(i_mthread, argDict, sortOrder):
     saveSubIndex = False
     if sortOrder == "new":
         i_mthread.pforestgot = True
-        clog.logger.trace("%s: %s: pforestgot set to True" % (i_mthread.subreddit.name, i_mthread.name))
+        clog.logger.trace("%s: %s: pforestgot set to True" % (i_mthread.subreddit.name, i_mthread.fullname))
         saveSubIndex = True
     if countNew > 0:
-        i_mthread.count += countNew
-        clog.logger.trace("%s: %s: count set to %d" % (i_mthread.subreddit.name, i_mthread.name, i_mthread.count))
+        i_mthread.pcount += countNew
+        clog.logger.trace("%s: %s: pcount set to %d" % (i_mthread.subreddit.name, i_mthread.fullname, i_mthread.pcount))
         saveSubIndex = True
     if saveSubIndex:
         i_mthread.save()
 
-    s_temp = i_mthread.subreddit.name + ", " + i_mthread.name + ": " + str(countNew) + " new, " + str(countDuplicate) + " duplicated, " + str(countPostsWithNoAuthor) + " with no author."
+    s_temp = i_mthread.subreddit.name + ", " + i_mthread.fullname + ": " + str(countNew) + " new, " + str(countDuplicate) + " duplicated, " + str(countPostsWithNoAuthor) + " with no author."
     clog.logger.info(s_temp)
     argDict['rv'] += "<br>" + s_temp
     return
@@ -164,20 +164,20 @@ def updateThreadComments(i_mthread, argDict):
 
     vs = ''
     if not i_mthread.pforestgot:
-        clog.logger.trace("%s: %s: New commentForest updating sorted by new" % (i_mthread.subreddit.name, i_mthread.name))
+        clog.logger.trace("%s: %s: New commentForest updating sorted by new" % (i_mthread.subreddit.name, i_mthread.fullname))
         getCommentsByCommentForest(i_mthread, argDict, "new")
         argDict['modeCount']['Comment Forest New'] += 1
     # elif i_mthread.count < 10:
-    #     clog.logger.debug("%s: %s: Old small commentForest updating sorted by old" % (i_mthread.subreddit.name, i_mthread.name))
+    #     clog.logger.debug("%s: %s: Old small commentForest updating sorted by old" % (i_mthread.subreddit.name, i_mthread.fullname))
     #     getCommentsByCommentForest(i_mthread, argDict, "old")
         # argDict['modeCount']['Comment Forest Old'] += 1
                     # THIS HACK NOT VALID, SUBMISSION UPDATED AND HAS NEW COUNT NOW
                     # elif i_mthread.count == 260:  #HACK THERE IS ONE ITEM WITH 260 COUNT IN IT, USING IT TO TEST IMPLEMENTATION OF ...
-                    #     clog.logger.debug("%s: %s: Old small commentForest updating sorted by old" % (i_mthread.subreddit.name, i_mthread.name))
+                    #     clog.logger.debug("%s: %s: Old small commentForest updating sorted by old" % (i_mthread.subreddit.name, i_mthread.fullname))
                     #     getCommentsByCommentForest(i_mthread, argDict, "old")
                     #     argDict['modeCount']['Comment Forest Old'] += 1
     else:
-        clog.logger.info("%s: %s: Old large commentForest updating by METHOD TO BE IMPLEMENTED LATER" % (i_mthread.subreddit.name, i_mthread.name))
+        clog.logger.info("%s: %s: Old large commentForest updating by METHOD TO BE IMPLEMENTED LATER" % (i_mthread.subreddit.name, i_mthread.fullname))
         argDict['modeCount']['Method To Be Implemented Later'] += 1
 
     return
