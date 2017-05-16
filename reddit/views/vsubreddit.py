@@ -5,7 +5,7 @@ from ..config import clog
 from ..models import msubreddit
 from ..blue import bthread
 import praw
-import pprint
+# import pprint
 
 # *****************************************************************************
 def list(request):
@@ -35,7 +35,7 @@ def add(request, name):
     prawSubreddit = prawReddit.subreddit(name)
 
     i_msubreddit = msubreddit.objects.addOrUpdate(name, prawSubreddit)
-    clog.logger.debug("i_msubreddit = %s" % (pprint.pformat(vars(i_msubreddit))))
+    # clog.logger.debug("i_msubreddit = %s" % (pprint.pformat(vars(i_msubreddit))))
 
     if i_msubreddit.addOrUpdateTempField == "new":             vs += " added"
     if i_msubreddit.addOrUpdateTempField == "oldUnchanged":    vs += " oldUnchanged"
@@ -45,7 +45,6 @@ def add(request, name):
     sessionKey = 'blue'
     request.session[sessionKey] = vs
     return redirect('vbase.main', xData=sessionKey)
-
 
 # *****************************************************************************
 def delAll(request):

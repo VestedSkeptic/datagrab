@@ -3,48 +3,7 @@ from ..config import clog
 from ..models.mcomment import mcomment
 from ..models.muser import muser
 import praw
-
-# # *****************************************************************************
-# # if mcomment exists return it otherwise create it
-# def getmcomment(comment, i_muser, aDict):
-#     mi = clog.dumpMethodInfo()
-#     # clog.logger.info(mi)
-#
-#     ssi = None
-#     try:
-#         ssi = mcomment.objects.get(user=i_muser, name=comment.name)
-#         aDict['isNew'] = False
-#     except ObjectDoesNotExist:
-#         ssi = mcomment(user=i_muser, name=comment.name, thread=comment.parent_id, subreddit=comment.subreddit_id)
-#         ssi.save()
-#     aDict['ssi'] = ssi
-#     return
-
-# # *****************************************************************************
-# # if mcommentRaw does not exist save it.
-# # TODO else compare appropriate fields, if any differences record appropriately
-# def savesmcommentRaw(comment, ssi):
-#     mi = clog.dumpMethodInfo()
-#     # clog.logger.info(mi)
-#
-#     stRaw = None
-#     try:
-#         stRaw = mcommentRaw.objects.get(index=ssi)
-#         # stRaw = mcomment.mcommentRaw.objects.get(ssi=ssi)
-#     except ObjectDoesNotExist:
-#         # # vars converts comment to json dict which can be saved to DB
-#         # ts = comment
-#         # clog.logger.debug("ts.subreddit type = %s " % (type(ts.subreddit)))
-#         # clog.logger.debug("ts.author type = %s" % (type(ts.author)))
-#         # clog.logger.debug("ts._reddit type = %s" % (type(ts._reddit)))
-#
-#         stRaw = mcommentRaw(index=ssi, data=vars(comment))
-#         # stRaw = mthread.mcommentRaw(ssi=ssi, data=vars(comment))
-#         # stRaw = mcommentRaw(ssi=ssi, data=json.dumps(vars(comment)))
-#         # stRaw = mcommentRaw(ssi=ssi, data=json.dumps(comment))
-#         stRaw.save()
-#     return
-
+import pprint
 
 # --------------------------------------------------------------------------
 def getBestBeforeValue(i_muser, prawReddit):
@@ -118,18 +77,9 @@ def getCommentsByCommentForest(i_mthread, argDict, sortOrder):
             if comment.author == None:
                 countPostsWithNoAuthor += 1
             else:
-                # i_muser = None
-                # try:
-                #     i_muser = muser.objects.get(name=comment.author.name)
-                #     clog.logger.debug("muser %s exists" % (i_muser.name))
-                # except ObjectDoesNotExist:
-                #     i_muser = muser(name=comment.author.name, ppoi=False)
-                #     i_muser.save()
-                #     clog.logger.trace("muser %s created" % (i_muser.name))
-                # replace with iuser manager
-                # replace with iuser manager
-                # replace with iuser manager
-                # replace with iuser manager
+                prawRedditor = prawReddit.redditor(comment.author.name)
+                i_muser = muser.objects.addOrUpdate(prawRedditor)
+                clog.logger.debug("i_muser = %s" % (pprint.pformat(vars(i_muser))))
 
                 # aDict = {'ssi' : None, 'isNew' : True }
                 # # blUserComments_getUserCommentIndex(comment, i_muser, aDict)

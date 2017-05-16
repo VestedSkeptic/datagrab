@@ -5,17 +5,55 @@ from .mbase import mbase
 from ..config import clog
 
 # *****************************************************************************
+class muserManager(models.Manager):
+    def addOrUpdate(self, prawRedditor):
+        mi = clog.dumpMethodInfo()
+        clog.logger.info(mi)
+
+        try:
+            i_muser = self.get(name=prawRedditor.name)
+            redditFieldDict = i_muser.getRedditFieldDict()
+            changedCount = i_muser.updateRedditFields(prawRedditor, redditFieldDict)
+            if changedCount == 0: i_muser.addOrUpdateTempField = "oldUnchanged"
+            else:                 i_muser.addOrUpdateTempField = "oldChanged"
+        except ObjectDoesNotExist:
+            i_muser = self.create(name=prawRedditor.name)
+            redditFieldDict = i_muser.getRedditFieldDict()
+            i_muser.addRedditFields(prawRedditor, redditFieldDict)
+            i_muser.addOrUpdateTempField = "new"
+        i_muser.save()
+        return i_muser
+
+# *****************************************************************************
 class muser(mbase, models.Model):
     name            = models.CharField(max_length=30)
-    ppoi             = models.BooleanField(default=False)
-    cHistoryGot     = models.BooleanField(default=False)
+    # properties
+    ppoi            = models.BooleanField(default=False)
+    phistorygot     = models.BooleanField(default=False)
+    # Redditor fields
+    r_path           = models.CharField(max_length=40, default='', blank=True)
+
+    objects = muserManager()
+
+    # -------------------------------------------------------------------------
+    def getRedditFieldDict(self):
+        mi = clog.dumpMethodInfo()
+        clog.logger.info(mi)
+
+        redditFieldDict = {
+            # mThreadFieldName      redditFieldName     convertMethodPtr
+            'r_path':               ("_path",           None),      # string
+        }
+        return redditFieldDict
+
+    # -------------------------------------------------------------------------
     def __str__(self):
         # mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
         s = self.name
         if self.ppoi: s += " (ppoi)"
-        if self.cHistoryGot: s += " (cHistoryGot = True)"
-        else:                s += " (cHistoryGot = False)"
+        if self.phistorygot: s += " (phistorygot = True)"
+        else:                s += " (phistorygot = False)"
         return format(s)
 
 
