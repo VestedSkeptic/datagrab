@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from mbase import mbase
 from msubreddit import msubreddit
 from ..config import clog
+# import pprint
 
 # *****************************************************************************
 class mthreadManager(models.Manager):
@@ -38,12 +39,32 @@ class mthread(mbase, models.Model):
     pforestgot      = models.BooleanField(default=False)
     pcount          = models.PositiveIntegerField(default=0)
     # rename following as reddit fields: ex" redited, rdomain, etc.
-    rauthor          = models.CharField(max_length=21, default='', blank=True)
-    rdowns           = models.IntegerField(default=0)
-    rups             = models.IntegerField(default=0)
-    rtitle           = models.CharField(max_length=301, default='', blank=True)
-    rselftext        = models.TextField(default='')
-    ris_self         = models.BooleanField(default=False)
+    rauthor         = models.CharField(max_length=21, default='', blank=True)
+    rdowns          = models.IntegerField(default=0)
+    rups            = models.IntegerField(default=0)
+    rtitle          = models.CharField(max_length=301, default='', blank=True)
+    rselftext       = models.TextField(default='')
+    ris_self        = models.BooleanField(default=False)
+
+    redited         = models.BooleanField(default=False)
+    rhidden         = models.BooleanField(default=False)
+    rlocked         = models.BooleanField(default=False)
+    rquarantine     = models.BooleanField(default=False)
+
+    rid             = models.CharField(max_length=10, default='', blank=True)
+    rurl            = models.CharField(max_length=2084, default='', blank=True)
+    rdomain         = models.CharField(max_length=64, default='', blank=True)
+
+    rnum_comments   = models.IntegerField(default=0)
+    rscore          = models.IntegerField(default=0)
+
+    rmod_reports    = models.TextField(default='', blank=True)
+    ruser_reports   = models.TextField(default='', blank=True)
+
+    rcreated_utc    = models.DecimalField(default=0, max_digits=12,decimal_places=1)
+    rcreated        = models.DecimalField(default=0, max_digits=12,decimal_places=1)
+
+    rapproved_by    = models.CharField(max_length=21, default='', blank=True)
 
     objects = mthreadManager()
 
@@ -54,83 +75,34 @@ class mthread(mbase, models.Model):
 
         redditFieldDict = {
             # mThreadFieldName      redditFieldName     convertMethodPtr
-            'rauthor':              ("author",          self.getRedditAuthorName),
-            'rdowns':               ("downs",           int),
-            'rups':                 ("ups",             int),
-            'rtitle':               ("title",           None),
-            'rselftext':            ("selftext",        None),
-            'ris_self':             ("is_self",         None),
+            'rauthor':              ("author",          self.getRedditUserNameAsString),  # special
+            'rdowns':               ("downs",           int),       # int
+            'rups':                 ("ups",             int),       # int
+            'rtitle':               ("title",           None),      # string
+            'rselftext':            ("selftext",        None),      # string
+            'ris_self':             ("is_self",         None),      # bool
 
+            'redited':              ("edited",          None),      # bool
+            'rhidden':              ("hidden",          None),      # bool
+            'rlocked':              ("locked",          None),      # bool
+            'rquarantine':          ("quarantine",      None),      # bool
+
+            'rid':                  ("id",              None),      # string
+            'rurl':                 ("url",             None),      # string
+            'rdomain':              ("domain",          None),      # string
+
+            'rnum_comments':        ("num_comments",    int),       # int
+            'rscore':               ("score",           int),       # int
+
+            'rmod_reports':         ("mod_reports",     None),      # [[u'mod reported text', u'stp2007']],  OR [[u'Spam', u'stp2007']]
+            'ruser_reports':        ("user_reports",    None),      # [[u'Text for other reason', 1]]        OR [[u'Spam', 1]]
+
+            'rcreated_utc':         ("created_utc",     None),      # 1493534605.0,
+            'rcreated':             ("created",         None),      # 1493534605.0,
+
+            'rapproved_by':         ("approved_by",     self.getRedditUserNameAsString),  # special
         }
         return redditFieldDict
-
-
-# '_comments_by_id': {},
-#   '_fetched': False,
-#   '_flair': None,
-#   '_info_params': {},
-#   '_mod': None,
-#   '_reddit': <praw.reddit.Reddit object at 0x7fee4ac8beb8>,
-#   'approved_by': None,
-#   'archived': False,
-#   'author_flair_css_class': None,
-#   'author_flair_text': None,
-#   'banned_by': None,
-#   'brand_safe': True,
-#   'can_gild': True,
-#   'clicked': False,
-#   'comment_limit': 2048,
-#   'comment_sort': 'best',
-#   'contest_mode': False,
-#   'created_utc': 1493534605.0,
-#   'created': 1493563405.0,
-#   'distinguished': None,
-#   'domain': 'self.redditdev',
-#   'edited': False,
-#   'gilded': 0,
-#   'hidden': False,
-#   'hide_score': False,
-#   'id': '68e6pp',
-#   'likes': None,
-#   'link_flair_css_class': None,
-#   'link_flair_text': None,
-#   'locked': False,
-#   'media_embed': {},
-#   'media': None,
-#   'mod_reports': [],
-#   'name': 't3_68e6pp',
-#   'num_comments': 0,
-#   'num_reports': None,
-#   'over_18': False,
-#   'permalink': '/r/redditdev/comments/68e6pp/praw_450_released/',
-#   'quarantine': False,
-#   'removal_reason': None,
-#   'report_reasons': None,
-#   'saved': False,
-#   'score': 18,
-#   'secure_media_embed': {},
-#   'secure_media': None,
-#   'selftext_html': '<!-- SC_OFF --><div class="md"><p>Notable additions:</p>\n',
-#   'spoiler': False,
-#   'stickied': True,
-#   'subreddit_id': 't5_2qizd',
-#   'subreddit_name_prefixed': 'r/redditdev',
-#   'subreddit_type': 'public',
-#   'subreddit': Subreddit(display_name='redditdev'),
-#   'suggested_sort': None,
-#   'thumbnail': '',
-#   'url': 'https://www.reddit.com/r/redditdev/comments/68e6pp/praw_450_released/',
-#   'user_reports': [],
-#   'view_count': None,
-#   'visited': False
-
-    # -------------------------------------------------------------------------
-    def getRedditAuthorName(self, author):
-        mi = clog.dumpMethodInfo()
-        clog.logger.info(mi)
-
-        if author == None or author == '[deleted]' or author == '[removed]': return author
-        else:                                                                return author.name
 
     # -------------------------------------------------------------------------
     def __str__(self):
@@ -195,8 +167,8 @@ class mthread(mbase, models.Model):
 #   'over_18': False,
 #   'permalink': '/r/redditdev/comments/68e6pp/praw_450_released/',
 #   'quarantine': False,
-#   'removal_reason': None,
-#   'report_reasons': None,
+#   'removal_reason': None,     # This attribute is deprecated. Please use mod_reports and user_reports instead.
+#   'report_reasons': None,     # This attribute is deprecated. Please use mod_reports and user_reports instead.
 #   'saved': False,
 #   'score': 18,
 #   'secure_media_embed': {},

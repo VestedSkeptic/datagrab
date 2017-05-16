@@ -2,6 +2,7 @@
 from ..config import clog
 from ..models.mthread import mthread, mthreadManager
 import praw
+# import pprint
 
 # --------------------------------------------------------------------------
 def getBestBeforeValue(prawReddit):
@@ -26,7 +27,7 @@ def getMoreThreadsForSubreddit(i_msubreddit):
     try:
         for prawThread in prawReddit.subreddit(i_msubreddit.name).new(limit=None, params=params):
             i_mthread = mthread.objects.addOrUpdate(i_msubreddit, prawThread)
-
+            # clog.logger.debug("i_mthread = %s" % (pprint.pformat(vars(i_mthread))))
 
     except praw.exceptions.APIException as e:
         clog.logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))

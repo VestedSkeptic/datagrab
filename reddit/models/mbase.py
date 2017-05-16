@@ -2,6 +2,8 @@ from __future__ import unicode_literals
 from django.db import models
 from ..config import clog
 import praw
+import inspect
+# import pprint
 
 CONST_CLIENT_ID                                         = "kcksu9E4VgC0TQ"
 CONST_SECRET                                            = "Megl7I6XKHtGIQ0T4_q62KiaRQw"
@@ -43,6 +45,25 @@ class mbase(models.Model):
         )
         return prawReddit
 
+
+    # -------------------------------------------------------------------------
+    def getRedditUserNameAsString(self, redditUser):
+        mi = clog.dumpMethodInfo()
+        clog.logger.info(mi)
+
+        if isinstance(redditUser, praw.models.Redditor): return redditUser.name         # if it is a praw Reddit object
+        elif redditUser == None:                         return '[None]'
+        else:                                            return redditUser              # will also return values of '[deleted]' or ''[removed]'
+
+    # # -------------------------------------------------------------------------
+    # # if None will return ''
+    # def getStringOrNoneAsEmptyString(self, inputString):
+    #     mi = clog.dumpMethodInfo()
+    #     clog.logger.info(mi)
+    #
+    #     if inputString == None: return ''
+    #     else:                   return inputString
+
     # -------------------------------------------------------------------------
     def addRedditFields(self, prawData, redditFieldDict):
         mi = clog.dumpMethodInfo()
@@ -50,7 +71,7 @@ class mbase(models.Model):
 
         for mFieldName in redditFieldDict:
             redditFieldName     = redditFieldDict[mFieldName][0]  # ex: author
-            convertMethodPtr    = redditFieldDict[mFieldName][1]  # ex: self.getRedditAuthorName
+            convertMethodPtr    = redditFieldDict[mFieldName][1]  # ex: self.getRedditUserNameAsString
             redditValue         = getattr(prawData, redditFieldName)  # ex: prawData.author
 
             if convertMethodPtr: setattr(self, mFieldName, convertMethodPtr(redditValue))
@@ -65,7 +86,7 @@ class mbase(models.Model):
 
         for mFieldName in redditFieldDict:
             redditFieldName     = redditFieldDict[mFieldName][0]  # ex: author
-            convertMethodPtr    = redditFieldDict[mFieldName][1]  # ex: self.getRedditAuthorName
+            convertMethodPtr    = redditFieldDict[mFieldName][1]  # ex: self.getRedditUserNameAsString
             redditValue         = getattr(prawData, redditFieldName)  # ex: prawData.author
 
             # Instead of only putting value in self
