@@ -59,7 +59,7 @@ def main(request, xData=None):
     vs += '<br><b>vthread</b>:'
     vs += ' <a href="http://localhost:8000/reddit/vthread/list">list</a>'
     vs += ' <a href="http://localhost:8000/reddit/vthread/delAll">delAll</a>'
-    vs += ' <a href="http://localhost:8000/reddit/vthread/update">update</a>'
+    vs += ' <a href="http://localhost:8000/reddit/vthread/update">update comments</a>'
 
     vs += '<br>' + displayDatabaseModelCounts()
 
