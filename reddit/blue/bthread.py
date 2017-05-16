@@ -24,15 +24,21 @@ def getMoreThreadsForSubreddit(i_msubreddit):
     params['before'] = getBestBeforeValue(prawReddit)
     clog.logger.debug("params[before] = %s" % params['before'])
 
+    countNew = 0
+    countOldUnchanged = 0
+    countOldChanged = 0
     try:
         for prawThread in prawReddit.subreddit(i_msubreddit.name).new(limit=None, params=params):
             i_mthread = mthread.objects.addOrUpdate(i_msubreddit, prawThread)
             # clog.logger.debug("i_mthread = %s" % (pprint.pformat(vars(i_mthread))))
 
+            if i_mthread.addOrUpdateTempField == "new":             countNew += 1
+            if i_mthread.addOrUpdateTempField == "oldUnchanged":    countOldUnchanged += 1
+            if i_mthread.addOrUpdateTempField == "oldChanged":      countOldChanged += 1
+
     except praw.exceptions.APIException as e:
         clog.logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
 
-    # s_temp = i_msubreddit.name + ": " + str(countNew) + " new and " + str(countDuplicate) + " duplicate submissions processed"
-    # clog.logger.info(s_temp)
+    clog.logger.info(i_msubreddit.name + ": " + str(countNew) + " new, " + str(countOldUnchanged) + " oldUnchanged, " + str(countOldChanged) + " oldChanged, ")
 
     return

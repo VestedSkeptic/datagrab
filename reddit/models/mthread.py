@@ -4,7 +4,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from mbase import mbase
 from msubreddit import msubreddit
 from ..config import clog
-# import pprint
 
 # *****************************************************************************
 class mthreadManager(models.Manager):
@@ -15,55 +14,45 @@ class mthreadManager(models.Manager):
         try:
             i_mthread = self.get(subreddit=i_msubreddit, fullname=prawThread.name)
             redditFieldDict = i_mthread.getRedditFieldDict()
-            i_mthread.updateRedditFields(prawThread, redditFieldDict)
+            changedCount = i_mthread.updateRedditFields(prawThread, redditFieldDict)
+            if changedCount == 0: i_mthread.addOrUpdateTempField = "oldUnchanged"
+            else:                 i_mthread.addOrUpdateTempField = "oldChanged"
         except ObjectDoesNotExist:
             i_mthread = self.create(subreddit=i_msubreddit, fullname=prawThread.name)
             redditFieldDict = i_mthread.getRedditFieldDict()
             i_mthread.addRedditFields(prawThread, redditFieldDict)
+            i_mthread.addOrUpdateTempField = "new"
         i_mthread.save()
-
-
-        # Return results such as
-        # new item
-        # old item, unchanged
-        # old item, changed
-
         return i_mthread
 
 # *****************************************************************************
 class mthread(mbase, models.Model):
     subreddit       = models.ForeignKey(msubreddit, on_delete=models.CASCADE,)
     fullname        = models.CharField(max_length=12)
-    # rename following as properties, ex: pdeleted, pforestgot, pcount
+    # properties
     pdeleted        = models.BooleanField(default=False)
     pforestgot      = models.BooleanField(default=False)
     pcount          = models.PositiveIntegerField(default=0)
-    # rename following as reddit fields: ex" redited, rdomain, etc.
+    # Redditor fields
     rauthor         = models.CharField(max_length=21, default='', blank=True)
     rdowns          = models.IntegerField(default=0)
     rups            = models.IntegerField(default=0)
     rtitle          = models.CharField(max_length=301, default='', blank=True)
     rselftext       = models.TextField(default='')
     ris_self        = models.BooleanField(default=False)
-
     redited         = models.BooleanField(default=False)
     rhidden         = models.BooleanField(default=False)
     rlocked         = models.BooleanField(default=False)
     rquarantine     = models.BooleanField(default=False)
-
     rid             = models.CharField(max_length=10, default='', blank=True)
     rurl            = models.CharField(max_length=2084, default='', blank=True)
     rdomain         = models.CharField(max_length=64, default='', blank=True)
-
     rnum_comments   = models.IntegerField(default=0)
     rscore          = models.IntegerField(default=0)
-
     rmod_reports    = models.TextField(default='', blank=True)
     ruser_reports   = models.TextField(default='', blank=True)
-
     rcreated_utc    = models.DecimalField(default=0, max_digits=12,decimal_places=1)
     rcreated        = models.DecimalField(default=0, max_digits=12,decimal_places=1)
-
     rapproved_by    = models.CharField(max_length=21, default='', blank=True)
 
     objects = mthreadManager()
