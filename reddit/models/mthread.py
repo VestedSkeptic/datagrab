@@ -34,26 +34,31 @@ class mthread(mbase, models.Model):
     pforestgot      = models.BooleanField(default=False)
     pcount          = models.PositiveIntegerField(default=0)
     # Redditor fields
+    rapproved_by    = models.CharField(max_length=21, default='', blank=True)
     rauthor         = models.CharField(max_length=21, default='', blank=True)
-    rdowns          = models.IntegerField(default=0)
-    rups            = models.IntegerField(default=0)
-    rtitle          = models.CharField(max_length=301, default='', blank=True)
-    rselftext       = models.TextField(default='')
-    ris_self        = models.BooleanField(default=False)
-    redited         = models.BooleanField(default=False)
-    rhidden         = models.BooleanField(default=False)
-    rlocked         = models.BooleanField(default=False)
-    rquarantine     = models.BooleanField(default=False)
-    rid             = models.CharField(max_length=10, default='', blank=True)
-    rurl            = models.CharField(max_length=2084, default='', blank=True)
+    rbanned_by      = models.CharField(max_length=21, default='', blank=True)
     rdomain         = models.CharField(max_length=64, default='', blank=True)
+    rid             = models.CharField(max_length=10, default='', blank=True)
+    rtitle          = models.CharField(max_length=301, default='', blank=True)
+    rurl            = models.CharField(max_length=2084, default='', blank=True)
+
+    rmod_reports    = models.TextField(default='', blank=True)
+    rselftext       = models.TextField(default='')
+    ruser_reports   = models.TextField(default='', blank=True)
+
+    rdowns          = models.IntegerField(default=0)
     rnum_comments   = models.IntegerField(default=0)
     rscore          = models.IntegerField(default=0)
-    rmod_reports    = models.TextField(default='', blank=True)
-    ruser_reports   = models.TextField(default='', blank=True)
-    rcreated_utc    = models.DecimalField(default=0, max_digits=12,decimal_places=1)
+    rups            = models.IntegerField(default=0)
+
+    redited         = models.BooleanField(default=False)
+    rhidden         = models.BooleanField(default=False)
+    ris_self        = models.BooleanField(default=False)
+    rlocked         = models.BooleanField(default=False)
+    rquarantine     = models.BooleanField(default=False)
+
     rcreated        = models.DecimalField(default=0, max_digits=12,decimal_places=1)
-    rapproved_by    = models.CharField(max_length=21, default='', blank=True)
+    rcreated_utc    = models.DecimalField(default=0, max_digits=12,decimal_places=1)
 
     objects = mthreadManager()
 
@@ -64,32 +69,31 @@ class mthread(mbase, models.Model):
 
         redditFieldDict = {
             # mThreadFieldName      redditFieldName     convertMethodPtr
+            'rapproved_by':         ("approved_by",     self.getRedditUserNameAsString),  # special
             'rauthor':              ("author",          self.getRedditUserNameAsString),  # special
-            'rdowns':               ("downs",           int),       # int
-            'rups':                 ("ups",             int),       # int
+            'rbanned_by':           ("banned_by",       self.getRedditUserNameAsString),  # special
+            'rdomain':              ("domain",          None),      # string
+            'rid':                  ("id",              None),      # string
             'rtitle':               ("title",           None),      # string
+            'rurl':                 ("url",             None),      # string
+
+            'rmod_reports':         ("mod_reports",     None),      # [[u'mod reported text', u'stp2007']],  OR [[u'Spam', u'stp2007']]
             'rselftext':            ("selftext",        None),      # string
-            'ris_self':             ("is_self",         None),      # bool
+            'ruser_reports':        ("user_reports",    None),      # [[u'Text for other reason', 1]]        OR [[u'Spam', 1]]
+
+            'rdowns':               ("downs",           int),       # int
+            'rnum_comments':        ("num_comments",    int),       # int
+            'rscore':               ("score",           int),       # int
+            'rups':                 ("ups",             int),       # int
 
             'redited':              ("edited",          None),      # bool
             'rhidden':              ("hidden",          None),      # bool
+            'ris_self':             ("is_self",         None),      # bool
             'rlocked':              ("locked",          None),      # bool
             'rquarantine':          ("quarantine",      None),      # bool
 
-            'rid':                  ("id",              None),      # string
-            'rurl':                 ("url",             None),      # string
-            'rdomain':              ("domain",          None),      # string
-
-            'rnum_comments':        ("num_comments",    int),       # int
-            'rscore':               ("score",           int),       # int
-
-            'rmod_reports':         ("mod_reports",     None),      # [[u'mod reported text', u'stp2007']],  OR [[u'Spam', u'stp2007']]
-            'ruser_reports':        ("user_reports",    None),      # [[u'Text for other reason', 1]]        OR [[u'Spam', 1]]
-
-            'rcreated_utc':         ("created_utc",     None),      # 1493534605.0,
             'rcreated':             ("created",         None),      # 1493534605.0,
-
-            'rapproved_by':         ("approved_by",     self.getRedditUserNameAsString),  # special
+            'rcreated_utc':         ("created_utc",     None),      # 1493534605.0,
         }
         return redditFieldDict
 

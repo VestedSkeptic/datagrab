@@ -35,6 +35,8 @@ def add(request, name):
     prawRedditor = prawReddit.redditor(name)
 
     i_muser = muser.objects.addOrUpdate(prawRedditor)
+    i_muser.ppoi = True
+    i_muser.save()
     clog.logger.debug("i_muser = %s" % (pprint.pformat(vars(i_muser))))
 
     if i_muser.addOrUpdateTempField == "new":           vs += " added"
@@ -67,7 +69,7 @@ def update(request):
     clog.logger.info(mi)
 
     vs = ''
-    qs = muser.objects.all()
+    qs = muser.objects.filter(ppoi=True)
     if qs.count() > 0:
         for i_muser in qs:
             argDict = {'vs': ""}
@@ -75,7 +77,7 @@ def update(request):
             bcomment.updateUserComments(i_muser)
             vs += argDict['vs']
     else:
-        vs += " No musers found"
+        vs += "No musers found"
 
     clog.logger.info(vs)
     sessionKey = 'blue'

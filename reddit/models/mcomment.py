@@ -6,12 +6,90 @@ from .muser import muser
 from ..config import clog
 
 # *****************************************************************************
+class mcommentManager(models.Manager):
+    def addOrUpdate(self, i_muser, prawComment):
+        mi = clog.dumpMethodInfo()
+        clog.logger.info(mi)
+
+        try:
+            i_mcomment = self.get(user=i_muser, name=prawComment.name, thread=prawComment.link_id, subreddit=prawComment.subreddit_id)
+            redditFieldDict = i_mcomment.getRedditFieldDict()
+            changedCount = i_mcomment.updateRedditFields(prawComment, redditFieldDict)
+            if changedCount == 0: i_mcomment.addOrUpdateTempField = "oldUnchanged"
+            else:                 i_mcomment.addOrUpdateTempField = "oldChanged"
+        except ObjectDoesNotExist:
+            i_mcomment = self.create(user=i_muser, name=prawComment.name, thread=prawComment.link_id, subreddit=prawComment.subreddit_id)
+            redditFieldDict = i_mcomment.getRedditFieldDict()
+            i_mcomment.addRedditFields(prawComment, redditFieldDict)
+            i_mcomment.addOrUpdateTempField = "new"
+        i_mcomment.save()
+        return i_mcomment
+
+# *****************************************************************************
 class mcomment(mbase, models.Model):
     user            = models.ForeignKey(muser, on_delete=models.CASCADE,)
     name            = models.CharField(max_length=12)
     thread          = models.CharField(max_length=12)
     subreddit       = models.CharField(max_length=12)
+    # properties
     deleted         = models.BooleanField(default=False)
+    # Reddit fields
+    rapproved_by                = models.CharField(max_length=21, default='', blank=True)
+    rbanned_by                  = models.CharField(max_length=21, default='', blank=True)
+    rid                         = models.CharField(max_length=10, default='', blank=True)
+    rparent_id                  = models.CharField(max_length=16, default='', blank=True)
+    rsubreddit_name_prefixed    = models.CharField(max_length=64, default='', blank=True)
+
+    rbody                       = models.TextField(default='', blank=True)
+    rmod_reports                = models.TextField(default='', blank=True)
+    ruser_reports               = models.TextField(default='', blank=True)
+
+    rcontroversiality           = models.IntegerField(default=0)
+    rdowns                      = models.IntegerField(default=0)
+    rscore                      = models.IntegerField(default=0)
+    rups                        = models.IntegerField(default=0)
+
+    rarchived                   = models.BooleanField(default=False)
+    redited                     = models.BooleanField(default=False)
+    rstickied                   = models.BooleanField(default=False)
+
+    rcreated                    = models.DecimalField(default=0, max_digits=12,decimal_places=1)
+    rcreated_utc                = models.DecimalField(default=0, max_digits=12,decimal_places=1)
+
+    objects = mcommentManager()
+    # -------------------------------------------------------------------------
+    def getRedditFieldDict(self):
+        mi = clog.dumpMethodInfo()
+        clog.logger.info(mi)
+
+        redditFieldDict = {
+            # mThreadFieldName          redditFieldName                 convertMethodPtr
+            'rapproved_by':             ("approved_by",                 self.getRedditUserNameAsString),  # special
+            'rbanned_by':               ("banned_by",                   self.getRedditUserNameAsString),  # special
+            'rid':                      ("id",                          None),      # string
+            'rparent_id':               ("parent_id",                   None),      # string
+            'rsubreddit_name_prefixed': ("subreddit_name_prefixed",     None),      # string
+
+            'rbody':                    ("body",                        None),      # string
+            'rmod_reports':             ("mod_reports",                 None),      # [[u'mod reported text', u'stp2007']],  OR [[u'Spam', u'stp2007']]
+            'ruser_reports':            ("user_reports",                None),      # [[u'Text for other reason', 1]]        OR [[u'Spam', 1]]
+
+            'rcontroversiality':        ("controversiality",            int),       # int
+            'rdowns':                   ("downs",                       int),       # int
+            'rscore':                   ("score",                       int),       # int
+            'rups':                     ("ups",                         int),       # int
+
+            'rarchived':                ("archived",                    None),      # bool
+            'redited':                  ("edited",                      None),      # bool
+            'rstickied':                ("stickied",                    None),      # bool
+
+            'rcreated':                 ("created",                     None),      # 1493534605.0,
+            'rcreated_utc':             ("created_utc",                 None),      # 1493534605.0,
+
+        }
+        return redditFieldDict
+
+    # -------------------------------------------------------------------------
     def __str__(self):
         # mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)

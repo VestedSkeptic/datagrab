@@ -27,22 +27,21 @@ def updateUserComments(i_muser):
 
     # iterate through submissions saving them
     countNew = 0
-    countDuplicate = 0
+    countOldChanged = 0
+    countOldUnchanged = 0
     try:
-        # for comment in prawReddit.subreddit(i_muser.name).new(limit=None, params=params):
-        for comment in prawReddit.redditor(i_muser.name).comments.new(limit=None, params=params):
-            # aDict = {'ssi' : None, 'isNew' : True }
-            # getmcomment(comment, i_muser, aDict)
-            # if aDict['isNew']:
-            #     savesmcommentRaw(comment, aDict['ssi'])
-            #     countNew += 1
-            # else:
-            #     countDuplicate += 1
-            pass  # REPACE WITH NEW COMMENT MANAGER
+        for prawComment in prawReddit.redditor(i_muser.name).comments.new(limit=None, params=params):
+            i_mcomment = mcomment.objects.addOrUpdate(i_muser, prawComment)
+            clog.logger.debug("i_mcomment = %s" % (pprint.pformat(vars(i_mcomment))))
+
+            if i_mcomment.addOrUpdateTempField == "new":            countNew += 1
+            if i_mcomment.addOrUpdateTempField == "oldUnchanged":   countOldUnchanged += 1
+            if i_mcomment.addOrUpdateTempField == "oldChanged":     countOldChanged += 1
+
     except praw.exceptions.APIException as e:
         clog.logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
 
-    s_temp = i_muser.name + ": " + str(countNew) + " new and " + str(countDuplicate) + " duplicate submissions processed"
+    s_temp = i_muser.name + ": " + str(countNew) + " new, " + str(countOldUnchanged) + " oldUnChanged, " + str(countOldChanged) + " oldChanged "
     clog.logger.info(s_temp)
 
     return
@@ -58,10 +57,15 @@ def getCommentsByCommentForest(i_mthread, argDict, sortOrder):
     prawReddit = i_mthread.getPrawRedditInstance()
 
     countNew = 0
-    countDuplicate = 0
+    countOldChanged = 0
+    countOldUnchanged = 0
     countPostsWithNoAuthor = 0
     try:
         params={};
+
+        # del next 2
+        submission_ID = i_mthread.fullname[3:]
+        clog.logger.debug("submission_ID = %s" % (submission_ID))
 
         submissionObject = prawReddit.submission(id=i_mthread.fullname[3:])
         clog.logger.debug("submissionObject = %s" % (submissionObject))
@@ -70,45 +74,42 @@ def getCommentsByCommentForest(i_mthread, argDict, sortOrder):
         # submissionObject.comments.replace_more(limit=0)
         # submissionObject.comments.replace_more(limit=None)
         submissionObject.comments.replace_more(limit=16)
-        for comment in submissionObject.comments.list():
-            clog.logger.debug("comment = %s" % (comment))
-            # See if comment.author.name exists in class user(models.Model):
+        clog.logger.info("blue blue blue")
+        for prawComment in submissionObject.comments.list():
+            clog.logger.debug("prawComment = %s" % (prawComment))
+            # See if prawComment.author.name exists in class user(models.Model):
             # If not add it with ppoi value set to false.
-            if comment.author == None:
+            if prawComment.author == None:
                 countPostsWithNoAuthor += 1
             else:
-                prawRedditor = prawReddit.redditor(comment.author.name)
+                prawRedditor = prawReddit.redditor(prawComment.author.name)
                 i_muser = muser.objects.addOrUpdate(prawRedditor)
                 clog.logger.debug("i_muser = %s" % (pprint.pformat(vars(i_muser))))
 
-                # aDict = {'ssi' : None, 'isNew' : True }
-                # # blUserComments_getUserCommentIndex(comment, i_muser, aDict)
-                # getmcomment(comment, i_muser, aDict)
-                # clog.logger.trace("muser %s needs to be created" % (i_muser.name))
-                # if aDict['isNew']:
-                #     # blUserComments_saveUserCommentsRaw(comment, aDict['ssi'])
-                #     savesmcommentRaw(comment, aDict['ssi'])
-                #     countNew += 1
-                # else:
-                #     countDuplicate += 1
-                pass  # REPACE WITH NEW COMMENT MANAGER
+                i_mcomment = mcomment.objects.addOrUpdate(i_muser, prawComment)
+                clog.logger.debug("i_mcomment = %s" % (pprint.pformat(vars(i_mcomment))))
+
+                if i_mcomment.addOrUpdateTempField == "new":            countNew += 1
+                if i_mcomment.addOrUpdateTempField == "oldUnchanged":   countOldUnchanged += 1
+                if i_mcomment.addOrUpdateTempField == "oldChanged":     countOldChanged += 1
+
     except praw.exceptions.APIException as e:
         clog.logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
 
     # Update i_mthread appropriately
-    saveSubIndex = False
+    save_mthread = False
     if sortOrder == "new":
         i_mthread.pforestgot = True
-        clog.logger.trace("%s: %s: pforestgot set to True" % (i_mthread.subreddit.name, i_mthread.fullname))
-        saveSubIndex = True
+        # clog.logger.trace("%s: %s: pforestgot set to True" % (i_mthread.subreddit.name, i_mthread.fullname))
+        save_mthread = True
     if countNew > 0:
         i_mthread.pcount += countNew
-        clog.logger.trace("%s: %s: pcount set to %d" % (i_mthread.subreddit.name, i_mthread.fullname, i_mthread.pcount))
-        saveSubIndex = True
-    if saveSubIndex:
+        # clog.logger.trace("%s: %s: pcount set to %d" % (i_mthread.subreddit.name, i_mthread.fullname, i_mthread.pcount))
+        save_mthread = True
+    if save_mthread:
         i_mthread.save()
 
-    s_temp = i_mthread.subreddit.name + ", " + i_mthread.fullname + ": " + str(countNew) + " new, " + str(countDuplicate) + " duplicated, " + str(countPostsWithNoAuthor) + " with no author."
+    s_temp = i_mthread.subreddit.name + ", " + i_mthread.fullname + ": " + str(countNew) + " new, " + str(countOldUnchanged) + " oldUnchanged, " + str(countOldChanged) + " oldChanged, " + str(countPostsWithNoAuthor) + " with no author."
     clog.logger.info(s_temp)
     argDict['rv'] += "<br>" + s_temp
     return
