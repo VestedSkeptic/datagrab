@@ -3,7 +3,7 @@ from ..config import clog
 from ..models.mcomment import mcomment
 from ..models.muser import muser
 import praw
-import pprint
+# import pprint
 
 # --------------------------------------------------------------------------
 def getBestBeforeValue(i_muser, prawReddit):
@@ -63,31 +63,21 @@ def getCommentsByCommentForest(i_mthread, argDict, sortOrder):
     try:
         params={};
 
-        # del next 2
-        submission_ID = i_mthread.fullname[3:]
-        clog.logger.debug("submission_ID = %s" % (submission_ID))
-
         submissionObject = prawReddit.submission(id=i_mthread.fullname[3:])
-        clog.logger.debug("submissionObject = %s" % (submissionObject))
-
         submissionObject.comment_sort = sortOrder
         # submissionObject.comments.replace_more(limit=0)
         # submissionObject.comments.replace_more(limit=None)
         submissionObject.comments.replace_more(limit=16)
-        clog.logger.info("blue blue blue")
         for prawComment in submissionObject.comments.list():
-            clog.logger.debug("prawComment = %s" % (prawComment))
-            # See if prawComment.author.name exists in class user(models.Model):
-            # If not add it with ppoi value set to false.
             if prawComment.author == None:
                 countPostsWithNoAuthor += 1
             else:
                 prawRedditor = prawReddit.redditor(prawComment.author.name)
                 i_muser = muser.objects.addOrUpdate(prawRedditor)
-                clog.logger.debug("i_muser = %s" % (pprint.pformat(vars(i_muser))))
+                # clog.logger.debug("i_muser = %s" % (pprint.pformat(vars(i_muser))))
 
                 i_mcomment = mcomment.objects.addOrUpdate(i_muser, prawComment)
-                clog.logger.debug("i_mcomment = %s" % (pprint.pformat(vars(i_mcomment))))
+                # clog.logger.debug("i_mcomment = %s" % (pprint.pformat(vars(i_mcomment))))
 
                 if i_mcomment.addOrUpdateTempField == "new":            countNew += 1
                 if i_mcomment.addOrUpdateTempField == "oldUnchanged":   countOldUnchanged += 1
@@ -100,11 +90,9 @@ def getCommentsByCommentForest(i_mthread, argDict, sortOrder):
     save_mthread = False
     if sortOrder == "new":
         i_mthread.pforestgot = True
-        # clog.logger.trace("%s: %s: pforestgot set to True" % (i_mthread.subreddit.name, i_mthread.fullname))
         save_mthread = True
     if countNew > 0:
         i_mthread.pcount += countNew
-        # clog.logger.trace("%s: %s: pcount set to %d" % (i_mthread.subreddit.name, i_mthread.fullname, i_mthread.pcount))
         save_mthread = True
     if save_mthread:
         i_mthread.save()

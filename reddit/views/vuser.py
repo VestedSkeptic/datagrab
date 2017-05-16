@@ -5,7 +5,7 @@ from ..config import clog
 from ..models import muser
 from ..blue import bcomment
 import praw
-import pprint
+# import pprint
 
 # *****************************************************************************
 def list(request):
@@ -72,10 +72,7 @@ def update(request):
     qs = muser.objects.filter(ppoi=True)
     if qs.count() > 0:
         for i_muser in qs:
-            argDict = {'vs': ""}
-            # i_muser.updateThreads(argDict)
             bcomment.updateUserComments(i_muser)
-            vs += argDict['vs']
     else:
         vs += "No musers found"
 

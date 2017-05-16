@@ -54,16 +54,13 @@ def update(request):
         for i_mthread in qs:
             argDict = {'rv': "", 'modeCount': {'Comment Forest New' : 0, 'Comment Forest Old' : 0, 'Method To Be Implemented Later' : 0, }}
             bcomment.updateThreadComments(i_mthread, argDict)
-        # rv += argDict['rv']
+
         s_temp = "Comment Forest New count" + " = " + str(argDict['modeCount']['Comment Forest New'])
         clog.logger.info(s_temp)
-        # rv += "<br>" + s_temp
         s_temp = "Comment Forest Old count" + " = " + str(argDict['modeCount']['Comment Forest Old'])
         clog.logger.info(s_temp)
-        # rv += "<br>" + s_temp
         s_temp = "Method To Be Implemented Later count" + " = " + str(argDict['modeCount']['Method To Be Implemented Later'])
         clog.logger.info(s_temp)
-        # rv += "<br>" + s_temp
     else:
         vs += " No mthreads found"
 

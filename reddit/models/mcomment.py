@@ -27,12 +27,12 @@ class mcommentManager(models.Manager):
 
 # *****************************************************************************
 class mcomment(mbase, models.Model):
-    user            = models.ForeignKey(muser, on_delete=models.CASCADE,)
-    name            = models.CharField(max_length=12)
-    thread          = models.CharField(max_length=12)
-    subreddit       = models.CharField(max_length=12)
+    user                        = models.ForeignKey(muser, on_delete=models.CASCADE,)
+    name                        = models.CharField(max_length=12)
+    thread                      = models.CharField(max_length=12)
+    subreddit                   = models.CharField(max_length=12)
     # properties
-    deleted         = models.BooleanField(default=False)
+    deleted                     = models.BooleanField(default=False)
     # Reddit fields
     rapproved_by                = models.CharField(max_length=21, default='', blank=True)
     rbanned_by                  = models.CharField(max_length=21, default='', blank=True)
@@ -57,6 +57,7 @@ class mcomment(mbase, models.Model):
     rcreated_utc                = models.DecimalField(default=0, max_digits=12,decimal_places=1)
 
     objects = mcommentManager()
+
     # -------------------------------------------------------------------------
     def getRedditFieldDict(self):
         mi = clog.dumpMethodInfo()

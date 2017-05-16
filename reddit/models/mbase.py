@@ -45,7 +45,6 @@ class mbase(models.Model):
         )
         return prawReddit
 
-
     # -------------------------------------------------------------------------
     def getRedditUserNameAsString(self, redditUser):
         mi = clog.dumpMethodInfo()

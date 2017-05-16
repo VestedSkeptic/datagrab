@@ -26,9 +26,9 @@ class msubredditManager(models.Manager):
 
 # *****************************************************************************
 class msubreddit(mbase, models.Model):
-    name            = models.CharField(max_length=30)
+    name                            = models.CharField(max_length=30)
     # properties
-    ppoi            = models.BooleanField(default=False)
+    ppoi                            = models.BooleanField(default=False)
     # Redditor fields
     raccounts_active_is_fuzzed      = models.BooleanField(default=False)
     rcollapse_deleted_comments      = models.BooleanField(default=False)
@@ -70,6 +70,7 @@ class msubreddit(mbase, models.Model):
         clog.logger.info(mi)
 
         redditFieldDict = {
+            # mThreadFieldName              redditFieldName                 convertMethodPtr
             'raccounts_active_is_fuzzed':   ("accounts_active_is_fuzzed",   None),      # bool
             'rcollapse_deleted_comments':   ("collapse_deleted_comments",   None),      # bool
             'rpublic_traffic':              ("public_traffic",              None),      # bool

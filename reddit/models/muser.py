@@ -31,7 +31,7 @@ class muser(mbase, models.Model):
     ppoi            = models.BooleanField(default=False)
     phistorygot     = models.BooleanField(default=False)
     # Redditor fields
-    r_path           = models.CharField(max_length=40, default='', blank=True)
+    r_path          = models.CharField(max_length=40, default='', blank=True)
 
     objects = muserManager()
 
