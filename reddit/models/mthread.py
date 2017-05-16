@@ -5,10 +5,6 @@ from mbase import mbase
 from msubreddit import msubreddit
 from ..config import clog
 
-
-
-
-
 # *****************************************************************************
 class mthreadManager(models.Manager):
     def addOrUpdate(self, i_msubreddit, prawThread):
@@ -20,16 +16,17 @@ class mthreadManager(models.Manager):
             # i_mthread.updateRedditFields(prawThread)
         except ObjectDoesNotExist:
             i_mthread = self.create(subreddit=i_msubreddit, name=prawThread.name)
-            i_mthread.addRedditFields(prawThread)
+            redditFieldDict = i_mthread.getRedditFieldDict()
+            i_mthread.addRedditFields(prawThread, redditFieldDict)
         i_mthread.save()
 
 
+        # Return results such as
+        # new item
+        # old item, unchanged
+        # old item, changed
 
-        # do something with the book
-
-
-        # return i_mthread
-        return
+        return i_mthread
 
 # *****************************************************************************
 class mthread(mbase, models.Model):
@@ -61,40 +58,6 @@ class mthread(mbase, models.Model):
         else:               s += " (cForestGot = False)"
         return format(s)
 
-
-#   'approved_by': None,
-#   'author': Redditor(name='bboe'),
-#   'banned_by': None,
-#   'created_utc': 1493534605.0,
-#   'created': 1493563405.0,
-#   'domain': 'self.redditdev',
-#   'downs': 0,
-#   'edited': False,
-#   'id': '68e6pp',
-#   'is_self': True,
-#   'likes': None,
-#   'locked': False,
-#   'mod_reports': [],
-#   'name': 't3_68e6pp',
-#   'num_comments': 0,
-#   'permalink': '/r/redditdev/comments/68e6pp/praw_450_released/',
-#   'quarantine': False,
-#   'removal_reason': None,
-#   'report_reasons': None,
-#   'score': 18,
-#   'selftext': 'Notable additions:\n',
-#   'subreddit_id': 't5_2qizd',
-#   'subreddit_name_prefixed': 'r/redditdev',
-#   'subreddit_type': 'public',
-#   'subreddit': Subreddit(display_name='redditdev'),
-#   'title': 'PRAW 4.5.0 Released',
-#   'ups': 18,
-#   'url': 'https://www.reddit.com/r/redditdev/comments/68e6pp/praw_450_released/',
-#   'user_reports': [],
-
-    # created_utc     = models.DateTimeField()
-    # is_self         = models.BooleanField()
-
     # -------------------------------------------------------------------------
     def getRedditFieldDict(self):
         mi = clog.dumpMethodInfo()
@@ -109,12 +72,6 @@ class mthread(mbase, models.Model):
             'rselftext':            ("selftext",        None),
             'ris_self':             ("is_self",         None),
 
-            # 'name': "value",
-            # 'name': "value",
-            # 'name': "value",
-            # 'name': "value",
-            # 'name': "value",
-            # 'name': "value",
         }
         return redditFieldDict
 
@@ -126,49 +83,6 @@ class mthread(mbase, models.Model):
         if author == None or author == '[deleted]' or author == '[removed]': return author
         else:                                                                return author.name
 
-    # -------------------------------------------------------------------------
-    def addRedditFields(self, prawThread):
-        mi = clog.dumpMethodInfo()
-        clog.logger.info(mi)
-
-        redditFieldDict = self.getRedditFieldDict()
-        for mThreadFieldName in redditFieldDict:
-            redditFieldName     = redditFieldDict[mThreadFieldName][0]  # ex: author
-            convertMethodPtr    = redditFieldDict[mThreadFieldName][1]  # ex: self.getRedditAuthorName
-            redditValue         = getattr(prawThread, redditFieldName)  # ex: prawThread.author
-
-            if convertMethodPtr: setattr(self, mThreadFieldName, convertMethodPtr(redditValue))
-            else:                setattr(self, mThreadFieldName, redditValue)
-
-# *****************************************************************************
-class mthreadRaw(models.Model):
-    index           = models.OneToOneField(mthread, primary_key=True)
-    data            = models.TextField()
-
-    def __str__(self):
-        # mi = clog.dumpMethodInfo()
-        # clog.logger.info(mi)
-
-        s = self.index.subreddit.name
-        s += ": " + self.data
-        return format(s)
-
-# *****************************************************************************
-class mthreadExtracted(models.Model):
-    index           = models.OneToOneField(mthread, primary_key=True)
-    author          = models.CharField(max_length=21)
-    created_utc     = models.DateTimeField()
-    is_self         = models.BooleanField()
-    title           = models.CharField(max_length=301)
-    selftext        = models.TextField()
-
-    def __str__(self):
-        # mi = clog.dumpMethodInfo()
-        # clog.logger.info(mi)
-
-        s = self.index.subreddit.name
-        s += ": " + self.title
-        return format(s)
 
 
 # # ----------------------------------------------------------------------------

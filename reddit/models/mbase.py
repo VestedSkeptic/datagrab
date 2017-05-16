@@ -16,17 +16,17 @@ class mbase(models.Model):
     def __str__(self):
         return format("mbase")
 
-    # -------------------------------------------------------------------------
-    @staticmethod
-    def getDictOfClassFieldNames(classModel):
-        mi = clog.dumpMethodInfo()
-        clog.logger.info(mi)
-
-        rvDict = {}
-        fields = classModel._meta.get_fields()
-        for field in fields:
-            rvDict[field.name] = None
-        return rvDict
+    # # -------------------------------------------------------------------------
+    # @staticmethod
+    # def getDictOfClassFieldNames(classModel):
+    #     mi = clog.dumpMethodInfo()
+    #     clog.logger.info(mi)
+    #
+    #     rvDict = {}
+    #     fields = classModel._meta.get_fields()
+    #     for field in fields:
+    #         rvDict[field.name] = None
+    #     return rvDict
 
     # -------------------------------------------------------------------------
     @staticmethod
@@ -42,6 +42,19 @@ class mbase(models.Model):
             password=CONST_DEV_PASSWORD
         )
         return prawReddit
+
+    # -------------------------------------------------------------------------
+    def addRedditFields(self, prawData, redditFieldDict):
+        mi = clog.dumpMethodInfo()
+        clog.logger.info(mi)
+
+        for mFieldName in redditFieldDict:
+            redditFieldName     = redditFieldDict[mFieldName][0]  # ex: author
+            convertMethodPtr    = redditFieldDict[mFieldName][1]  # ex: self.getRedditAuthorName
+            redditValue         = getattr(prawData, redditFieldName)  # ex: prawData.author
+
+            if convertMethodPtr: setattr(self, mFieldName, convertMethodPtr(redditValue))
+            else:                setattr(self, mFieldName, redditValue)
 
 
 
