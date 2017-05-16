@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from django.db import models
+from django.core.exceptions import ObjectDoesNotExist
 from .mbase import mbase
 from .muser import muser
 from ..config import clog
@@ -19,18 +20,6 @@ class mcomment(mbase, models.Model):
         # s += " [" + self.name + "]"
         # s += " [submisson_id=" + self.submission_id + "]"
         # s += " [parent_id=" + self.parent_id + "]"
-        return format(s)
-
-# *****************************************************************************
-class mcommentRaw(mbase, models.Model):
-    index           = models.OneToOneField(mcomment, primary_key=True)   # was uci
-    data            = models.TextField()
-    def __str__(self):
-        # mi = clog.dumpMethodInfo()
-        # clog.logger.info(mi)
-
-        s = self.index.user
-        # s += " [" + self.data + "]"
         return format(s)
 
 
