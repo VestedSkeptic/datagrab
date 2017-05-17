@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from mbase import mbase
 from msubreddit import msubreddit
 from ..config import clog
-import pprint
+# import pprint
 
 # *****************************************************************************
 class mthreadManager(models.Manager):
@@ -24,7 +24,7 @@ class mthreadManager(models.Manager):
             i_mthread.addRedditFields(prawThread, redditFieldDict)
             i_mthread.addOrUpdateTempField = "new"
 
-        clog.logger.debug("i_mthread = %s" % (pprint.pformat(vars(i_mthread))))
+        # clog.logger.debug("i_mthread = %s" % (pprint.pformat(vars(i_mthread))))
         i_mthread.save()
         return i_mthread
 
@@ -54,7 +54,6 @@ class mthread(mbase, models.Model):
     rscore          = models.IntegerField(default=0)
     rups            = models.IntegerField(default=0)
 
-    redited         = models.BooleanField(default=False)
     rhidden         = models.BooleanField(default=False)
     ris_self        = models.BooleanField(default=False)
     rlocked         = models.BooleanField(default=False)
@@ -62,6 +61,7 @@ class mthread(mbase, models.Model):
 
     rcreated        = models.DecimalField(default=0, max_digits=12,decimal_places=1)
     rcreated_utc    = models.DecimalField(default=0, max_digits=12,decimal_places=1)
+    redited         = models.DecimalField(default=0, max_digits=12,decimal_places=1)
 
     objects = mthreadManager()
 
@@ -89,7 +89,6 @@ class mthread(mbase, models.Model):
             'rscore':               ("score",           int),       # int
             'rups':                 ("ups",             int),       # int
 
-            'redited':              ("edited",          None),      # bool
             'rhidden':              ("hidden",          None),      # bool
             'ris_self':             ("is_self",         None),      # bool
             'rlocked':              ("locked",          None),      # bool
@@ -97,6 +96,8 @@ class mthread(mbase, models.Model):
 
             'rcreated':             ("created",         None),      # 1493534605.0,
             'rcreated_utc':         ("created_utc",     None),      # 1493534605.0,
+
+            'redited':              ("edited",          self.getEditedOrFalseValueAsZero),  # False or timestamp
         }
         return redditFieldDict
 

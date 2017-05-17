@@ -64,6 +64,16 @@ class mbase(models.Model):
         else:                   return inputString
 
     # -------------------------------------------------------------------------
+    # Reddit edited field has a value of False or a timestamp.
+    # This method will return timestamp or a value of zero if it was False
+    def getEditedOrFalseValueAsZero(self, inputString):
+        mi = clog.dumpMethodInfo()
+        # clog.logger.info(mi)
+
+        if inputString == False:    return 0
+        else:                       return inputString
+
+    # -------------------------------------------------------------------------
     def addRedditFields(self, prawData, redditFieldDict):
         mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)

@@ -3,7 +3,7 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from .mbase import mbase
 from ..config import clog
-import pprint
+# import pprint
 
 # *****************************************************************************
 class msubredditManager(models.Manager):
@@ -23,7 +23,7 @@ class msubredditManager(models.Manager):
             i_msubreddit.addRedditFields(prawSubreddit, redditFieldDict)
             i_msubreddit.addOrUpdateTempField = "new"
 
-        clog.logger.debug("i_msubreddit = %s" % (pprint.pformat(vars(i_msubreddit))))
+        # clog.logger.debug("i_msubreddit = %s" % (pprint.pformat(vars(i_msubreddit))))
         i_msubreddit.save()
         return i_msubreddit
 

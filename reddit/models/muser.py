@@ -3,7 +3,7 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from .mbase import mbase
 from ..config import clog
-import pprint
+# import pprint
 
 # *****************************************************************************
 class muserManager(models.Manager):
@@ -23,7 +23,7 @@ class muserManager(models.Manager):
             i_muser.addRedditFields(prawRedditor, redditFieldDict)
             i_muser.addOrUpdateTempField = "new"
 
-        clog.logger.debug("i_muser = %s" % (pprint.pformat(vars(i_muser))))
+        # clog.logger.debug("i_muser = %s" % (pprint.pformat(vars(i_muser))))
         i_muser.save()
         return i_muser
 

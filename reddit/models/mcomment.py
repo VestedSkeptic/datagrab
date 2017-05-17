@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from .mbase import mbase
 from .muser import muser
 from ..config import clog
-import pprint
+# import pprint
 
 # *****************************************************************************
 class mcommentManager(models.Manager):
@@ -24,7 +24,7 @@ class mcommentManager(models.Manager):
             i_mcomment.addRedditFields(prawComment, redditFieldDict)
             i_mcomment.addOrUpdateTempField = "new"
 
-        clog.logger.debug("i_mcomment = %s" % (pprint.pformat(vars(i_mcomment))))
+        # clog.logger.debug("i_mcomment = %s" % (pprint.pformat(vars(i_mcomment))))
         i_mcomment.save()
         return i_mcomment
 
@@ -53,11 +53,11 @@ class mcomment(mbase, models.Model):
     rups                        = models.IntegerField(default=0)
 
     rarchived                   = models.BooleanField(default=False)
-    redited                     = models.BooleanField(default=False)
     rstickied                   = models.BooleanField(default=False)
 
     rcreated                    = models.DecimalField(default=0, max_digits=12,decimal_places=1)
     rcreated_utc                = models.DecimalField(default=0, max_digits=12,decimal_places=1)
+    redited                     = models.DecimalField(default=0, max_digits=12,decimal_places=1)
 
     objects = mcommentManager()
 
@@ -84,11 +84,12 @@ class mcomment(mbase, models.Model):
             'rups':                     ("ups",                         int),       # int
 
             'rarchived':                ("archived",                    None),      # bool
-            'redited':                  ("edited",                      None),      # bool
             'rstickied':                ("stickied",                    None),      # bool
 
             'rcreated':                 ("created",                     None),      # 1493534605.0,
             'rcreated_utc':             ("created_utc",                 None),      # 1493534605.0,
+
+            'redited':                  ("edited",                      self.getEditedOrFalseValueAsZero),  # False or timestamp
 
         }
         return redditFieldDict
