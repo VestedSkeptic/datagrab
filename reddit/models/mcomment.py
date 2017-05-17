@@ -4,12 +4,13 @@ from django.core.exceptions import ObjectDoesNotExist
 from .mbase import mbase
 from .muser import muser
 from ..config import clog
+import pprint
 
 # *****************************************************************************
 class mcommentManager(models.Manager):
     def addOrUpdate(self, i_muser, prawComment):
         mi = clog.dumpMethodInfo()
-        clog.logger.info(mi)
+        # clog.logger.info(mi)
 
         try:
             i_mcomment = self.get(user=i_muser, name=prawComment.name, thread=prawComment.link_id, subreddit=prawComment.subreddit_id)
@@ -22,6 +23,8 @@ class mcommentManager(models.Manager):
             redditFieldDict = i_mcomment.getRedditFieldDict()
             i_mcomment.addRedditFields(prawComment, redditFieldDict)
             i_mcomment.addOrUpdateTempField = "new"
+
+        clog.logger.debug("i_mcomment = %s" % (pprint.pformat(vars(i_mcomment))))
         i_mcomment.save()
         return i_mcomment
 
@@ -61,7 +64,7 @@ class mcomment(mbase, models.Model):
     # -------------------------------------------------------------------------
     def getRedditFieldDict(self):
         mi = clog.dumpMethodInfo()
-        clog.logger.info(mi)
+        # clog.logger.info(mi)
 
         redditFieldDict = {
             # mThreadFieldName          redditFieldName                 convertMethodPtr

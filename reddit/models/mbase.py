@@ -48,7 +48,7 @@ class mbase(models.Model):
     # -------------------------------------------------------------------------
     def getRedditUserNameAsString(self, redditUser):
         mi = clog.dumpMethodInfo()
-        clog.logger.info(mi)
+        # clog.logger.info(mi)
 
         if isinstance(redditUser, praw.models.Redditor): return redditUser.name         # if it is a praw Reddit object
         elif redditUser == None:                         return '[None]'
@@ -66,7 +66,7 @@ class mbase(models.Model):
     # -------------------------------------------------------------------------
     def addRedditFields(self, prawData, redditFieldDict):
         mi = clog.dumpMethodInfo()
-        clog.logger.info(mi)
+        # clog.logger.info(mi)
 
         for mFieldName in redditFieldDict:
             redditFieldName     = redditFieldDict[mFieldName][0]  # ex: author
@@ -80,9 +80,9 @@ class mbase(models.Model):
     # return count of fields that were changed or zero
     def updateRedditFields(self, prawData, redditFieldDict):
         mi = clog.dumpMethodInfo()
-        clog.logger.info(mi)
+        # clog.logger.info(mi)
 
-        clog.logger.info("METHOD NOT COMPLETED")
+        clog.logger.debug("METHOD NOT COMPLETED")
 
         for mFieldName in redditFieldDict:
             redditFieldName     = redditFieldDict[mFieldName][0]  # ex: author

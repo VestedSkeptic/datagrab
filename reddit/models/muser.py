@@ -3,12 +3,13 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from .mbase import mbase
 from ..config import clog
+import pprint
 
 # *****************************************************************************
 class muserManager(models.Manager):
     def addOrUpdate(self, prawRedditor):
         mi = clog.dumpMethodInfo()
-        clog.logger.info(mi)
+        # clog.logger.info(mi)
 
         try:
             i_muser = self.get(name=prawRedditor.name)
@@ -21,6 +22,8 @@ class muserManager(models.Manager):
             redditFieldDict = i_muser.getRedditFieldDict()
             i_muser.addRedditFields(prawRedditor, redditFieldDict)
             i_muser.addOrUpdateTempField = "new"
+
+        clog.logger.debug("i_muser = %s" % (pprint.pformat(vars(i_muser))))
         i_muser.save()
         return i_muser
 
@@ -38,7 +41,7 @@ class muser(mbase, models.Model):
     # -------------------------------------------------------------------------
     def getRedditFieldDict(self):
         mi = clog.dumpMethodInfo()
-        clog.logger.info(mi)
+        # clog.logger.info(mi)
 
         redditFieldDict = {
             # mThreadFieldName      redditFieldName     convertMethodPtr

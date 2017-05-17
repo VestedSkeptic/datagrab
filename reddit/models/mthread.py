@@ -4,12 +4,13 @@ from django.core.exceptions import ObjectDoesNotExist
 from mbase import mbase
 from msubreddit import msubreddit
 from ..config import clog
+import pprint
 
 # *****************************************************************************
 class mthreadManager(models.Manager):
     def addOrUpdate(self, i_msubreddit, prawThread):
         mi = clog.dumpMethodInfo()
-        clog.logger.info(mi)
+        # clog.logger.info(mi)
 
         try:
             i_mthread = self.get(subreddit=i_msubreddit, fullname=prawThread.name)
@@ -22,6 +23,8 @@ class mthreadManager(models.Manager):
             redditFieldDict = i_mthread.getRedditFieldDict()
             i_mthread.addRedditFields(prawThread, redditFieldDict)
             i_mthread.addOrUpdateTempField = "new"
+
+        clog.logger.debug("i_mthread = %s" % (pprint.pformat(vars(i_mthread))))
         i_mthread.save()
         return i_mthread
 
@@ -65,7 +68,7 @@ class mthread(mbase, models.Model):
     # -------------------------------------------------------------------------
     def getRedditFieldDict(self):
         mi = clog.dumpMethodInfo()
-        clog.logger.info(mi)
+        # clog.logger.info(mi)
 
         redditFieldDict = {
             # mThreadFieldName      redditFieldName     convertMethodPtr

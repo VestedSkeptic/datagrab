@@ -3,12 +3,13 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from .mbase import mbase
 from ..config import clog
+import pprint
 
 # *****************************************************************************
 class msubredditManager(models.Manager):
     def addOrUpdate(self, name, prawSubreddit):
         mi = clog.dumpMethodInfo()
-        clog.logger.info(mi)
+        # clog.logger.info(mi)
 
         try:
             i_msubreddit = self.get(name=name)
@@ -21,6 +22,8 @@ class msubredditManager(models.Manager):
             redditFieldDict = i_msubreddit.getRedditFieldDict()
             i_msubreddit.addRedditFields(prawSubreddit, redditFieldDict)
             i_msubreddit.addOrUpdateTempField = "new"
+
+        clog.logger.debug("i_msubreddit = %s" % (pprint.pformat(vars(i_msubreddit))))
         i_msubreddit.save()
         return i_msubreddit
 
@@ -67,7 +70,7 @@ class msubreddit(mbase, models.Model):
     # -------------------------------------------------------------------------
     def getRedditFieldDict(self):
         mi = clog.dumpMethodInfo()
-        clog.logger.info(mi)
+        # clog.logger.info(mi)
 
         redditFieldDict = {
             # mThreadFieldName              redditFieldName                 convertMethodPtr
