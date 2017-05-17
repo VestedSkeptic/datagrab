@@ -1,32 +1,10 @@
 from django.http import HttpResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger   # for pagination
 from ..config import clog
 from ..models import mthread
 from ..blue import bcomment
-
-# *****************************************************************************
-def list(request):
-    mi = clog.dumpMethodInfo()
-    clog.logger.info(mi)
-
-    vs = ''
-    qs = mthread.objects.all()
-    if qs.count() == 0:
-        vs += "No items to list"
-    for item in qs:
-        vs += item.fullname
-        vs += ": rauthor = " + item.rauthor
-        vs += ", rdowns = " + str(item.rdowns)
-        vs += ", rups = " + str(item.rups)
-        vs += ", rtitle = " + item.rtitle
-        vs += ", ris_self = " + str(item.ris_self)
-        vs += ", rselftext = " + item.rselftext
-
-    clog.logger.info(vs)
-    sessionKey = 'blue'
-    request.session[sessionKey] = vs
-    return redirect('vbase.main', xData=sessionKey)
 
 # *****************************************************************************
 def delAll(request):
@@ -55,16 +33,6 @@ def update(request):
         for i_mthread in qs:
             count += 1
             clog.logger.info("Processing thread %d of %d" % (count, qs.count()))
-            # argDict = {'rv': "", 'modeCount': {'Comment Forest New' : 0, 'Comment Forest Old' : 0, 'Method To Be Implemented Later' : 0, }}
-            # bcomment.updateThreadComments(i_mthread, argDict)
-            bcomment.updateThreadComments(i_mthread)
-
-        # s_temp = "Comment Forest New count" + " = " + str(argDict['modeCount']['Comment Forest New'])
-        # clog.logger.info(s_temp)
-        # s_temp = "Comment Forest Old count" + " = " + str(argDict['modeCount']['Comment Forest Old'])
-        # clog.logger.info(s_temp)
-        # s_temp = "Method To Be Implemented Later count" + " = " + str(argDict['modeCount']['Method To Be Implemented Later'])
-        # clog.logger.info(s_temp)
     else:
         vs += " No mthreads found"
 
@@ -72,6 +40,37 @@ def update(request):
     sessionKey = 'blue'
     request.session[sessionKey] = vs
     return redirect('vbase.main', xData=sessionKey)
+
+# *****************************************************************************
+def list(request, subreddit):
+    mi = clog.dumpMethodInfo()
+    clog.logger.info(mi)
+
+    qs = mthread.objects.filter(subreddit__name=subreddit).order_by("-rcreated")
+    paginator = Paginator(qs, 20) # Show 20 per page
+
+    page = request.GET.get('page')
+    try:
+        threads = paginator.page(page)
+    except PageNotAnInteger:
+        threads = paginator.page(1) # If page is not an integer, deliver first page.
+    except EmptyPage:
+        threads = paginator.page(paginator.num_pages) # If page is out of range (e.g. 9999), deliver last page of results.
+
+    return render(request, 'vthread_list.html', {'threads': threads, 'subreddit':subreddit})
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

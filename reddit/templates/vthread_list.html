@@ -1,0 +1,33 @@
+{% for thread in threads %}
+    {# Each "thread" is a mThread model object. #}
+    <a href="https://www.reddit.com/r/{{subreddit}}/comments/{{thread.rid}}">{{thread.rid}}</a>&nbsp;
+    ({{thread.rdomain}})&nbsp;
+    {{thread.rnum_comments}} comments<br/>
+
+
+{% comment %}
+<a href="https://www.reddit.com/r/{{subreddit}}/comments/{{thread.rid}}">{{thread.rtitle}}</a>&nbsp;
+
+
+url to thread on politics:   https://www.reddit.com/r/politics/comments/6bodhr/dem_to_call_for_trumps_impeachment_on_house_floor/
+url to thread on politics:   https://www.reddit.com/r/politics/comments/6bodhr
+url to thread on politics:   politics/comments/6bodhr
+{% endcomment %}
+
+{% endfor %}
+<br/>
+<div class="pagination">
+    <span class="step-links">
+        {% if threads.has_previous %}
+            <a href="?page={{ threads.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ threads.number }} of {{ threads.paginator.num_pages }}.
+        </span>
+
+        {% if threads.has_next %}
+            <a href="?page={{ threads.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>

@@ -65,9 +65,11 @@ def main(request, xData=None):
     vs += ', <a href="http://localhost:8000/reddit/vsubreddit/add/politics">Politics</a>'
 
     vs += '<br><b>vthread</b>:'
-    vs += ' <a href="http://localhost:8000/reddit/vthread/list">list</a>'
-    vs += ' <a href="http://localhost:8000/reddit/vthread/delAll">delAll</a>'
-    vs += ' <a href="http://localhost:8000/reddit/vthread/update">update comments</a>'
+    vs += '  <a href="http://localhost:8000/reddit/vthread/delAll">delAll</a>'
+    vs += ', <a href="http://localhost:8000/reddit/vthread/update">update comments</a>'
+    vs += '<br><b>vthread list</b>:'
+    vs += '  <a href="http://localhost:8000/reddit/vthread/list/Molw">list Molw</a>'
+    vs += ', <a href="http://localhost:8000/reddit/vthread/list/politics">list Politics</a>'
 
     vs += '<br>' + displayDatabaseModelCounts()
 
