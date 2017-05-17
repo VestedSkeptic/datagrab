@@ -29,6 +29,14 @@ def displayDatabaseModelCounts():
     s += '<BR>mthreads deleted = ' + str(subreddits_si_deleted)
     s += '<BR>==========================='
     s += '<BR>'
+
+    # clog.logger.critical("critical")
+    # clog.logger.error("error")
+    # clog.logger.warning("warning")
+    # clog.logger.info("info")
+    # clog.logger.debug("debug")
+    # clog.logger.trace("trace")
+
     return s
 
 # *****************************************************************************

@@ -47,11 +47,11 @@ def updateUserComments(i_muser):
     return
 
 # *****************************************************************************
-def getCommentsByCommentForest(i_mthread, argDict, sortOrder):
+# def getCommentsByCommentForest(i_mthread, argDict, sortOrder):
+def getCommentsByCommentForest(i_mthread, sortOrder):
     mi = clog.dumpMethodInfo()
-    clog.logger.info(mi)
-
-    clog.logger.debug("%s: %s: sortOrder = %s" % (i_mthread.subreddit.name, i_mthread.fullname, sortOrder))
+    # clog.logger.debug(mi)
+    # clog.logger.debug("%s: %s: sortOrder = %s" % (i_mthread.subreddit.name, i_mthread.fullname, sortOrder))
 
     # create PRAW prawReddit instance
     prawReddit = i_mthread.getPrawRedditInstance()
@@ -99,19 +99,21 @@ def getCommentsByCommentForest(i_mthread, argDict, sortOrder):
 
     s_temp = i_mthread.subreddit.name + ", " + i_mthread.fullname + ": " + str(countNew) + " new, " + str(countOldUnchanged) + " oldUnchanged, " + str(countOldChanged) + " oldChanged, " + str(countPostsWithNoAuthor) + " with no author."
     clog.logger.info(s_temp)
-    argDict['rv'] += "<br>" + s_temp
+    # argDict['rv'] += "<br>" + s_temp
     return
 
 # --------------------------------------------------------------------------
-def updateThreadComments(i_mthread, argDict):
+# def updateThreadComments(i_mthread, argDict):
+def updateThreadComments(i_mthread):
     mi = clog.dumpMethodInfo()
     clog.logger.info(mi)
 
     vs = ''
     if not i_mthread.pforestgot:
         clog.logger.trace("%s: %s: New commentForest updating sorted by new" % (i_mthread.subreddit.name, i_mthread.fullname))
-        getCommentsByCommentForest(i_mthread, argDict, "new")
-        argDict['modeCount']['Comment Forest New'] += 1
+        # getCommentsByCommentForest(i_mthread, argDict, "new")
+        getCommentsByCommentForest(i_mthread, "new")
+        # argDict['modeCount']['Comment Forest New'] += 1
     # elif i_mthread.count < 10:
     #     clog.logger.debug("%s: %s: Old small commentForest updating sorted by old" % (i_mthread.subreddit.name, i_mthread.fullname))
     #     getCommentsByCommentForest(i_mthread, argDict, "old")
@@ -123,7 +125,7 @@ def updateThreadComments(i_mthread, argDict):
                     #     argDict['modeCount']['Comment Forest Old'] += 1
     else:
         clog.logger.info("%s: %s: Old large commentForest updating by METHOD TO BE IMPLEMENTED LATER" % (i_mthread.subreddit.name, i_mthread.fullname))
-        argDict['modeCount']['Method To Be Implemented Later'] += 1
+        # argDict['modeCount']['Method To Be Implemented Later'] += 1
 
     return
 

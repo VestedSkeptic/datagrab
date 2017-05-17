@@ -15,7 +15,7 @@ def list(request):
     if qs.count() == 0:
         vs += "No items to list"
     for item in qs:
-        vs += item.name
+        vs += item.fullname
         vs += ": rauthor = " + item.rauthor
         vs += ", rdowns = " + str(item.rdowns)
         vs += ", rups = " + str(item.rups)
@@ -51,16 +51,20 @@ def update(request):
     vs = ''
     qs = mthread.objects.filter(pdeleted=False).order_by('subreddit__name')
     if qs.count() > 0:
+        count = 0
         for i_mthread in qs:
-            argDict = {'rv': "", 'modeCount': {'Comment Forest New' : 0, 'Comment Forest Old' : 0, 'Method To Be Implemented Later' : 0, }}
-            bcomment.updateThreadComments(i_mthread, argDict)
+            count += 1
+            clog.logger.info("Processing thread %d of %d" % (count, qs.count()))
+            # argDict = {'rv': "", 'modeCount': {'Comment Forest New' : 0, 'Comment Forest Old' : 0, 'Method To Be Implemented Later' : 0, }}
+            # bcomment.updateThreadComments(i_mthread, argDict)
+            bcomment.updateThreadComments(i_mthread)
 
-        s_temp = "Comment Forest New count" + " = " + str(argDict['modeCount']['Comment Forest New'])
-        clog.logger.info(s_temp)
-        s_temp = "Comment Forest Old count" + " = " + str(argDict['modeCount']['Comment Forest Old'])
-        clog.logger.info(s_temp)
-        s_temp = "Method To Be Implemented Later count" + " = " + str(argDict['modeCount']['Method To Be Implemented Later'])
-        clog.logger.info(s_temp)
+        # s_temp = "Comment Forest New count" + " = " + str(argDict['modeCount']['Comment Forest New'])
+        # clog.logger.info(s_temp)
+        # s_temp = "Comment Forest Old count" + " = " + str(argDict['modeCount']['Comment Forest Old'])
+        # clog.logger.info(s_temp)
+        # s_temp = "Method To Be Implemented Later count" + " = " + str(argDict['modeCount']['Method To Be Implemented Later'])
+        # clog.logger.info(s_temp)
     else:
         vs += " No mthreads found"
 
