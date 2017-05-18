@@ -6,13 +6,13 @@ import inspect
 import os
 # import pprint
 
-cLoggerLevel_CRITICAL                       = logging.CRITICAL          # 50
-cLoggerLevel_ERROR                          = logging.ERROR             # 40
-cLoggerLevel_WARNING                        = logging.WARNING           # 30
-cLoggerLevel_INFO                           = logging.INFO              # 20
-cLoggerLevel_DEBUG                          = logging.DEBUG             # 10
-cLoggerLevel_TRACE                          = 5                         # 5
-cLoggerLevel_NOTSET                         = logging.NOTSET            # 0
+cLoggerLevel_CRITICAL                       = logging.CRITICAL      # 50
+cLoggerLevel_ERROR                          = logging.ERROR         # 40
+cLoggerLevel_WARNING                        = logging.WARNING       # 30
+cLoggerLevel_INFO                           = logging.INFO          # 20
+cLoggerLevel_DEBUG                          = logging.DEBUG         # 10
+cLoggerLevel_TRACE                          = 6                     # 6, value of 5 conflicts with Celery "SUBDEBUG" level
+cLoggerLevel_NOTSET                         = logging.NOTSET        # 0
 
 cLoggerFile_archiveOlder                    = 100
 cLoggerFile_overwriteOlder                  = 200
@@ -171,6 +171,10 @@ class cLogger(object):
 
     # --------------------------------------------------------------------------
     def getMethodPtr(self, loggingLevel):
+        # self.logger.info("getMethodPtr")
+        # self.logger.info("loggingLevel = %s" % (loggingLevel))
+        # self.logger.info("loggingLevelName = %s" % (logging.getLevelName(loggingLevel)))
+        # self.logger.info("self.funcdict = %s" % (pprint.pformat(self.funcdict)))
         methodPtr = self.funcdict[logging.getLevelName(loggingLevel)]
         return methodPtr
 

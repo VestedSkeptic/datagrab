@@ -27,12 +27,13 @@ def update(request):
     clog.logger.info(mi)
 
     vs = ''
-    qs = mthread.objects.filter(pdeleted=False).order_by('subreddit__name')
+    qs = mthread.objects.filter(pdeleted=False, pforestgot=False).order_by("-rcreated")
     if qs.count() > 0:
         count = 0
         for i_mthread in qs:
             count += 1
             clog.logger.info("Processing thread %d of %d" % (count, qs.count()))
+            bcomment.updateThreadComments(i_mthread)
     else:
         vs += " No mthreads found"
 

@@ -13,7 +13,7 @@ def getBestBeforeValue(prawReddit):
     return ''
 
 # --------------------------------------------------------------------------
-def getMoreThreadsForSubreddit(i_msubreddit):
+def getMoreThreadsForSubredditInstance(i_msubreddit):
     mi = clog.dumpMethodInfo()
     clog.logger.info(mi)
 

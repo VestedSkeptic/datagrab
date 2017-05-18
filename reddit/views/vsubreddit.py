@@ -72,7 +72,7 @@ def update(request):
         vs += "%d msubreddits found" % (qs.count())
         for i_msubreddit in qs:
             argDict = {'vs': ""}
-            bthread.getMoreThreadsForSubreddit(i_msubreddit)
+            bthread.getMoreThreadsForSubredditInstance(i_msubreddit)
             vs += argDict['vs']
     else:
         vs += "No msubreddits found"
