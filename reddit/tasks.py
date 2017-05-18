@@ -38,23 +38,26 @@ def black(subredditName):
         return "no"
 
 
-
-#
-# # --------------------------------------------------------------------------
-# def initializeCLogger():
-#     global clog
-
-
-#### SCHEDULE SHELL ####
-# python manage.py shell
-# > from reddit.config import initializeCLogger
-# > initializeCLogger()
-# > from reddit.tasks import black
-# > black.delay("Molw")
+### PROCESS ###
+# 1. Start Django Server Terminal
 
 #### WORKER SHELL ####
-# Change in code requires restart of worker
+# 2. Start Celery Worker Terminal
+# note: kill with Ctrl-C  Ctrl-C
+# note: kill and restart for any code change
+#
 # python manage.py celery worker --loglevel=info
+
+#### SCHEDULE SHELL ####
+# 3. Start Celery Schedule Terminal.
+#
+# python manage.py shell
+#> from reddit.tasks import black
+#> black.delay("Molw")
+                                    # DONT SEEM TO NEED THIS!!!
+                                    # from reddit.config import initializeCLogger
+                                    # initializeCLogger()
+
 
 
 
