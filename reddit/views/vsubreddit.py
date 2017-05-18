@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from ..config import clog
 from ..models import msubreddit
 from ..blue import bthread
+from ..tasks import task_getMoreThreadsForSubredditName
 import praw
 # import pprint
 
@@ -67,15 +68,20 @@ def update(request):
     clog.logger.info(mi)
 
     vs = ''
-    qs = msubreddit.objects.all()
-    if qs.count() > 0:
-        vs += "%d msubreddits found" % (qs.count())
-        for i_msubreddit in qs:
-            argDict = {'vs': ""}
-            bthread.getMoreThreadsForSubredditInstance(i_msubreddit)
-            vs += argDict['vs']
-    else:
-        vs += "No msubreddits found"
+    # qs = msubreddit.objects.all()
+    # if qs.count() > 0:
+    #     vs += "Scheduling task to update: "
+    #     for i_msubreddit in qs:
+    #         vs += i_msubreddit.name + ", "
+    #         # bthread.getMoreThreadsForSubredditInstance(i_msubreddit)
+    #         # Schedule this as a task!!!
+    #         # Note the delay method
+    #         task_getMoreThreadsForSubredditName.delay(i_msubreddit.name)
+    # else:
+    #     vs += "No msubreddits found"
+
+    task_getMoreThreadsForSubredditName.delay("Molw")
+    clog.logger.info("JUST SETTING TASK TO UPDATE MOLW FOR NOW")
 
     clog.logger.info(vs)
     sessionKey = 'blue'

@@ -23,7 +23,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -123,3 +122,5 @@ import djcelery
 djcelery.setup_loader()
 BROKER_URL = 'django://'
 # CELERYD_HIJACK_ROOT_LOGGER=False
+# worker_hijack_root_logger=False
+# worker_log_color=False

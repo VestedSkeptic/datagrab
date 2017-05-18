@@ -92,7 +92,7 @@ class mbase(models.Model):
         mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 
-        clog.logger.debug("METHOD NOT COMPLETED")
+        # clog.logger.debug("METHOD NOT COMPLETED")
 
         for mFieldName in redditFieldDict:
             redditFieldName     = redditFieldDict[mFieldName][0]  # ex: author

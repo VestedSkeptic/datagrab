@@ -6,35 +6,16 @@ from django.core.exceptions import ObjectDoesNotExist
 
 # --------------------------------------------------------------------------
 @task()
-def red(x, y):
-    return x + y
-
-# --------------------------------------------------------------------------
-@task()
-def add(x, y):
-    return x + y
-
-# --------------------------------------------------------------------------
-@task()
-def orange(x, y):
-    return x + y
-
-
-# --------------------------------------------------------------------------
-# def getMoreThreadsForSubredditName(subredditName):
-@task()
-def black(subredditName):
+def task_getMoreThreadsForSubredditName(subredditName):
     mi = clog.dumpMethodInfo()
     # clog.logger.info(mi)
-
-    clog.logger.info("001")
 
     try:
         i_msubreddit = msubreddit.objects.get(name=subredditName)
         bthread.getMoreThreadsForSubredditInstance(i_msubreddit=i_msubreddit)
         return "yes"
     except ObjectDoesNotExist:
-        # clog.logger.info("%s: subreddit %s does not exist" % (mi, subredditName))
+        clog.logger.info("%s: subreddit %s does not exist" % (mi, subredditName))
         return "no"
 
 
@@ -48,15 +29,17 @@ def black(subredditName):
 #
 # python manage.py celery worker --loglevel=info
 
-#### SCHEDULE SHELL ####
-# 3. Start Celery Schedule Terminal.
-#
-# python manage.py shell
-#> from reddit.tasks import black
-#> black.delay("Molw")
-                                    # DONT SEEM TO NEED THIS!!!
-                                    # from reddit.config import initializeCLogger
-                                    # initializeCLogger()
+
+# PROBABLY DONT NEED THIS ANY MORE AS I CAN SCHEDULE TASK IN DJANGO VIEWS
+# # ### SCHEDULE SHELL ####
+# # 3. Start Celery Schedule Terminal.
+# #
+# # python manage.py shell
+# # > from reddit.tasks import black
+# # > black.delay("Molw")
+# #                                     DONT SEEM TO NEED THIS!!!
+# #                                     from reddit.config import initializeCLogger
+# #                                     initializeCLogger()
 
 
 
