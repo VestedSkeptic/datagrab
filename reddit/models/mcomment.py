@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from .mbase import mbase
-from .muser import muser
 from ..config import clog
 # import pprint
 
@@ -30,7 +29,7 @@ class mcommentManager(models.Manager):
 
 # *****************************************************************************
 class mcomment(mbase, models.Model):
-    user                        = models.ForeignKey(muser, on_delete=models.CASCADE,)
+    user                        = models.ForeignKey('reddit.muser', on_delete=models.CASCADE,)
     name                        = models.CharField(max_length=12)
     thread                      = models.CharField(max_length=12)
     subreddit                   = models.CharField(max_length=12)

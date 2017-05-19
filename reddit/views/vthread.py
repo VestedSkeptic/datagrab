@@ -33,7 +33,7 @@ def update(request):
         for i_mthread in qs:
             count += 1
             clog.logger.info("Processing thread %d of %d" % (count, qs.count()))
-            bcomment.updateThreadComments(i_mthread)
+            i_mthread.updateComments()
     else:
         vs += " No mthreads found"
 

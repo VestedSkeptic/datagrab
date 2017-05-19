@@ -37,7 +37,7 @@ def add(request, name):
     i_muser = muser.objects.addOrUpdate(prawRedditor)
     i_muser.ppoi = True
     i_muser.save()
-    clog.logger.debug("i_muser = %s" % (pprint.pformat(vars(i_muser))))
+    # clog.logger.debug("i_muser = %s" % (pprint.pformat(vars(i_muser))))
 
     if i_muser.addOrUpdateTempField == "new":           vs += " added"
     if i_muser.addOrUpdateTempField == "oldUnchanged":  vs += " oldUnchanged"
@@ -72,7 +72,7 @@ def update(request):
     qs = muser.objects.filter(ppoi=True)
     if qs.count() > 0:
         for i_muser in qs:
-            bcomment.updateUserComments(i_muser)
+            i_muser.updateComments()
     else:
         vs += "No musers found"
 

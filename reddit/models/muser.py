@@ -2,7 +2,9 @@ from __future__ import unicode_literals
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from .mbase import mbase
+from .mcomment import mcomment
 from ..config import clog
+import praw
 # import pprint
 
 # *****************************************************************************
@@ -58,6 +60,46 @@ class muser(mbase, models.Model):
         if self.phistorygot: s += " (phistorygot = True)"
         else:                s += " (phistorygot = False)"
         return format(s)
+
+    # --------------------------------------------------------------------------
+    def getBestCommentBeforeValue(self, prawReddit):
+        mi = clog.dumpMethodInfo()
+        # clog.logger.info(mi)
+
+        clog.logger.info("METHOD NOT COMPLETED")
+        return ''
+
+    # --------------------------------------------------------------------------
+    def updateComments(self):
+        mi = clog.dumpMethodInfo()
+        clog.logger.info(mi)
+
+        vs = ''
+        prawReddit = self.getPrawRedditInstance()
+
+        params={};
+        params['before'] = self.getBestCommentBeforeValue(prawReddit)
+        clog.logger.debug("params[before] = %s" % params['before'])
+
+        # iterate through submissions saving them
+        countNew = 0
+        countOldChanged = 0
+        countOldUnchanged = 0
+        try:
+            for prawComment in prawReddit.redditor(self.name).comments.new(limit=None, params=params):
+                i_mcomment = mcomment.objects.addOrUpdate(self, prawComment)
+                # clog.logger.debug("i_mcomment = %s" % (pprint.pformat(vars(i_mcomment))))
+                if i_mcomment.addOrUpdateTempField == "new":            countNew += 1
+                if i_mcomment.addOrUpdateTempField == "oldUnchanged":   countOldUnchanged += 1
+                if i_mcomment.addOrUpdateTempField == "oldChanged":     countOldChanged += 1
+
+        except praw.exceptions.APIException as e:
+            clog.logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
+
+        s_temp = self.name + ": " + str(countNew) + " new, " + str(countOldUnchanged) + " oldUnChanged, " + str(countOldChanged) + " oldChanged "
+        clog.logger.info(s_temp)
+
+        return
 
 
 # # ----------------------------------------------------------------------------

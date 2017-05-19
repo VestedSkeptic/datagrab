@@ -3,7 +3,10 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from .mbase import mbase
 from .msubreddit import msubreddit
+from .mcomment import mcomment
+from .muser import muser
 from ..config import clog
+import praw
 # import pprint
 
 # *****************************************************************************
@@ -112,6 +115,84 @@ class mthread(mbase, models.Model):
         if self.pforestgot: s += " (pforestgot = True)"
         else:               s += " (pforestgot = False)"
         return format(s)
+
+    # *****************************************************************************
+    # def getCommentsByCommentForest(self, argDict, sortOrder):
+    def getCommentsByCommentForest(self, sortOrder):
+        mi = clog.dumpMethodInfo()
+        # clog.logger.debug(mi)
+        # clog.logger.debug("%s: %s: sortOrder = %s" % (self.subreddit.name, self.fullname, sortOrder))
+
+        # create PRAW prawReddit instance
+        prawReddit = self.getPrawRedditInstance()
+
+        countNew = 0
+        countOldChanged = 0
+        countOldUnchanged = 0
+        countPostsWithNoAuthor = 0
+        try:
+            params={};
+
+            submissionObject = prawReddit.submission(id=self.fullname[3:])
+            submissionObject.comment_sort = sortOrder
+            # submissionObject.comments.replace_more(limit=0)
+            # submissionObject.comments.replace_more(limit=None)
+            submissionObject.comments.replace_more(limit=16)
+            for prawComment in submissionObject.comments.list():
+                if prawComment.author == None:
+                    countPostsWithNoAuthor += 1
+                else:
+                    prawRedditor = prawReddit.redditor(prawComment.author.name)
+                    i_muser = muser.objects.addOrUpdate(prawRedditor)
+                    # clog.logger.debug("i_muser = %s" % (pprint.pformat(vars(i_muser))))
+
+                    i_mcomment = mcomment.objects.addOrUpdate(i_muser, prawComment)
+                    # clog.logger.debug("i_mcomment = %s" % (pprint.pformat(vars(i_mcomment))))
+                    if i_mcomment.addOrUpdateTempField == "new":            countNew += 1
+                    if i_mcomment.addOrUpdateTempField == "oldUnchanged":   countOldUnchanged += 1
+                    if i_mcomment.addOrUpdateTempField == "oldChanged":     countOldChanged += 1
+
+        except praw.exceptions.APIException as e:
+            clog.logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
+
+        # Update self appropriately
+        save_mthread = False
+        if sortOrder == "new":
+            self.pforestgot = True
+            save_mthread = True
+        if countNew > 0:
+            self.pcount += countNew
+            save_mthread = True
+        if save_mthread:
+            self.save()
+
+        s_temp = self.subreddit.name + ", " + self.fullname + ": " + str(countNew) + " new, " + str(countOldUnchanged) + " oldUnchanged, " + str(countOldChanged) + " oldChanged, " + str(countPostsWithNoAuthor) + " with no author."
+        clog.logger.info(s_temp)
+        return
+
+    # --------------------------------------------------------------------------
+    def updateComments(self):
+        mi = clog.dumpMethodInfo()
+        clog.logger.info(mi)
+
+        vs = ''
+        if not self.pforestgot:
+            clog.logger.trace("%s: %s: New commentForest updating sorted by new" % (self.subreddit.name, self.fullname))
+            # getCommentsByCommentForest(self, argDict, "new")
+            self.getCommentsByCommentForest("new")
+            # argDict['modeCount']['Comment Forest New'] += 1
+        # elif self.count < 10:
+        #     clog.logger.debug("%s: %s: Old small commentForest updating sorted by old" % (self.subreddit.name, self.fullname))
+        #     getCommentsByCommentForest(self, argDict, "old")
+            # argDict['modeCount']['Comment Forest Old'] += 1
+                        # THIS HACK NOT VALID, SUBMISSION UPDATED AND HAS NEW COUNT NOW
+                        # elif self.count == 260:  #HACK THERE IS ONE ITEM WITH 260 COUNT IN IT, USING IT TO TEST IMPLEMENTATION OF ...
+                        #     clog.logger.debug("%s: %s: Old small commentForest updating sorted by old" % (self.subreddit.name, self.fullname))
+                        #     getCommentsByCommentForest(self, argDict, "old")
+                        #     argDict['modeCount']['Comment Forest Old'] += 1
+        else:
+            clog.logger.info("%s: %s: Old large commentForest updating by METHOD TO BE IMPLEMENTED LATER" % (self.subreddit.name, self.fullname))
+        return
 
 
 # # ----------------------------------------------------------------------------
