@@ -22,26 +22,12 @@ def task_getMoreThreadsForSubredditName(subredditName):
 ### PROCESS ###
 # 1. Start Django Server Terminal
 
-#### WORKER SHELL ####
+#### WORKER SHELL Celery 4.0 ####
 # 2. Start Celery Worker Terminal
 # note: kill with Ctrl-C  Ctrl-C
 # note: kill and restart for any code change
-#
-# python manage.py celery worker --loglevel=info
-
-
-# PROBABLY DONT NEED THIS ANY MORE AS I CAN SCHEDULE TASK IN DJANGO VIEWS
-# # ### SCHEDULE SHELL ####
-# # 3. Start Celery Schedule Terminal.
-# #
-# # python manage.py shell
-# # > from reddit.tasks import black
-# # > black.delay("Molw")
-# #                                     DONT SEEM TO NEED THIS!!!
-# #                                     from reddit.config import initializeCLogger
-# #                                     initializeCLogger()
-
-
+# note: for production worker should be run as daemon
+# celery -A datagrab worker -l info
 
 
 

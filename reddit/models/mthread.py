@@ -1,8 +1,8 @@
 from __future__ import unicode_literals
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
-from mbase import mbase
-from msubreddit import msubreddit
+from .mbase import mbase
+from .msubreddit import msubreddit
 from ..config import clog
 # import pprint
 

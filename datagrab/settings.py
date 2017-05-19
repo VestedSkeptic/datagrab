@@ -32,8 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'djcelery',                         # for Celery, always required
-    # 'kombu.transport.django',           # for Celery, is Django broker, used only for development
+    'django_celery_results',
     'reddit'
 ]
 
@@ -116,11 +115,18 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# Configure Django for Celery
-# ref: https://www.caktusgroup.com/blog/2014/06/23/scheduling-tasks-celery/
-# import djcelery
-# djcelery.setup_loader()
-BROKER_URL = 'django://'
-# CELERYD_HIJACK_ROOT_LOGGER=False
-# worker_hijack_root_logger=False
-# worker_log_color=False
+# # Configure Django for Celery
+# CELERY_RESULT_BACKEND = 'django-db'       # use only one of these two settings
+# # CELERY_RESULT_BACKEND = 'django-cache'      # use only one of these two settings
+# # ref: https://www.caktusgroup.com/blog/2014/06/23/scheduling-tasks-celery/
+# # import djcelery
+# # djcelery.setup_loader()
+# BROKER_URL = 'django://'
+# # CELERYD_HIJACK_ROOT_LOGGER=False
+# # worker_hijack_root_logger=False
+# # worker_log_color=False
+#
+# BROKER_URL = 'redis://localhost:6379/0'
+# CELERY_ACCEPT_CONTENT = ['json']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_RESULT_SERIALIZER = 'json'
