@@ -3,8 +3,8 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from .mbase import mbase
 from .msubreddit import msubreddit
-from .mcomment import mcomment
-from .muser import muser
+# from .mcomment import mcomment
+# from .muser import muser
 from ..config import clog
 import praw
 # import pprint
@@ -119,6 +119,9 @@ class mthread(mbase, models.Model):
     # *****************************************************************************
     # def getCommentsByCommentForest(self, argDict, sortOrder):
     def getCommentsByCommentForest(self, sortOrder):
+        from .mcomment import mcomment
+        from .muser import muser
+
         mi = clog.dumpMethodInfo()
         # clog.logger.debug(mi)
         # clog.logger.debug("%s: %s: sortOrder = %s" % (self.subreddit.name, self.fullname, sortOrder))

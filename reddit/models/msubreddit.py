@@ -140,32 +140,21 @@ class msubreddit(mbase, models.Model):
 
         params={};
         params['before'] = self.getThreadsBestBeforeValue(prawReddit)
-        # clog.logger.info("params[before] = %s" % params['before'])
 
         countNew = 0
         countOldUnchanged = 0
         countOldChanged = 0
 
-        # clog.logger.info("BLUE a")
-
         try:
-            # clog.logger.info("BLUE b")
             for prawThread in prawReddit.subreddit(self.name).new(limit=None, params=params):
-                # clog.logger.info("BLUE c")
                 i_mthread = mthread.objects.addOrUpdate(self, prawThread)
-                # clog.logger.info("BLUE d")
-                # clog.logger.debug("i_mthread = %s" % (pprint.pformat(vars(i_mthread))))
-
                 if i_mthread.addOrUpdateTempField == "new":             countNew += 1
                 if i_mthread.addOrUpdateTempField == "oldUnchanged":    countOldUnchanged += 1
                 if i_mthread.addOrUpdateTempField == "oldChanged":      countOldChanged += 1
-                # clog.logger.info("BLUE e")
 
         except praw.exceptions.APIException as e:
             clog.logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
-            # clog.logger.info("BLUE y")
 
-        # clog.logger.info("BLUE z")
         clog.logger.info(self.name + ": " + str(countNew) + " new, " + str(countOldUnchanged) + " oldUnchanged, " + str(countOldChanged) + " oldChanged, ")
 
         return
