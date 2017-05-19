@@ -32,8 +32,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'djcelery',                         # for Celery, always required
-    'kombu.transport.django',           # for Celery, is Django broker, used only for development
+    # 'djcelery',                         # for Celery, always required
+    # 'kombu.transport.django',           # for Celery, is Django broker, used only for development
     'reddit'
 ]
 
@@ -118,8 +118,8 @@ STATIC_URL = '/static/'
 
 # Configure Django for Celery
 # ref: https://www.caktusgroup.com/blog/2014/06/23/scheduling-tasks-celery/
-import djcelery
-djcelery.setup_loader()
+# import djcelery
+# djcelery.setup_loader()
 BROKER_URL = 'django://'
 # CELERYD_HIJACK_ROOT_LOGGER=False
 # worker_hijack_root_logger=False

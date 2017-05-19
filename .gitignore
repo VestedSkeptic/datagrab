@@ -7,8 +7,8 @@ migrations
 
 # __init__.py
 # */*.pyc
-# mysite2/*.pyc
-# mysite2/__pycache__/*.pyc
+# datagrab/*.pyc
+# datagrab/__pycache__/*.pyc
 # Generated/readme.txt
 # xmlRules/*
 # scrap.txt
