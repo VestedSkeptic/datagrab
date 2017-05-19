@@ -1,6 +1,5 @@
 from celery import task
 from .config import clog
-from .blue import bthread
 from .models import msubreddit
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -12,7 +11,7 @@ def task_getMoreThreadsForSubredditName(subredditName):
 
     try:
         i_msubreddit = msubreddit.objects.get(name=subredditName)
-        bthread.getMoreThreadsForSubredditInstance(i_msubreddit=i_msubreddit)
+        i_msubreddit.updateThreads()
         return "yes"
     except ObjectDoesNotExist:
         clog.logger.info("%s: subreddit %s does not exist" % (mi, subredditName))

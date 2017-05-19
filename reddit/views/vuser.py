@@ -3,7 +3,6 @@ from django.shortcuts import redirect
 from django.core.exceptions import ObjectDoesNotExist
 from ..config import clog
 from ..models import muser
-from ..blue import bcomment
 import praw
 # import pprint
 

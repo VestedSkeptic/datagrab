@@ -3,7 +3,6 @@ from django.shortcuts import redirect
 from django.core.exceptions import ObjectDoesNotExist
 from ..config import clog
 from ..models import msubreddit
-from ..blue import bthread
 from ..tasks import task_getMoreThreadsForSubredditName
 import praw
 # import pprint
@@ -82,8 +81,8 @@ def update(request):
 
     # task_getMoreThreadsForSubredditName.delay("Molw")
     task_getMoreThreadsForSubredditName.delay("politics")
-    task_getMoreThreadsForSubredditName.delay("the_donald")
-    clog.logger.info("JUST SETTING TASK TO UPDATE MOLW FOR NOW")
+    # task_getMoreThreadsForSubredditName.delay("the_donald")
+    # clog.logger.info("JUST SETTING TASK TO UPDATE MOLW FOR NOW")
 
     clog.logger.info(vs)
     sessionKey = 'blue'

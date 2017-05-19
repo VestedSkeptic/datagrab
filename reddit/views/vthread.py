@@ -4,7 +4,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger   # for pagination
 from ..config import clog
 from ..models import mthread
-from ..blue import bcomment
 
 # *****************************************************************************
 def delAll(request):
