@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.core.exceptions import ObjectDoesNotExist
 from ..config import clog
 from ..models import msubreddit
-from ..tasks import task_getMoreThreadsForSubredditName
+from ..tasks import task_subredditUpdateThreads
 import praw
 # import pprint
 
@@ -75,13 +75,13 @@ def update(request):
     #         # bthread.getMoreThreadsForSubredditInstance(i_msubreddit)
     #         # Schedule this as a task!!!
     #         # Note the delay method
-    #         task_getMoreThreadsForSubredditName.delay(i_msubreddit.name)
+    #         task_subredditUpdateThreads.delay(i_msubreddit.name)
     # else:
     #     vs += "No msubreddits found"
 
-    # task_getMoreThreadsForSubredditName.delay("Molw")
-    task_getMoreThreadsForSubredditName.delay("politics")
-    # task_getMoreThreadsForSubredditName.delay("the_donald")
+    # task_subredditUpdateThreads.delay("Molw")
+    task_subredditUpdateThreads.delay("politics")
+    # task_subredditUpdateThreads.delay("the_donald")
     # clog.logger.info("JUST SETTING TASK TO UPDATE MOLW FOR NOW")
 
     clog.logger.info(vs)

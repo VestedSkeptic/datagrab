@@ -3,6 +3,7 @@ from django.shortcuts import redirect
 from django.core.exceptions import ObjectDoesNotExist
 from ..config import clog
 from ..models import muser
+from ..tasks import task_userUpdateComments
 import praw
 # import pprint
 
@@ -12,9 +13,9 @@ def list(request):
     clog.logger.info(mi)
 
     vs = ''
-    qs = muser.objects.all()
+    qs = muser.objects.filter(ppoi=True)
     if qs.count() == 0:
-        vs += "No items to list"
+        vs += "No users to list"
     for item in qs:
         vs += item.name + ", "
 
@@ -69,11 +70,9 @@ def update(request):
 
     vs = ''
     qs = muser.objects.filter(ppoi=True)
-    if qs.count() > 0:
-        for i_muser in qs:
-            i_muser.updateComments()
-    else:
-        vs += "No musers found"
+    for i_muser in qs:
+        clog.logger.info("=== Calling task task_userUpdateComments.delay for user %s" % (i_muser.name))
+        task_userUpdateComments.delay(i_muser.name)
 
     clog.logger.info(vs)
     sessionKey = 'blue'

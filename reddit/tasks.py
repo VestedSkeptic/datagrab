@@ -1,21 +1,8 @@
 from celery import task
+from django.core.exceptions import ObjectDoesNotExist
 from .config import clog
 from .models import msubreddit
-from django.core.exceptions import ObjectDoesNotExist
-
-# --------------------------------------------------------------------------
-@task()
-def task_getMoreThreadsForSubredditName(subredditName):
-    mi = clog.dumpMethodInfo()
-    # clog.logger.info(mi)
-
-    try:
-        i_msubreddit = msubreddit.objects.get(name=subredditName)
-        i_msubreddit.updateThreads()
-        return "yes"
-    except ObjectDoesNotExist:
-        clog.logger.info("%s: subreddit %s does not exist" % (mi, subredditName))
-        return "no"
+from .models import muser
 
 # --------------------------------------------------------------------------
 @task()
@@ -28,6 +15,38 @@ def task_testLogLevels():
     clog.logger.info("info")
     clog.logger.debug("debug")
     clog.logger.trace("trace")
+
+# --------------------------------------------------------------------------
+@task()
+def task_subredditUpdateThreads(subredditName):
+    mi = clog.dumpMethodInfo()
+    # clog.logger.info(mi)
+
+    try:
+        i_msubreddit = msubreddit.objects.get(name=subredditName)
+        i_msubreddit.updateThreads()
+        clog.logger.info("********* PASS *********")
+        return "********* PASS *********"
+    except ObjectDoesNotExist:
+        clog.logger.info("%s: subreddit %s does not exist" % (mi, subredditName))
+        clog.logger.info("********* FAIL *********")
+        return "********* FAIL *********"
+
+# --------------------------------------------------------------------------
+@task()
+def task_userUpdateComments(userName):
+    mi = clog.dumpMethodInfo()
+    clog.logger.info(mi)
+
+    try:
+        i_muser = muser.objects.get(name=userName)
+        i_muser.updateComments()
+        clog.logger.info("********* PASS *********")
+        return "********* PASS *********"
+    except ObjectDoesNotExist:
+        clog.logger.info("%s: user %s does not exist" % (mi, username))
+        clog.logger.info("********* FAIL *********")
+        return "********* FAIL *********"
 
 
 
