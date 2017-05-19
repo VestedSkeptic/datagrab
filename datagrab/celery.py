@@ -15,6 +15,11 @@ app = Celery(   'datagrab',
 #   should have a `CELERY_` prefix.
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
+# Config options
+# Restart worker after changing these
+app.conf.worker_log_color=False                       # works
+app.conf.worker_hijack_root_logger=False              # doesn't work
+
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()
 

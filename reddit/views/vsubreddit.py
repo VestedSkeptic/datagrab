@@ -80,8 +80,8 @@ def update(request):
     # else:
     #     vs += "No msubreddits found"
 
-    task_getMoreThreadsForSubredditName.delay("Molw")
-    # task_getMoreThreadsForSubredditName.delay("politics")
+    # task_getMoreThreadsForSubredditName.delay("Molw")
+    task_getMoreThreadsForSubredditName.delay("politics")
     # task_getMoreThreadsForSubredditName.delay("the_donald")
     clog.logger.info("JUST SETTING TASK TO UPDATE MOLW FOR NOW")
 

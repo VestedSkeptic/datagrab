@@ -7,6 +7,7 @@ from .views import vuser
 urlpatterns = [
     url(r'^vbase/main/$',                               vbase.main,                     name='vbase.main'),
     url(r'^vbase/main/xData/(?P<xData>\w+)/$',          vbase.main,                     name='vbase.main'),
+    url(r'^vbase/test/$',                               vbase.test,                     name='vbase.test'),
 
     url(r'^vuser/list/$',                               vuser.list,                     name='vuser.list'),
     url(r'^vuser/add/(?P<name>\w+)/$',                  vuser.add,                      name='vuser.add'),

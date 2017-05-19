@@ -73,8 +73,24 @@ def main(request, xData=None):
 
     vs += '<br>' + displayDatabaseModelCounts()
 
+    vs += '<br><a href="http://localhost:8000/reddit/vbase/test">vbase.test</a>'
+
     return HttpResponse(vs)
 
 
+# *****************************************************************************
+from ..tasks import task_testLogLevels
+def test(request):
+    mi = clog.dumpMethodInfo()
+    clog.logger.info(mi)
+
+    vs = "vbase.test: "
+
+    task_testLogLevels.delay()
+
+    clog.logger.info(vs)
+    sessionKey = 'blue'
+    request.session[sessionKey] = vs
+    return redirect('vbase.main', xData=sessionKey)
 
 
