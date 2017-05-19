@@ -79,9 +79,9 @@ def update(request):
     # else:
     #     vs += "No msubreddits found"
 
-    # task_subredditUpdateThreads.delay("Molw")
+    task_subredditUpdateThreads.delay("Molw")
     task_subredditUpdateThreads.delay("politics")
-    # task_subredditUpdateThreads.delay("the_donald")
+    task_subredditUpdateThreads.delay("the_donald")
     # clog.logger.info("JUST SETTING TASK TO UPDATE MOLW FOR NOW")
 
     clog.logger.info(vs)

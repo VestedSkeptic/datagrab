@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger   # for pagination
 from ..config import clog
 from ..models import mthread
+from ..tasks import task_threadUpdateComments
 
 # *****************************************************************************
 def delAll(request):
@@ -32,7 +33,8 @@ def update(request):
         for i_mthread in qs:
             count += 1
             clog.logger.info("Processing thread %d of %d" % (count, qs.count()))
-            i_mthread.updateComments()
+            # i_mthread.updateComments()
+            task_threadUpdateComments.delay(i_mthread.fullname)
     else:
         vs += " No mthreads found"
 

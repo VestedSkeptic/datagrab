@@ -3,6 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from .config import clog
 from .models import msubreddit
 from .models import muser
+from .models import mthread
 
 # --------------------------------------------------------------------------
 @task()
@@ -48,7 +49,22 @@ def task_userUpdateComments(userName):
         clog.logger.info("********* FAIL *********")
         return "********* FAIL *********"
 
+# --------------------------------------------------------------------------
+@task()
+def task_threadUpdateComments(threadName):
+    mi = clog.dumpMethodInfo()
+    # clog.logger.info(mi)
 
+    try:
+        clog.logger.info("thread: %s" % (threadName))
+        i_mthread = mthread.objects.get(fullname=threadName)
+        i_mthread.updateComments()
+        clog.logger.info("********* PASS *********")
+        return "********* PASS *********"
+    except ObjectDoesNotExist:
+        clog.logger.info("%s: user %s does not exist" % (mi, username))
+        clog.logger.info("********* FAIL *********")
+        return "********* FAIL *********"
 
 
 
