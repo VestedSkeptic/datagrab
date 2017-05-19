@@ -205,7 +205,7 @@ class cLogger(object):
     # inspect.stack()[1]    is parent of current or what called methodTrace.
     # (
     #     <frame object at 0x7fcc7718e228>,
-    #     '/media/shared/work/mysite2/reddit/vbase.py',
+    #     '/media/shared/work/datagrab/reddit/vbase.py',
     #     7,
     #     'main',
     #     ['    config.clog.methodTrace()\n'],
