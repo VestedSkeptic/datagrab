@@ -17,7 +17,7 @@ def list(request):
     if qs.count() == 0:
         vs += "No items to list"
     for item in qs:
-        vs += item.name + ", "
+        vs += item.__str__() + ", "
 
     clog.logger.info(vs)
     sessionKey = 'blue'
@@ -67,22 +67,19 @@ def update(request):
     clog.logger.info(mi)
 
     vs = ''
-    # qs = msubreddit.objects.all()
-    # if qs.count() > 0:
-    #     vs += "Scheduling task to update: "
-    #     for i_msubreddit in qs:
-    #         vs += i_msubreddit.name + ", "
-    #         # bthread.getMoreThreadsForSubredditInstance(i_msubreddit)
-    #         # Schedule this as a task!!!
-    #         # Note the delay method
-    #         task_subredditUpdateThreads.delay(i_msubreddit.name)
-    # else:
-    #     vs += "No msubreddits found"
+    qs = msubreddit.objects.filter(ppoi=True)
+    if qs.count() > 0:
+        vs += "Scheduling task to update: "
+        for i_msubreddit in qs:
+            vs += i_msubreddit.name + ", "
+            task_subredditUpdateThreads.delay(i_msubreddit.name)
+    else:
+        vs += "No msubreddits found"
 
-    task_subredditUpdateThreads.delay("Molw")
-    task_subredditUpdateThreads.delay("politics")
-    task_subredditUpdateThreads.delay("the_donald")
-    # clog.logger.info("JUST SETTING TASK TO UPDATE MOLW FOR NOW")
+    # task_subredditUpdateThreads.delay("Molw")
+    # task_subredditUpdateThreads.delay("politics")
+    # # task_subredditUpdateThreads.delay("the_donald")
+    # # clog.logger.info("JUST SETTING TASK TO UPDATE MOLW FOR NOW")
 
     clog.logger.info(vs)
     sessionKey = 'blue'

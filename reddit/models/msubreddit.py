@@ -12,6 +12,8 @@ class msubredditManager(models.Manager):
         mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 
+        clog.logger.info(mi + ": " + name)
+
         try:
             i_msubreddit = self.get(name=name)
             redditFieldDict = i_msubreddit.getRedditFieldDict()

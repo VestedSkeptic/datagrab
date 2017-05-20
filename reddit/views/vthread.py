@@ -7,6 +7,24 @@ from ..models import mthread
 from ..tasks import task_threadUpdateComments
 
 # *****************************************************************************
+def list(request, subreddit):
+    mi = clog.dumpMethodInfo()
+    clog.logger.info(mi)
+
+    qs = mthread.objects.filter(subreddit__name=subreddit).order_by("-rcreated")
+    paginator = Paginator(qs, 20) # Show 20 per page
+
+    page = request.GET.get('page')
+    try:
+        threads = paginator.page(page)
+    except PageNotAnInteger:
+        threads = paginator.page(1) # If page is not an integer, deliver first page.
+    except EmptyPage:
+        threads = paginator.page(paginator.num_pages) # If page is out of range (e.g. 9999), deliver last page of results.
+
+    return render(request, 'vthread_list.html', {'threads': threads, 'subreddit':subreddit})
+
+# *****************************************************************************
 def delAll(request):
     mi = clog.dumpMethodInfo()
     clog.logger.info(mi)
@@ -32,7 +50,8 @@ def update(request):
         count = 0
         for i_mthread in qs:
             count += 1
-            clog.logger.info("Processing thread %d of %d" % (count, qs.count()))
+            # clog.logger.info("Processing thread %d of %d" % (count, qs.count()))
+            clog.logger.info("Scheduling task to process thread %d of %d" % (count, qs.count()))
             # i_mthread.updateComments()
             task_threadUpdateComments.delay(i_mthread.fullname)
     else:
@@ -43,23 +62,6 @@ def update(request):
     request.session[sessionKey] = vs
     return redirect('vbase.main', xData=sessionKey)
 
-# *****************************************************************************
-def list(request, subreddit):
-    mi = clog.dumpMethodInfo()
-    clog.logger.info(mi)
-
-    qs = mthread.objects.filter(subreddit__name=subreddit).order_by("-rcreated")
-    paginator = Paginator(qs, 20) # Show 20 per page
-
-    page = request.GET.get('page')
-    try:
-        threads = paginator.page(page)
-    except PageNotAnInteger:
-        threads = paginator.page(1) # If page is not an integer, deliver first page.
-    except EmptyPage:
-        threads = paginator.page(paginator.num_pages) # If page is out of range (e.g. 9999), deliver last page of results.
-
-    return render(request, 'vthread_list.html', {'threads': threads, 'subreddit':subreddit})
 
 
 
