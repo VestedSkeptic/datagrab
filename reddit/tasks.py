@@ -56,8 +56,8 @@ def task_threadUpdateComments(threadName):
     # clog.logger.info(mi)
 
     try:
-        clog.logger.info("thread: %s" % (threadName))
         i_mthread = mthread.objects.get(fullname=threadName)
+        clog.logger.info("thread: %s" % (i_mthread.rtitle))
         i_mthread.updateComments()
         clog.logger.info("********* PASS *********")
         return "********* PASS *********"

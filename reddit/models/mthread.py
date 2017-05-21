@@ -123,7 +123,7 @@ class mthread(mbase, models.Model):
         from .muser import muser
 
         mi = clog.dumpMethodInfo()
-        # clog.logger.debug(mi)
+        clog.logger.debug(mi)
         # clog.logger.debug("%s: %s: sortOrder = %s" % (self.subreddit.name, self.fullname, sortOrder))
 
         # create PRAW prawReddit instance
@@ -169,14 +169,14 @@ class mthread(mbase, models.Model):
         if save_mthread:
             self.save()
 
-        s_temp = self.subreddit.name + ", " + self.fullname + ": " + str(countNew) + " new, " + str(countOldUnchanged) + " oldUnchanged, " + str(countOldChanged) + " oldChanged, " + str(countPostsWithNoAuthor) + " with no author."
+        s_temp = str(countNew) + " new, " + str(countOldUnchanged) + " oldUnchanged, " + str(countOldChanged) + " oldChanged, " + str(countPostsWithNoAuthor) + " with no author."
         clog.logger.info(s_temp)
         return
 
     # --------------------------------------------------------------------------
     def updateComments(self):
         mi = clog.dumpMethodInfo()
-        clog.logger.info(mi)
+        # clog.logger.info(mi)
 
         vs = ''
         if not self.pforestgot:

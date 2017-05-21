@@ -10,15 +10,31 @@ import praw
 # *****************************************************************************
 class muserManager(models.Manager):
     def addOrUpdate(self, prawRedditor):
+
+        # NOTE: ENDED UP WITH MULITIPLE USERS WITH SAME NAME BECAUSE TWO TASKS operating
+        # AT THE SAME TIME CREATED BOTH USERS. THIS CAUSES THE GET CALL BELOW TO FAIL.
+        # FOR NOW, BEFORE FIXING THAT ISSUE AND WRITING CODE TO FIX DUPLICATE NAMES AM
+        # CHANGING QUERY TO FILTER AND HACKING IN DUPLICATE OF OJBECT DOE SNOT EXIST CODE
+
         mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 
         try:
-            i_muser = self.get(name=prawRedditor.name)
-            redditFieldDict = i_muser.getRedditFieldDict()
-            changedCount = i_muser.updateRedditFields(prawRedditor, redditFieldDict)
-            if changedCount == 0: i_muser.addOrUpdateTempField = "oldUnchanged"
-            else:                 i_muser.addOrUpdateTempField = "oldChanged"
+            # clog.logger.info("prawRedditor.name = %s" % (prawRedditor.name))
+
+            # i_muser = self.get(name=prawRedditor.name)
+            qs = muser.objects.filter(name=prawRedditor.name)
+            if qs.count() > 0:
+                i_muser = qs[0]
+                redditFieldDict = i_muser.getRedditFieldDict()
+                changedCount = i_muser.updateRedditFields(prawRedditor, redditFieldDict)
+                if changedCount == 0: i_muser.addOrUpdateTempField = "oldUnchanged"
+                else:                 i_muser.addOrUpdateTempField = "oldChanged"
+            else: # hack put in object does not exist code below
+                i_muser = self.create(name=prawRedditor.name)
+                redditFieldDict = i_muser.getRedditFieldDict()
+                i_muser.addRedditFields(prawRedditor, redditFieldDict)
+                i_muser.addOrUpdateTempField = "new"
         except ObjectDoesNotExist:
             i_muser = self.create(name=prawRedditor.name)
             redditFieldDict = i_muser.getRedditFieldDict()
