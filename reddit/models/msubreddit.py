@@ -117,7 +117,7 @@ class msubreddit(mbase, models.Model):
         # clog.logger.info(mi)
 
         s = self.name
-        if self.ppoi: s += " (ppoi)"
+        # if self.ppoi: s += " (ppoi)"
         return format(s)
 
     # --------------------------------------------------------------------------
@@ -135,7 +135,7 @@ class msubreddit(mbase, models.Model):
         mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 
-        clog.logger.info("%s.%s" % (self.name, mi))
+        clog.logger.info("%s (%s) %s" % (self.name, self.rid, mi))
 
         vs = ''
         prawReddit = self.getPrawRedditInstance()

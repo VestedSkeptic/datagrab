@@ -3,22 +3,24 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from .mbase import mbase
 from ..config import clog
+import praw
 # import pprint
 
 # *****************************************************************************
 class mcommentManager(models.Manager):
-    def addOrUpdate(self, i_muser, prawComment):
+    def addOrUpdate(self, username, prawComment):
         mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 
         try:
-            i_mcomment = self.get(user=i_muser, name=prawComment.name, thread=prawComment.link_id, subreddit=prawComment.subreddit_id)
+            i_mcomment = self.get(username=username, name=prawComment.name, thread=prawComment.link_id, subreddit=prawComment.subreddit_id)
             redditFieldDict = i_mcomment.getRedditFieldDict()
             changedCount = i_mcomment.updateRedditFields(prawComment, redditFieldDict)
             if changedCount == 0: i_mcomment.addOrUpdateTempField = "oldUnchanged"
             else:                 i_mcomment.addOrUpdateTempField = "oldChanged"
         except ObjectDoesNotExist:
-            i_mcomment = self.create(user=i_muser, name=prawComment.name, thread=prawComment.link_id, subreddit=prawComment.subreddit_id)
+            # clog.logger.info("username = %s" % (username))
+            i_mcomment = self.create(username=username, name=prawComment.name, thread=prawComment.link_id, subreddit=prawComment.subreddit_id)
             redditFieldDict = i_mcomment.getRedditFieldDict()
             i_mcomment.addRedditFields(prawComment, redditFieldDict)
             i_mcomment.addOrUpdateTempField = "new"
@@ -29,12 +31,13 @@ class mcommentManager(models.Manager):
 
 # *****************************************************************************
 class mcomment(mbase, models.Model):
-    user                        = models.ForeignKey('reddit.muser', on_delete=models.CASCADE,)
     name                        = models.CharField(max_length=12)
     thread                      = models.CharField(max_length=12)
-    subreddit                   = models.CharField(max_length=12)
+    subreddit                   = models.CharField(max_length=12, db_index=True)
+    username                    = models.CharField(max_length=30, db_index=True)
     # properties
-    deleted                     = models.BooleanField(default=False)
+    pdeleted                    = models.BooleanField(default=False)
+    puseradded                  = models.BooleanField(default=False)
     # Reddit fields
     rapproved_by                = models.CharField(max_length=21, default='', blank=True)
     rbanned_by                  = models.CharField(max_length=21, default='', blank=True)
@@ -98,12 +101,11 @@ class mcomment(mbase, models.Model):
         # mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 
-        s = self.user.name
+        s = self.username
         # s += " [" + self.name + "]"
         # s += " [submisson_id=" + self.submission_id + "]"
         # s += " [parent_id=" + self.parent_id + "]"
         return format(s)
-
 
 # # ----------------------------------------------------------------------------
 # # COMMENT ATTRIBUTES COMING FROM A USER

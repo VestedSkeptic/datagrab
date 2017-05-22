@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from .mbase import mbase
-# from .mcomment import mcomment
 from ..config import clog
 import praw
 # import pprint
@@ -47,7 +46,7 @@ class muserManager(models.Manager):
 
 # *****************************************************************************
 class muser(mbase, models.Model):
-    name            = models.CharField(max_length=30)
+    name            = models.CharField(max_length=30, db_index=True)
     # properties
     ppoi            = models.BooleanField(default=False)
     phistorygot     = models.BooleanField(default=False)
@@ -72,9 +71,9 @@ class muser(mbase, models.Model):
         # mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
         s = self.name
-        if self.ppoi: s += " (ppoi)"
-        if self.phistorygot: s += " (phistorygot = True)"
-        else:                s += " (phistorygot = False)"
+        # if self.ppoi: s += " (ppoi)"
+        # if self.phistorygot: s += " (phistorygot = True)"
+        # else:                s += " (phistorygot = False)"
         return format(s)
 
     # --------------------------------------------------------------------------
@@ -82,7 +81,7 @@ class muser(mbase, models.Model):
         mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 
-        clog.logger.info("METHOD NOT COMPLETED")
+        # clog.logger.info("METHOD NOT COMPLETED")
         return ''
 
     # --------------------------------------------------------------------------
@@ -90,7 +89,7 @@ class muser(mbase, models.Model):
         from .mcomment import mcomment
 
         mi = clog.dumpMethodInfo()
-        clog.logger.info(mi)
+        # clog.logger.info(mi)
 
         vs = ''
         prawReddit = self.getPrawRedditInstance()
@@ -105,11 +104,13 @@ class muser(mbase, models.Model):
         countOldUnchanged = 0
         try:
             for prawComment in prawReddit.redditor(self.name).comments.new(limit=None, params=params):
-                i_mcomment = mcomment.objects.addOrUpdate(self, prawComment)
+                i_mcomment = mcomment.objects.addOrUpdate(self.name, prawComment)
                 # clog.logger.debug("i_mcomment = %s" % (pprint.pformat(vars(i_mcomment))))
                 if i_mcomment.addOrUpdateTempField == "new":            countNew += 1
                 if i_mcomment.addOrUpdateTempField == "oldUnchanged":   countOldUnchanged += 1
                 if i_mcomment.addOrUpdateTempField == "oldChanged":     countOldChanged += 1
+                i_mcomment.puseradded = True
+                i_mcomment.save()
 
         except praw.exceptions.APIException as e:
             clog.logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))

@@ -1,5 +1,6 @@
 from django.conf.urls import url
 from .views import vbase
+from .views import vcomment
 from .views import vsubreddit
 from .views import vthread
 from .views import vuser
@@ -22,6 +23,8 @@ urlpatterns = [
     url(r'^vthread/delAll/$',                           vthread.delAll,                 name='vthread.delAll'),
     url(r'^vthread/update/$',                           vthread.update,                 name='vthread.update'),
     url(r'^vthread/list/(?P<subreddit>\w+)/$',          vthread.list,                   name='vthread.list'),
+
+    url(r'^comment/updateUsers/$',                      vcomment.updateUsers,           name='vcomment.updateUsers'),
 ]
 
 

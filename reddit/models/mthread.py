@@ -3,8 +3,6 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from .mbase import mbase
 from .msubreddit import msubreddit
-# from .mcomment import mcomment
-# from .muser import muser
 from ..config import clog
 import praw
 # import pprint
@@ -145,11 +143,11 @@ class mthread(mbase, models.Model):
                 if prawComment.author == None:
                     countPostsWithNoAuthor += 1
                 else:
-                    prawRedditor = prawReddit.redditor(prawComment.author.name)
-                    i_muser = muser.objects.addOrUpdate(prawRedditor)
-                    # clog.logger.debug("i_muser = %s" % (pprint.pformat(vars(i_muser))))
+                    # prawRedditor = prawReddit.redditor(prawComment.author.name)
+                    # i_muser = muser.objects.addOrUpdate(prawRedditor)
+                    # # clog.logger.debug("i_muser = %s" % (pprint.pformat(vars(i_muser))))
 
-                    i_mcomment = mcomment.objects.addOrUpdate(i_muser, prawComment)
+                    i_mcomment = mcomment.objects.addOrUpdate(prawComment.author.name, prawComment)
                     # clog.logger.debug("i_mcomment = %s" % (pprint.pformat(vars(i_mcomment))))
                     if i_mcomment.addOrUpdateTempField == "new":            countNew += 1
                     if i_mcomment.addOrUpdateTempField == "oldUnchanged":   countOldUnchanged += 1
