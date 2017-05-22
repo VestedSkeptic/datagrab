@@ -149,16 +149,11 @@ def inspectTaskQueue(arg):
                 reservedCount += 1
 
     global heartbeatTickString
-    if scheduledCount or activeCount or reservedCount:
-        clog.logger.info("*** %4s: Tasks: %d scheduled, %d active, %d reserved" % (heartbeatTickString, scheduledCount, activeCount, reservedCount))
-    else:
-        clog.logger.info("*** %4s: No tasks pending" %(heartbeatTickString))
+    if scheduledCount or activeCount or reservedCount: clog.logger.info("*** %4s: Tasks: %d active, %d scheduled, %d reserved" % (heartbeatTickString, activeCount, scheduledCount, reservedCount))
+    else:                                              clog.logger.info("*** %4s: No tasks pending" %(heartbeatTickString))
 
-
-    if heartbeatTickString == 'Tick':
-        heartbeatTickString = 'Tok'
-    else:
-        heartbeatTickString = 'Tick'
+    if heartbeatTickString == 'Tick': heartbeatTickString = 'Tok'
+    else:                             heartbeatTickString = 'Tick'
 
 
 

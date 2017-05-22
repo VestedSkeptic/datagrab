@@ -46,6 +46,7 @@ def main(request, xData=None):
     moreData = request.session.get(xData, '')
     vs += moreData
 
+    vs += '<br><a href="http://localhost:8000/reddit/vbase/test">vbase.test</a>'
     vs += '<br><b>vuser</b>: '
     vs += '  <a href="http://localhost:8000/reddit/vuser/list">list</a>'
     # vs += ', <a href="http://localhost:8000/reddit/vuser/delAll">delAll</a>'
@@ -74,24 +75,23 @@ def main(request, xData=None):
 
     vs += '<br>' + displayDatabaseModelCounts()
 
-    vs += '<br><a href="http://localhost:8000/reddit/vbase/test">vbase.test</a>'
 
     return HttpResponse(vs)
 
-# # *****************************************************************************
-# from ..tasks import task_testLogLevels
-# def test(request):
-#     mi = clog.dumpMethodInfo()
-#     clog.logger.info(mi)
-#
-#     vs = "vbase.test: "
-#
-#     task_testLogLevels.delay()
-#
-#     clog.logger.info(vs)
-#     sessionKey = 'blue'
-#     request.session[sessionKey] = vs
-#     return redirect('vbase.main', xData=sessionKey)
+# *****************************************************************************
+from ..tasks import task_testLogLevels
+def test(request):
+    mi = clog.dumpMethodInfo()
+    clog.logger.info(mi)
+
+    vs = "vbase.test: "
+
+    task_testLogLevels.delay()
+
+    clog.logger.info(vs)
+    sessionKey = 'blue'
+    request.session[sessionKey] = vs
+    return redirect('vbase.main', xData=sessionKey)
 
 # # *****************************************************************************
 # def test(request):
@@ -509,22 +509,22 @@ def main(request, xData=None):
 #     return redirect('vbase.main', xData=sessionKey)
 
 
-# *****************************************************************************
-from celery.task.control import inspect # for ispectTasks
-def test(request):
-    mi = clog.dumpMethodInfo()
-    # clog.logger.info(mi)
-
-    # ------------------------------------
-    vs = "vbase.test: empty"
-
-
-    # ------------------------------------
-
-    clog.logger.info(vs)
-    sessionKey = 'blue'
-    request.session[sessionKey] = vs
-    return redirect('vbase.main', xData=sessionKey)
+# # *****************************************************************************
+# from celery.task.control import inspect # for ispectTasks
+# def test(request):
+#     mi = clog.dumpMethodInfo()
+#     # clog.logger.info(mi)
+#
+#     # ------------------------------------
+#     vs = "vbase.test: empty"
+#
+#
+#     # ------------------------------------
+#
+#     clog.logger.info(vs)
+#     sessionKey = 'blue'
+#     request.session[sessionKey] = vs
+#     return redirect('vbase.main', xData=sessionKey)
 
 
 
