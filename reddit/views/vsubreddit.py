@@ -35,6 +35,8 @@ def add(request, name):
     prawSubreddit = prawReddit.subreddit(name)
 
     i_msubreddit = msubreddit.objects.addOrUpdate(name, prawSubreddit)
+    i_msubreddit.ppoi = True
+    i_msubreddit.save()
     # clog.logger.debug("i_msubreddit = %s" % (pprint.pformat(vars(i_msubreddit))))
 
     if i_msubreddit.addOrUpdateTempField == "new":             vs += " added"
@@ -75,11 +77,6 @@ def update(request):
             task_subredditUpdateThreads.delay(i_msubreddit.name)
     else:
         vs += "No msubreddits found"
-
-    # task_subredditUpdateThreads.delay("Molw")
-    # task_subredditUpdateThreads.delay("politics")
-    # # task_subredditUpdateThreads.delay("the_donald")
-    # # clog.logger.info("JUST SETTING TASK TO UPDATE MOLW FOR NOW")
 
     clog.logger.info(vs)
     sessionKey = 'blue'

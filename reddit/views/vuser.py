@@ -17,7 +17,7 @@ def list(request):
     if qs.count() == 0:
         vs += "No users to list"
     for item in qs:
-        vs += item.name + ", "
+        vs += item.__str__() + ", "
 
     clog.logger.info(vs)
     sessionKey = 'blue'

@@ -121,7 +121,7 @@ class mthread(mbase, models.Model):
         from .muser import muser
 
         mi = clog.dumpMethodInfo()
-        clog.logger.debug(mi)
+        # clog.logger.debug(mi)
         # clog.logger.debug("%s: %s: sortOrder = %s" % (self.subreddit.name, self.fullname, sortOrder))
 
         # create PRAW prawReddit instance

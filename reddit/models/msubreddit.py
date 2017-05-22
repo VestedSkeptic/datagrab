@@ -12,8 +12,6 @@ class msubredditManager(models.Manager):
         mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 
-        clog.logger.info(mi + ": " + name)
-
         try:
             i_msubreddit = self.get(name=name)
             redditFieldDict = i_msubreddit.getRedditFieldDict()
@@ -117,7 +115,7 @@ class msubreddit(mbase, models.Model):
         # clog.logger.info(mi)
 
         s = self.name
-        # if self.ppoi: s += " (ppoi)"
+        if self.ppoi: s += " (ppoi)"
         return format(s)
 
     # --------------------------------------------------------------------------
@@ -131,7 +129,6 @@ class msubreddit(mbase, models.Model):
     # --------------------------------------------------------------------------
     def updateThreads(self):
         from .mthread import mthread
-
         mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 

@@ -1,16 +1,20 @@
 from celery import task
+from datagrab.celery import app as celery_app               # for beat tasks
+from celery.task.control import inspect                     # for ispectTasks
 from django.core.exceptions import ObjectDoesNotExist
 from .config import clog
 from .models import mcomment
 from .models import msubreddit
 from .models import mthread
 from .models import muser
+import pprint
 
 # --------------------------------------------------------------------------
 @task()
 def task_testLogLevels():
     mi = clog.dumpMethodInfo()
     # clog.logger.info(mi)
+
     clog.logger.critical("critical")
     clog.logger.error("error")
     clog.logger.warning("warning")
@@ -67,23 +71,11 @@ def task_threadUpdateComments(threadName):
         clog.logger.info("********* FAIL *********")
         return "********* FAIL *********"
 
-
 # --------------------------------------------------------------------------
 @task()
 def task_commentsUpdateUsers():
     mi = clog.dumpMethodInfo()
     # clog.logger.info(mi)
-
-    # qs = mcomment.objects.filter(puseradded=False)
-    # if qs.count() == 0:
-    #     clog.logger.info("********* No comments to update *********")
-    #     return "********* No comments to update *********"
-    # else:
-    #     clog.logger.info("%d comments found with puseradded = False" % (qs.count()))
-    #     for i_mcomment in qs:
-    #         i_mcomment.updateUser()
-    #     clog.logger.info("********* PASS *********")
-    #     return "********* PASS *********"
 
     # create PRAW prawReddit instance
     prawReddit = mcomment.getPrawRedditInstance()
@@ -114,27 +106,93 @@ def task_commentsUpdateUsers():
     clog.logger.info("********* PASS *********")
     return "********* PASS *********"
 
+# --------------------------------------------------------------------------
+heartbeatTickString = "Tick"
+@celery_app.task
+def inspectTaskQueue(arg):
+    # clog.logger.info(arg)
+
+    thisTaskName    = 'reddit.tasks.inspectTaskQueue'
+    workerName      = "celery@datagrab"
+
+    i = inspect()
+
+    # clog.logger.info("scheduled: %s" % (pprint.pformat(i.scheduled())))
+    # clog.logger.info("active: %s" % (pprint.pformat(i.active())))
+    # clog.logger.info("reserved: %s" % (pprint.pformat(i.reserved())))
+
+    # Scheduled Tasks
+    scheduledCount = 0
+    scheduled = i.scheduled()
+    if len(scheduled) > 0 and workerName in scheduled:
+        scheduledList = scheduled[workerName]
+        for item in scheduledList:
+            if item['name'] != thisTaskName:    # Ignore THIS task
+                scheduledCount += 1
+
+    # Active Tasks
+    activeCount = 0
+    active = i.active()
+    if len(active) > 0 and workerName in active:
+        activeList = active[workerName]
+        for item in activeList:
+            if item['name'] != thisTaskName:    # Ignore THIS task
+                activeCount += 1
+
+    # Reserved Tasks
+    reservedCount = 0
+    reserved = i.reserved()
+    if len(reserved) > 0 and workerName in reserved:
+        reservedList = reserved[workerName]
+        for item in reservedList:
+            if item['name'] != thisTaskName:    # Ignore THIS task
+                reservedCount += 1
+
+    global heartbeatTickString
+    if scheduledCount or activeCount or reservedCount:
+        clog.logger.info("*** %4s: Tasks: %d scheduled, %d active, %d reserved" % (heartbeatTickString, scheduledCount, activeCount, reservedCount))
+    else:
+        clog.logger.info("*** %4s: No tasks pending" %(heartbeatTickString))
 
 
+    if heartbeatTickString == 'Tick':
+        heartbeatTickString = 'Tok'
+    else:
+        heartbeatTickString = 'Tick'
+
+
+
+# Example of 'active' printout:
+# {
+#     'celery@datagrab':
+#     [
+#         {
+#             'acknowledged': True,
+#             'args': "('==== TASK QUEUE',)",
+#             'delivery_info':
+#             {
+#                 'exchange': '',
+#                 'priority': 0,
+#                 'redelivered': None,
+#                 'routing_key': 'celery'
+#             },
+#             'hostname': 'celery@datagrab',
+#             'id': '3dcb76a3-8b6f-4227-a8a0-248921c83b37',
+#             'kwargs': '{}',
+#             'name': 'reddit.tasks.test',
+#             'time_start': 10847.071408712,
+#             'type': 'reddit.tasks.test',
+#             'worker_pid': 11093
+#         }
+#     ]
+# }
 
 
 # --------------------------------------------------------------------------
-### PROCESS ###
-# 1. Start Django Server Terminal
-
-#### WORKER SHELL Celery 4.0 ####
-# 2. Start Celery Worker Terminal
-# note: kill with Ctrl-C  Ctrl-C
-# note: kill and restart for any code change
-# note: for production worker should be run as daemon
-# celery -A datagrab worker -l CRITICAL -f /home/delta/work/logs/worker.txt
-
-
-
-
-
-
-
+@celery_app.on_after_finalize.connect
+def setup_periodic_tasks(sender, **kwargs):
+    # Calls test('hello') every 10 seconds.
+    sender.add_periodic_task(10.0, inspectTaskQueue.s('inspectTaskQueue'))
 
 
 

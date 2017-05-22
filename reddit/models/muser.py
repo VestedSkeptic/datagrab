@@ -71,7 +71,7 @@ class muser(mbase, models.Model):
         # mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
         s = self.name
-        # if self.ppoi: s += " (ppoi)"
+        if self.ppoi: s += " (ppoi)"
         # if self.phistorygot: s += " (phistorygot = True)"
         # else:                s += " (phistorygot = False)"
         return format(s)
