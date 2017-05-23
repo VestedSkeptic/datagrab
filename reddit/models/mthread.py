@@ -10,7 +10,7 @@ import praw
 # *****************************************************************************
 class mthreadManager(models.Manager):
     def addOrUpdate(self, i_msubreddit, prawThread):
-        mi = clog.dumpMethodInfo()
+        # mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 
         try:
@@ -68,7 +68,7 @@ class mthread(mbase, models.Model):
 
     # -------------------------------------------------------------------------
     def getRedditFieldDict(self):
-        mi = clog.dumpMethodInfo()
+        # mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 
         redditFieldDict = {
