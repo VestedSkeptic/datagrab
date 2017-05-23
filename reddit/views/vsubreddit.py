@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.core.exceptions import ObjectDoesNotExist
 from ..config import clog
 from ..models import msubreddit
-from ..tasks import task_subredditUpdateThreads
+from ..tasks import TASK_updateThreadsForSubreddit
 import praw
 # import pprint
 
@@ -74,7 +74,7 @@ def update(request):
         vs += "Scheduling task to update: "
         for i_msubreddit in qs:
             vs += i_msubreddit.name + ", "
-            task_subredditUpdateThreads.delay(i_msubreddit.name)
+            TASK_updateThreadsForSubreddit.delay(i_msubreddit.name)
     else:
         vs += "No msubreddits found"
 

@@ -15,7 +15,7 @@ class muserManager(models.Manager):
         # FOR NOW, BEFORE FIXING THAT ISSUE AND WRITING CODE TO FIX DUPLICATE NAMES AM
         # CHANGING QUERY TO FILTER AND HACKING IN DUPLICATE OF OJBECT DOE SNOT EXIST CODE
 
-        mi = clog.dumpMethodInfo()
+        # mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 
         try:
@@ -57,7 +57,7 @@ class muser(mbase, models.Model):
 
     # -------------------------------------------------------------------------
     def getRedditFieldDict(self):
-        mi = clog.dumpMethodInfo()
+        # mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 
         redditFieldDict = {

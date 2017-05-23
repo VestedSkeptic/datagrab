@@ -75,7 +75,7 @@ class mbase(models.Model):
 
     # -------------------------------------------------------------------------
     def addRedditFields(self, prawData, redditFieldDict):
-        mi = clog.dumpMethodInfo()
+        # mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 
         for mFieldName in redditFieldDict:

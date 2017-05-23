@@ -3,7 +3,7 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from .mbase import mbase
 from ..config import clog
-import praw
+# import praw
 # import pprint
 
 # *****************************************************************************
@@ -125,39 +125,6 @@ class msubreddit(mbase, models.Model):
 
         # clog.logger.info("METHOD NOT COMPLETED")
         return ''
-
-    # --------------------------------------------------------------------------
-    def updateThreads(self):
-        from .mthread import mthread
-        mi = clog.dumpMethodInfo()
-        # clog.logger.info(mi)
-
-        clog.logger.info("%s (%s) %s" % (self.name, self.rid, mi))
-
-        vs = ''
-        prawReddit = self.getPrawRedditInstance()
-
-        params={};
-        params['before'] = self.getThreadsBestBeforeValue(prawReddit)
-
-        countNew = 0
-        countOldUnchanged = 0
-        countOldChanged = 0
-
-        try:
-            for prawThread in prawReddit.subreddit(self.name).new(limit=None, params=params):
-                i_mthread = mthread.objects.addOrUpdate(self, prawThread)
-                if i_mthread.addOrUpdateTempField == "new":             countNew += 1
-                if i_mthread.addOrUpdateTempField == "oldUnchanged":    countOldUnchanged += 1
-                if i_mthread.addOrUpdateTempField == "oldChanged":      countOldChanged += 1
-
-        except praw.exceptions.APIException as e:
-            clog.logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
-
-        clog.logger.info(self.name + ": " + str(countNew) + " new, " + str(countOldUnchanged) + " oldUnchanged, " + str(countOldChanged) + " oldChanged, ")
-
-        return
-
 
 # # ----------------------------------------------------------------------------
 # # SUBREDDIT attributes

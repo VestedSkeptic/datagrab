@@ -13,22 +13,6 @@ import pprint
 
 # --------------------------------------------------------------------------
 @task()
-def task_subredditUpdateThreads(subredditName):
-    mi = clog.dumpMethodInfo()
-    # clog.logger.info(mi)
-
-    try:
-        i_msubreddit = msubreddit.objects.get(name=subredditName)
-        i_msubreddit.updateThreads()
-        clog.logger.info("********* PASS *********")
-        return "********* PASS *********"
-    except ObjectDoesNotExist:
-        clog.logger.info("%s: subreddit %s does not exist" % (mi, subredditName))
-        clog.logger.info("********* FAIL *********")
-        return "********* FAIL *********"
-
-# --------------------------------------------------------------------------
-@task()
 def task_threadUpdateComments(threadName):
     mi = clog.dumpMethodInfo()
     # clog.logger.info(mi)
@@ -162,7 +146,7 @@ def TASK_inspectTaskQueue():
     if scheduledCount or activeCount or reservedCount:
         clog.logger.info("%s: %-36s %10s: %d active, %d scheduled, %d reserved" % (current_task.request.id[:13], mi, heartbeatTickString, activeCount, scheduledCount, reservedCount))
     else:
-        clog.logger.info("%s: %-36s %10s: No tasks pending" % (current_task.request.id[:13], mi, heartbeatTickString))
+        clog.logger.info("%s: %-36s %10s:" % (current_task.request.id[:13], mi, heartbeatTickString))
     if heartbeatTickString == 'Tick': heartbeatTickString = 'Tok'
     else:                             heartbeatTickString = 'Tick'
 
@@ -183,14 +167,55 @@ def TASK_template():
     return ""
 
 # --------------------------------------------------------------------------
+@task()
+def TASK_updateThreadsForSubreddit(subredditName):
+    mi = clog.dumpMethodInfo()
+    # clog.logger.info(mi)
+
+    try:
+        i_msubreddit = msubreddit.objects.get(name=subredditName)
+        clog.logger.info("%s: %-36s %10s: %s" % (current_task.request.id[:13], mi, 'processing', subredditName))
+
+        prawReddit = i_msubreddit.getPrawRedditInstance()
+
+        params={};
+        params['before'] = i_msubreddit.getThreadsBestBeforeValue(prawReddit)
+        # clog.logger.info("before = %s" % (params['before']))
+
+        countNew = 0
+        countOldUnchanged = 0
+        countOldChanged = 0
+        try:
+            for prawThread in prawReddit.subreddit(i_msubreddit.name).new(limit=None, params=params):
+                i_mthread = mthread.objects.addOrUpdate(i_msubreddit, prawThread)
+                if i_mthread.addOrUpdateTempField == "new":             countNew += 1
+                if i_mthread.addOrUpdateTempField == "oldUnchanged":    countOldUnchanged += 1
+                if i_mthread.addOrUpdateTempField == "oldChanged":      countOldChanged += 1
+        except praw.exceptions.APIException as e:
+            clog.logger.info("%s: %-36s %10s: %s PRAW_APIException: error_type = %s, message = %s" % (current_task.request.id[:13], mi, 'processing', subredditName, e.error_type, e.message))
+
+        # clog.logger.info(i_msubreddit.name + ": " + str(countNew) + " new, " + str(countOldUnchanged) + " oldUnchanged, " + str(countOldChanged) + " oldChanged, ")
+        clog.logger.info("%s: %-36s %10s: %s, %d new, %d old, %d oldChanged" % (current_task.request.id[:13], mi, 'completed', subredditName, countNew, countOldUnchanged, countOldChanged))
+    except ObjectDoesNotExist:
+        clog.logger.info("%s: %-36s %10s: %s, %s" % (current_task.request.id[:13], mi, 'completed', subredditName, "ERROR does not exist"))
+
+    return ""
+
+# --------------------------------------------------------------------------
+# can add expires parameter (in seconds) so task times out if it hasn't occurred
+# in this time period.
+# Ex: sender.add_periodic_task(60.0,      TASK_template.s(), expires=10)
 @celery_app.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
-    # sender.add_periodic_task( 5.0,      TASK_testLogLevels.s())
     sender.add_periodic_task(60.0,      TASK_inspectTaskQueue.s())
-    sender.add_periodic_task(10.0,      TASK_updateUsersForAllComments.s(50))
-    sender.add_periodic_task( 5.0,      TASK_template.s())
+    # # sender.add_periodic_task( 5.0,      TASK_testLogLevels.s())
+    # # sender.add_periodic_task( 5.0,      TASK_template.s())
+    sender.add_periodic_task( 25.0,      TASK_updateUsersForAllComments.s(50))
 
-
+    sender.add_periodic_task(180.0,      TASK_updateThreadsForSubreddit.s('politics'))
+    sender.add_periodic_task(180.0,      TASK_updateThreadsForSubreddit.s('The_Donald'))
+    sender.add_periodic_task(300.0,      TASK_updateThreadsForSubreddit.s('Le_Pen'))
+    sender.add_periodic_task(300.0,      TASK_updateThreadsForSubreddit.s('AskThe_Donald'))
 
 
 
