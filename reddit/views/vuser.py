@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.core.exceptions import ObjectDoesNotExist
 from ..config import clog
 from ..models import muser
-from ..tasks import task_userUpdateComments
+from ..tasks import TASK_updateCommentsForUser
 import praw
 # import pprint
 
@@ -71,8 +71,8 @@ def update(request):
     vs = ''
     qs = muser.objects.filter(ppoi=True)
     for i_muser in qs:
-        clog.logger.info("=== Calling task task_userUpdateComments.delay for user %s" % (i_muser.name))
-        task_userUpdateComments.delay(i_muser.name)
+        clog.logger.info("=== Calling task TASK_updateCommentsForUser.delay for user %s" % (i_muser.name))
+        TASK_updateCommentsForUser.delay(i_muser.name)
 
     clog.logger.info(vs)
     sessionKey = 'blue'

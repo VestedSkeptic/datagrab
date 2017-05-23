@@ -9,7 +9,7 @@ import praw
 # *****************************************************************************
 class mcommentManager(models.Manager):
     def addOrUpdate(self, username, prawComment):
-        mi = clog.dumpMethodInfo()
+        # mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 
         try:
@@ -65,7 +65,7 @@ class mcomment(mbase, models.Model):
 
     # -------------------------------------------------------------------------
     def getRedditFieldDict(self):
-        mi = clog.dumpMethodInfo()
+        # mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 
         redditFieldDict = {

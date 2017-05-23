@@ -33,7 +33,7 @@ class mbase(models.Model):
     # -------------------------------------------------------------------------
     @staticmethod
     def getPrawRedditInstance():
-        mi = clog.dumpMethodInfo()
+        # mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 
         prawReddit = praw.Reddit(
@@ -47,7 +47,7 @@ class mbase(models.Model):
 
     # -------------------------------------------------------------------------
     def getRedditUserNameAsString(self, redditUser):
-        mi = clog.dumpMethodInfo()
+        # mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 
         if isinstance(redditUser, praw.models.Redditor): return redditUser.name         # if it is a praw Reddit object
@@ -57,7 +57,7 @@ class mbase(models.Model):
     # -------------------------------------------------------------------------
     # if None will return ''
     def getStringOrNoneAsEmptyString(self, inputString):
-        mi = clog.dumpMethodInfo()
+        # mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 
         if inputString == None: return ''
@@ -67,7 +67,7 @@ class mbase(models.Model):
     # Reddit edited field has a value of False or a timestamp.
     # This method will return timestamp or a value of zero if it was False
     def getEditedOrFalseValueAsZero(self, inputString):
-        mi = clog.dumpMethodInfo()
+        # mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 
         if inputString == False:    return 0
@@ -89,7 +89,7 @@ class mbase(models.Model):
     # -------------------------------------------------------------------------
     # return count of fields that were changed or zero
     def updateRedditFields(self, prawData, redditFieldDict):
-        mi = clog.dumpMethodInfo()
+        # mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 
         # clog.logger.debug("METHOD NOT COMPLETED")

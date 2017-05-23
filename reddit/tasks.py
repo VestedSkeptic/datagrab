@@ -28,23 +28,6 @@ def task_threadUpdateComments(threadName):
         clog.logger.info("********* FAIL *********")
         return "********* FAIL *********"
 
-
-# --------------------------------------------------------------------------
-@task()
-def task_userUpdateComments(userName):
-    mi = clog.dumpMethodInfo()
-    # clog.logger.info(mi)
-
-    try:
-        i_muser = muser.objects.get(name=userName)
-        i_muser.updateComments()
-        clog.logger.info("********* PASS *********")
-        return "********* PASS *********"
-    except ObjectDoesNotExist:
-        clog.logger.info("%s: user %s does not exist" % (mi, username))
-        clog.logger.info("********* FAIL *********")
-        return "********* FAIL *********"
-
 # --------------------------------------------------------------------------
 @task()
 def TASK_testLogLevels():
@@ -166,6 +149,94 @@ def TASK_template():
     clog.logger.info("%s: %-36s %10s:" % (current_task.request.id[:13], mi, 'completed'))
     return ""
 
+# # *****************************************************************************
+# def update(request):
+#     mi = clog.dumpMethodInfo()
+#     clog.logger.info(mi)
+#
+#     vs = ''
+#     qs = muser.objects.filter(ppoi=True)
+#     for i_muser in qs:
+#         clog.logger.info("=== Calling task TASK_updateCommentsForUser.delay for user %s" % (i_muser.name))
+#         TASK_updateCommentsForUser.delay(i_muser.name)
+#
+#     clog.logger.info(vs)
+#     sessionKey = 'blue'
+#     request.session[sessionKey] = vs
+#     return redirect('vbase.main', xData=sessionKey)
+
+# # --------------------------------------------------------------------------
+# @task()
+# def TASK_updateCommentsForAllUsers():
+#     mi = clog.dumpMethodInfo()
+#     # clog.logger.info(mi)
+#
+#     try:
+#         i_muser = muser.objects.get(name=username)
+#         clog.logger.info("%s: %-36s %10s: %s" % (current_task.request.id[:13], mi, 'processing', username))
+#
+#         prawReddit = i_muser.getPrawRedditInstance()
+#
+#         params={};
+#         params['before'] = i_muser.getBestCommentBeforeValue(prawReddit)
+#         # clog.logger.info("before = %s" % (params['before']))
+#
+#         # iterate through submissions saving them
+#         countNew = 0
+#         countOldChanged = 0
+#         countOldUnchanged = 0
+#         try:
+#             for prawComment in prawReddit.redditor(i_muser.name).comments.new(limit=None, params=params):
+#                 i_mcomment = mcomment.objects.addOrUpdate(i_muser.name, prawComment)
+#                 if i_mcomment.addOrUpdateTempField == "new":            countNew += 1
+#                 if i_mcomment.addOrUpdateTempField == "oldUnchanged":   countOldUnchanged += 1
+#                 if i_mcomment.addOrUpdateTempField == "oldChanged":     countOldChanged += 1
+#                 i_mcomment.puseradded = True
+#                 i_mcomment.save()
+#         except praw.exceptions.APIException as e:
+#             clog.logger.info("%s: %-36s %10s: %s PRAW_APIException: error_type = %s, message = %s" % (current_task.request.id[:13], mi, 'processing', username, e.error_type, e.message))
+#
+#         clog.logger.info("%s: %-36s %10s: %s, %d new, %d old, %d oldChanged" % (current_task.request.id[:13], mi, 'completed', username, countNew, countOldUnchanged, countOldChanged))
+#     except ObjectDoesNotExist:
+#         clog.logger.info("%s: %-36s %10s: %s, %s" % (current_task.request.id[:13], mi, 'completed', username, "ERROR does not exist"))
+#     return ""
+
+# --------------------------------------------------------------------------
+@task()
+def TASK_updateCommentsForUser(username):
+    mi = clog.dumpMethodInfo()
+    # clog.logger.info(mi)
+
+    try:
+        i_muser = muser.objects.get(name=username)
+        clog.logger.info("%s: %-36s %10s: %s" % (current_task.request.id[:13], mi, 'processing', username))
+
+        prawReddit = i_muser.getPrawRedditInstance()
+
+        params={};
+        params['before'] = i_muser.getBestCommentBeforeValue(prawReddit)
+        # clog.logger.info("before = %s" % (params['before']))
+
+        # iterate through submissions saving them
+        countNew = 0
+        countOldChanged = 0
+        countOldUnchanged = 0
+        try:
+            for prawComment in prawReddit.redditor(i_muser.name).comments.new(limit=None, params=params):
+                i_mcomment = mcomment.objects.addOrUpdate(i_muser.name, prawComment)
+                if i_mcomment.addOrUpdateTempField == "new":            countNew += 1
+                if i_mcomment.addOrUpdateTempField == "oldUnchanged":   countOldUnchanged += 1
+                if i_mcomment.addOrUpdateTempField == "oldChanged":     countOldChanged += 1
+                i_mcomment.puseradded = True
+                i_mcomment.save()
+        except praw.exceptions.APIException as e:
+            clog.logger.info("%s: %-36s %10s: %s PRAW_APIException: error_type = %s, message = %s" % (current_task.request.id[:13], mi, 'processing', username, e.error_type, e.message))
+
+        clog.logger.info("%s: %-36s %10s: %s, %d new, %d old, %d oldChanged" % (current_task.request.id[:13], mi, 'completed', username, countNew, countOldUnchanged, countOldChanged))
+    except ObjectDoesNotExist:
+        clog.logger.info("%s: %-36s %10s: %s, %s" % (current_task.request.id[:13], mi, 'completed', username, "ERROR does not exist"))
+    return ""
+
 # --------------------------------------------------------------------------
 @task()
 def TASK_updateThreadsForSubreddit(subredditName):
@@ -194,7 +265,6 @@ def TASK_updateThreadsForSubreddit(subredditName):
         except praw.exceptions.APIException as e:
             clog.logger.info("%s: %-36s %10s: %s PRAW_APIException: error_type = %s, message = %s" % (current_task.request.id[:13], mi, 'processing', subredditName, e.error_type, e.message))
 
-        # clog.logger.info(i_msubreddit.name + ": " + str(countNew) + " new, " + str(countOldUnchanged) + " oldUnchanged, " + str(countOldChanged) + " oldChanged, ")
         clog.logger.info("%s: %-36s %10s: %s, %d new, %d old, %d oldChanged" % (current_task.request.id[:13], mi, 'completed', subredditName, countNew, countOldUnchanged, countOldChanged))
     except ObjectDoesNotExist:
         clog.logger.info("%s: %-36s %10s: %s, %s" % (current_task.request.id[:13], mi, 'completed', subredditName, "ERROR does not exist"))
@@ -210,12 +280,15 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(60.0,      TASK_inspectTaskQueue.s())
     # # sender.add_periodic_task( 5.0,      TASK_testLogLevels.s())
     # # sender.add_periodic_task( 5.0,      TASK_template.s())
-    sender.add_periodic_task( 25.0,      TASK_updateUsersForAllComments.s(50))
+    sender.add_periodic_task(200.0,      TASK_updateUsersForAllComments.s(100))
+    sender.add_periodic_task(300.0,      TASK_updateThreadsForSubreddit.s('politics'))
+    sender.add_periodic_task(300.0,      TASK_updateThreadsForSubreddit.s('The_Donald'))
+    sender.add_periodic_task(600.0,      TASK_updateThreadsForSubreddit.s('Le_Pen'))
+    sender.add_periodic_task(600.0,      TASK_updateThreadsForSubreddit.s('AskThe_Donald'))
+    sender.add_periodic_task(1200.0,     TASK_updateThreadsForSubreddit.s('Molw'))
 
-    sender.add_periodic_task(180.0,      TASK_updateThreadsForSubreddit.s('politics'))
-    sender.add_periodic_task(180.0,      TASK_updateThreadsForSubreddit.s('The_Donald'))
-    sender.add_periodic_task(300.0,      TASK_updateThreadsForSubreddit.s('Le_Pen'))
-    sender.add_periodic_task(300.0,      TASK_updateThreadsForSubreddit.s('AskThe_Donald'))
+
+    sender.add_periodic_task( 60.0,      TASK_updateCommentsForUser.s('OldDevLearningLinux'))
 
 
 
