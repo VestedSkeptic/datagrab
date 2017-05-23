@@ -1,7 +1,7 @@
 # from django.http import HttpResponse
 from django.shortcuts import redirect
 from ..config import clog
-from ..tasks import task_commentsUpdateUsers
+from ..tasks import TASK_updateUsersForAllComments
 # from django.core.exceptions import ObjectDoesNotExist
 # from ..models import msubreddit
 # import praw
@@ -13,7 +13,7 @@ def updateUsers(request):
     clog.logger.info(mi)
 
     vs = ''
-    task_commentsUpdateUsers.delay()
+    TASK_updateUsersForAllComments.delay()
 
     clog.logger.info(vs)
     sessionKey = 'blue'

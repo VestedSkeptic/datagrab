@@ -1,6 +1,8 @@
 from celery import task
 from datagrab.celery import app as celery_app               # for beat tasks
 from celery.task.control import inspect                     # for ispectTasks
+from celery.schedules import crontab                        # for crontab periodic tasks
+from celery import current_task
 from django.core.exceptions import ObjectDoesNotExist
 from .config import clog
 from .models import mcomment
@@ -40,6 +42,24 @@ def task_subredditUpdateThreads(subredditName):
 
 # --------------------------------------------------------------------------
 @task()
+def task_threadUpdateComments(threadName):
+    mi = clog.dumpMethodInfo()
+    # clog.logger.info(mi)
+
+    try:
+        i_mthread = mthread.objects.get(fullname=threadName)
+        clog.logger.info("thread: %s" % (i_mthread.rtitle))
+        i_mthread.updateComments()
+        clog.logger.info("********* PASS *********")
+        return "********* PASS *********"
+    except ObjectDoesNotExist:
+        clog.logger.info("%s: thread %s does not exist" % (mi, username))
+        clog.logger.info("********* FAIL *********")
+        return "********* FAIL *********"
+
+
+# --------------------------------------------------------------------------
+@task()
 def task_userUpdateComments(userName):
     mi = clog.dumpMethodInfo()
     # clog.logger.info(mi)
@@ -56,33 +76,17 @@ def task_userUpdateComments(userName):
 
 # --------------------------------------------------------------------------
 @task()
-def task_threadUpdateComments(threadName):
-    mi = clog.dumpMethodInfo()
-    # clog.logger.info(mi)
-
-    try:
-        i_mthread = mthread.objects.get(fullname=threadName)
-        clog.logger.info("thread: %s" % (i_mthread.rtitle))
-        i_mthread.updateComments()
-        clog.logger.info("********* PASS *********")
-        return "********* PASS *********"
-    except ObjectDoesNotExist:
-        clog.logger.info("%s: thread %s does not exist" % (mi, username))
-        clog.logger.info("********* FAIL *********")
-        return "********* FAIL *********"
-
-# --------------------------------------------------------------------------
-@task()
-def task_commentsUpdateUsers():
+def TASK_updateUsersForAllComments(numberToProcess):
     mi = clog.dumpMethodInfo()
     # clog.logger.info(mi)
 
     # create PRAW prawReddit instance
     prawReddit = mcomment.getPrawRedditInstance()
+    countUsersAdded = 0
 
     qs = mcomment.objects.filter(puseradded=False)
+    clog.logger.info("%s: %-36s %10s: %d comments to be updated" % (current_task.request.id[:13], mi, 'processing',  qs.count()))
     while qs.count() > 0:
-        clog.logger.info("%d comments found with puseradded = False" % (qs.count()))
 
         # Look at first result
         i_mcomment = qs[0]
@@ -91,8 +95,8 @@ def task_commentsUpdateUsers():
         prawRedditor = prawReddit.redditor(i_mcomment.username)
         i_muser = muser.objects.addOrUpdate(prawRedditor)
 
-        # if i_muser.addOrUpdateTempField == "new":
-        #     clog.logger.info("%s: user %s created" % (mi, i_muser.name))
+        if i_muser.addOrUpdateTempField == "new":
+            countUsersAdded += 1
 
         # set puseradded True for any false comments for that user
         qs2 = mcomment.objects.filter(puseradded=False).filter(username=i_mcomment.username)
@@ -103,16 +107,21 @@ def task_commentsUpdateUsers():
         # are there any puseradded False comments left
         qs = mcomment.objects.filter(puseradded=False)
 
-    clog.logger.info("********* PASS *********")
-    return "********* PASS *********"
+        numberToProcess -= 1
+        if numberToProcess <= 0:
+            break
+
+    clog.logger.info("%s: %-36s %10s: %d comments to be updated, %d users added" % (current_task.request.id[:13], mi, 'completed',   qs.count(), countUsersAdded))
+    return ""
 
 # --------------------------------------------------------------------------
 heartbeatTickString = "Tick"
 @celery_app.task
-def inspectTaskQueue(arg):
-    # clog.logger.info(arg)
+def TASK_inspectTaskQueue():
+    mi = clog.dumpMethodInfo()
+    # clog.logger.info(mi)
 
-    thisTaskName    = 'reddit.tasks.inspectTaskQueue'
+    thisTaskName    = 'reddit.tasks.TASK_inspectTaskQueue'
     workerName      = "celery@datagrab"
 
     i = inspect()
@@ -149,45 +158,43 @@ def inspectTaskQueue(arg):
                 reservedCount += 1
 
     global heartbeatTickString
-    if scheduledCount or activeCount or reservedCount: clog.logger.info("*** %4s: Tasks: %d active, %d scheduled, %d reserved" % (heartbeatTickString, activeCount, scheduledCount, reservedCount))
-    else:                                              clog.logger.info("*** %4s: No tasks pending" %(heartbeatTickString))
-
+    if scheduledCount or activeCount or reservedCount:
+        clog.logger.info("%s: %-36s %10s: %d active, %d scheduled, %d reserved" % (current_task.request.id[:13], mi, heartbeatTickString, activeCount, scheduledCount, reservedCount))
+    else:
+        clog.logger.info("%s: %-36s %10s: No tasks pending" % (current_task.request.id[:13], mi, heartbeatTickString))
     if heartbeatTickString == 'Tick': heartbeatTickString = 'Tok'
     else:                             heartbeatTickString = 'Tick'
 
+# --------------------------------------------------------------------------
+@task()
+def TASK_template():
+    mi = clog.dumpMethodInfo()
+    # clog.logger.info(mi)
 
+    # # create PRAW prawReddit instance
+    # prawReddit = mcomment.getPrawRedditInstance()
 
-# Example of 'active' printout:
-# {
-#     'celery@datagrab':
-#     [
-#         {
-#             'acknowledged': True,
-#             'args': "('==== TASK QUEUE',)",
-#             'delivery_info':
-#             {
-#                 'exchange': '',
-#                 'priority': 0,
-#                 'redelivered': None,
-#                 'routing_key': 'celery'
-#             },
-#             'hostname': 'celery@datagrab',
-#             'id': '3dcb76a3-8b6f-4227-a8a0-248921c83b37',
-#             'kwargs': '{}',
-#             'name': 'reddit.tasks.test',
-#             'time_start': 10847.071408712,
-#             'type': 'reddit.tasks.test',
-#             'worker_pid': 11093
-#         }
-#     ]
-# }
+    clog.logger.info("%s: %-36s %10s:" % (current_task.request.id[:13], mi, 'processing'))
 
+    clog.logger.info("%s: %-36s %10s:" % (current_task.request.id[:13], mi, 'completed'))
+    return ""
 
 # --------------------------------------------------------------------------
 @celery_app.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
-    # Calls test('hello') every 10 seconds.
-    sender.add_periodic_task(10.0, inspectTaskQueue.s('inspectTaskQueue'))
+    sender.add_periodic_task(60.0,      TASK_inspectTaskQueue.s())
+    sender.add_periodic_task(10.0,      TASK_updateUsersForAllComments.s(50))
+    sender.add_periodic_task( 5.0,      TASK_template.s())
+
+
+
+
+    # TASK_template
+
+    # sender.add_periodic_task(
+    #     crontab(hour=7, minute=30, day_of_week=1),
+    #     test.s('Happy Mondays!'),
+    # )
 
 
 
