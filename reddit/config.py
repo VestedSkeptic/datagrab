@@ -5,7 +5,6 @@ clog = None
 # --------------------------------------------------------------------------
 def initializeCLogger():
     global clog
-    # clog = cLogger.cLogger("WorkingLogger")
     clog = cLogger.cLogger(__name__)
     clog.addTraceLoggingLevel()
     clog.generateFuncDict()

@@ -13,8 +13,8 @@ import pprint
 @task()
 def task_testLogLevels():
     mi = clog.dumpMethodInfo()
-    # clog.logger.info(mi)
 
+    clog.logger.info(mi)
     clog.logger.critical("critical")
     clog.logger.error("error")
     clog.logger.warning("warning")

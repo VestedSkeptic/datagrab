@@ -16,23 +16,12 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 
 # Config options
 # Restart worker after changing these
-app.conf.worker_log_color=False                       # works
-app.conf.worker_hijack_root_logger=False              # doesn't work
+app.conf.worker_log_color=False
+app.conf.worker_hijack_root_logger=False
+app.conf.worker_log_format='%(asctime)-8s %(levelname).1s %(filename)-18s (line %(lineno)4s): %(message)s'
 
 # ref: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 app.conf.timezone='Canada/Eastern'
 
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()
-
-
-
-
-
-
-
-
-
-
-
-

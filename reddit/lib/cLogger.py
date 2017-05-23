@@ -125,7 +125,7 @@ class cLogger(object):
             self.logger.setLevel(self.baseLoggerLevel)
 
     # --------------------------------------------------------------------------
-    def addFileLogger(self, pathFileName, loggingLevel, name, archiveType, filterVal):
+    def getFileHandler(self, pathFileName, loggingLevel, name, archiveType, filterVal):
         fileMode = 'w'
         if archiveType == cLoggerFile_archiveOlder:
             self.archiveOlderVersions(pathFileName)
@@ -140,6 +140,11 @@ class cLogger(object):
         handler.setFormatter(formatter)
         if   filterVal == cLoggerFilter_GreaterThanOrEqualToLevel:  handler.addFilter(filterGreaterThanOrEqualToLevelOnly(loggingLevel))
         elif filterVal == cLoggerFilter_SpecificLevelOnly:          handler.addFilter(filterSpecificLevelOnly(loggingLevel))
+        return handler
+
+    # --------------------------------------------------------------------------
+    def addFileLogger(self, pathFileName, loggingLevel, name, archiveType, filterVal):
+        handler = self.getFileHandler(pathFileName, loggingLevel, name, archiveType, filterVal)
         self.logger.addHandler(handler)
         if loggingLevel < self.baseLoggerLevel:
             self.baseLoggerLevel = loggingLevel
