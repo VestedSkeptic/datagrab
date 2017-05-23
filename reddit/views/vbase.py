@@ -79,14 +79,14 @@ def main(request, xData=None):
     return HttpResponse(vs)
 
 # *****************************************************************************
-from ..tasks import task_testLogLevels
+from ..tasks import TASK_testLogLevels
 def test(request):
     mi = clog.dumpMethodInfo()
     clog.logger.info(mi)
 
     vs = "vbase.test: "
 
-    task_testLogLevels.delay()
+    TASK_testLogLevels.delay()
 
     clog.logger.info(vs)
     sessionKey = 'blue'
