@@ -4,7 +4,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger   # for pagination
 from ..config import clog
 from ..models import mthread
-from ..tasks import task_threadUpdateComments
 
 # *****************************************************************************
 def list(request, subreddit):
@@ -33,29 +32,6 @@ def delAll(request):
     qs = mthread.objects.all()
     vs += str(qs.count()) + " mSubmissions deleted"
     qs.delete()
-
-    clog.logger.info(vs)
-    sessionKey = 'blue'
-    request.session[sessionKey] = vs
-    return redirect('vbase.main', xData=sessionKey)
-
-# *****************************************************************************
-def update(request):
-    mi = clog.dumpMethodInfo()
-    clog.logger.info(mi)
-
-    vs = ''
-    qs = mthread.objects.filter(pdeleted=False, pforestgot=False).order_by("-rcreated")
-    if qs.count() > 0:
-        count = 0
-        for i_mthread in qs:
-            count += 1
-            # clog.logger.info("Processing thread %d of %d" % (count, qs.count()))
-            clog.logger.info("Scheduling task to process thread %d of %d" % (count, qs.count()))
-            # i_mthread.updateComments()
-            task_threadUpdateComments.delay(i_mthread.fullname)
-    else:
-        vs += " No mthreads found"
 
     clog.logger.info(vs)
     sessionKey = 'blue'

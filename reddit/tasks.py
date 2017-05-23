@@ -12,21 +12,32 @@ from .models import muser
 import pprint
 
 # --------------------------------------------------------------------------
+def getTaskId():
+    return current_task.request.id[:8]
+
+# --------------------------------------------------------------------------
+def getTaskP():
+    # return 'P'
+    return 'Processing'
+
+# --------------------------------------------------------------------------
+def getTaskC():
+    # return 'C'
+    return 'Completed '
+
+# --------------------------------------------------------------------------
 @task()
-def task_threadUpdateComments(threadName):
+def TASK_template():
     mi = clog.dumpMethodInfo()
     # clog.logger.info(mi)
 
-    try:
-        i_mthread = mthread.objects.get(fullname=threadName)
-        clog.logger.info("thread: %s" % (i_mthread.rtitle))
-        i_mthread.updateComments()
-        clog.logger.info("********* PASS *********")
-        return "********* PASS *********"
-    except ObjectDoesNotExist:
-        clog.logger.info("%s: thread %s does not exist" % (mi, username))
-        clog.logger.info("********* FAIL *********")
-        return "********* FAIL *********"
+    # # create PRAW prawReddit instance
+    # prawReddit = mcomment.getPrawRedditInstance()
+
+    clog.logger.info("%s: %-40s %s:" % (getTaskId(), mi, getTaskP()))
+
+    clog.logger.info("%s: %-40s %s:" % (getTaskId(), mi, getTaskC()))
+    return ""
 
 # --------------------------------------------------------------------------
 @task()
@@ -34,56 +45,16 @@ def TASK_testLogLevels():
     mi = clog.dumpMethodInfo()
     # clog.logger.info(mi)
 
-    clog.logger.critical("%s: %-36s %10s:" % (current_task.request.id[:8], mi, 'critical'))
-    clog.logger.error   ("%s: %-36s %10s:" % (current_task.request.id[:8], mi, 'error'))
-    clog.logger.warning ("%s: %-36s %10s:" % (current_task.request.id[:8], mi, 'warning'))
-    clog.logger.info    ("%s: %-36s %10s:" % (current_task.request.id[:8], mi, 'info'))
-    clog.logger.debug   ("%s: %-36s %10s:" % (current_task.request.id[:8], mi, 'debug'))
-    clog.logger.trace   ("%s: %-36s %10s:" % (current_task.request.id[:8], mi, 'trace'))
+    clog.logger.critical("%s: %-40s %s: %s" % (getTaskId(), mi, getTaskC(), 'critical'))
+    clog.logger.error   ("%s: %-40s %s: %s" % (getTaskId(), mi, getTaskC(), 'error'))
+    clog.logger.warning ("%s: %-40s %s: %s" % (getTaskId(), mi, getTaskC(), 'warning'))
+    clog.logger.info    ("%s: %-40s %s: %s" % (getTaskId(), mi, getTaskC(), 'info'))
+    clog.logger.debug   ("%s: %-40s %s: %s" % (getTaskId(), mi, getTaskC(), 'debug'))
+    clog.logger.trace   ("%s: %-40s %s: %s" % (getTaskId(), mi, getTaskC(), 'trace'))
     return ""
 
 # --------------------------------------------------------------------------
-@task()
-def TASK_updateUsersForAllComments(numberToProcess):
-    mi = clog.dumpMethodInfo()
-    # clog.logger.info(mi)
-
-    # create PRAW prawReddit instance
-    prawReddit = mcomment.getPrawRedditInstance()
-    countUsersAdded = 0
-
-    qs = mcomment.objects.filter(puseradded=False)
-    clog.logger.info("%s: %-36s %1s: %d comments to be updated" % (current_task.request.id[:8], mi, 'P',  qs.count()))
-    while qs.count() > 0:
-
-        # Look at first result
-        i_mcomment = qs[0]
-
-        # AddOrUpdate that user
-        prawRedditor = prawReddit.redditor(i_mcomment.username)
-        i_muser = muser.objects.addOrUpdate(prawRedditor)
-
-        if i_muser.addOrUpdateTempField == "new":
-            countUsersAdded += 1
-
-        # set puseradded True for any false comments for that user
-        qs2 = mcomment.objects.filter(puseradded=False).filter(username=i_mcomment.username)
-        for item in qs2:
-            item.puseradded = True
-            item.save()
-
-        # are there any puseradded False comments left
-        qs = mcomment.objects.filter(puseradded=False)
-
-        numberToProcess -= 1
-        if numberToProcess <= 0:
-            break
-
-    clog.logger.info("%s: %-36s %1s: %d comments to be updated, %d users added" % (current_task.request.id[:8], mi, 'C',   qs.count(), countUsersAdded))
-    return ""
-
-# --------------------------------------------------------------------------
-heartbeatTickString = "X"
+heartbeatTickString = "TICK"
 # @celery_app.task
 @task()
 def TASK_inspectTaskQueue():
@@ -127,43 +98,69 @@ def TASK_inspectTaskQueue():
                 reservedCount += 1
 
     global heartbeatTickString
-    if scheduledCount or activeCount or reservedCount:
-        clog.logger.info("%s: %-36s %1s: %d active, %d scheduled, %d reserved" % (current_task.request.id[:8], mi, heartbeatTickString, activeCount, scheduledCount, reservedCount))
-    else:
-        clog.logger.info("%s: %-36s %1s: *** no pending tasks ***" % (current_task.request.id[:8], mi, heartbeatTickString))
-    if heartbeatTickString == 'y': heartbeatTickString = 'X'
-    else:                          heartbeatTickString = 'y'
+    if heartbeatTickString == 'TICK': heartbeatTickString = 'tock'
+    else:                             heartbeatTickString = 'TICK'
 
+    if scheduledCount or activeCount or reservedCount:
+        clog.logger.info("%s: %-40s %s: %s: %d active, %d scheduled, %d reserved" % (getTaskId(), mi, getTaskC(), heartbeatTickString, activeCount, scheduledCount, reservedCount))
+    else:
+        clog.logger.info("%s: %-40s %s: %s: %s" % (getTaskId(), mi, getTaskC(), heartbeatTickString, "*** no pending tasks ***"))
     return ""
 
 # --------------------------------------------------------------------------
 @task()
-def TASK_template():
+def TASK_updateUsersForAllComments(numberToProcess):
     mi = clog.dumpMethodInfo()
     # clog.logger.info(mi)
 
-    # # create PRAW prawReddit instance
-    # prawReddit = mcomment.getPrawRedditInstance()
+    # create PRAW prawReddit instance
+    prawReddit = mcomment.getPrawRedditInstance()
+    countUsersAdded = 0
 
-    clog.logger.info("%s: %-36s %1s:" % (current_task.request.id[:8], mi, 'P'))
+    qs = mcomment.objects.filter(puseradded=False)
+    clog.logger.info("%s: %-40s %s: %d comments pending" % (getTaskId(), mi, getTaskP(),  qs.count()))
+    while qs.count() > 0:
 
-    clog.logger.info("%s: %-36s %1s:" % (current_task.request.id[:8], mi, 'C'))
+        # Look at first result
+        i_mcomment = qs[0]
+
+        # AddOrUpdate that user
+        prawRedditor = prawReddit.redditor(i_mcomment.username)
+        i_muser = muser.objects.addOrUpdate(prawRedditor)
+
+        if i_muser.addOrUpdateTempField == "new":
+            countUsersAdded += 1
+
+        # set puseradded True for any false comments for that user
+        qs2 = mcomment.objects.filter(puseradded=False).filter(username=i_mcomment.username)
+        for item in qs2:
+            item.puseradded = True
+            item.save()
+
+        # are there any puseradded False comments left
+        qs = mcomment.objects.filter(puseradded=False)
+
+        numberToProcess -= 1
+        if numberToProcess <= 0:
+            break
+
+    clog.logger.info("%s: %-40s %s: %d comments pending, %d users added" % (getTaskId(), mi, getTaskC(),   qs.count(), countUsersAdded))
     return ""
 
-# # --------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 @task()
 def TASK_updateCommentsForAllUsers():
     mi = clog.dumpMethodInfo()
     # clog.logger.info(mi)
 
-    clog.logger.info("%s: %-36s %1s:" % (current_task.request.id[:8], mi, 'P'))
+    clog.logger.info("%s: %-40s %s:" % (getTaskId(), mi, getTaskP()))
     qs = muser.objects.filter(ppoi=True)
     countOfTasksSpawned = 0
     for i_muser in qs:
         TASK_updateCommentsForUser.delay(i_muser.name)
         countOfTasksSpawned += 1
 
-    clog.logger.info("%s: %-36s %1s: %d tasks spawned" % (current_task.request.id[:8], mi, 'C', countOfTasksSpawned))
+    clog.logger.info("%s: %-40s %s: %d tasks spawned" % (getTaskId(), mi, getTaskC(), countOfTasksSpawned))
     return ""
 
 # --------------------------------------------------------------------------
@@ -174,7 +171,7 @@ def TASK_updateCommentsForUser(username):
 
     try:
         i_muser = muser.objects.get(name=username)
-        clog.logger.info("%s: %-36s %1s: %s" % (current_task.request.id[:8], mi, 'P', username))
+        clog.logger.info("%s: %-40s %s: %s" % (getTaskId(), mi, getTaskP(), username))
 
         prawReddit = i_muser.getPrawRedditInstance()
 
@@ -195,11 +192,10 @@ def TASK_updateCommentsForUser(username):
                 i_mcomment.puseradded = True
                 i_mcomment.save()
         except praw.exceptions.APIException as e:
-            clog.logger.info("%s: %-36s %1s: %s PRAW_APIException: error_type = %s, message = %s" % (current_task.request.id[:8], mi, 'P', username, e.error_type, e.message))
-
-        clog.logger.info("%s: %-36s %1s: %s, %d new, %d old, %d oldChanged" % (current_task.request.id[:8], mi, 'C', username, countNew, countOldUnchanged, countOldChanged))
+            clog.logger.info("%s: %-40s %s: %s PRAW_APIException: error_type = %s, message = %s" % (getTaskId(), mi, getTaskP(), username, e.error_type, e.message))
+        clog.logger.info("%s: %-40s %s: %s, %d new, %d old, %d oldChanged" % (getTaskId(), mi, getTaskC(), username, countNew, countOldUnchanged, countOldChanged))
     except ObjectDoesNotExist:
-        clog.logger.info("%s: %-36s %1s: %s, %s" % (current_task.request.id[:8], mi, 'C', username, "ERROR does not exist"))
+        clog.logger.info("%s: %-40s %s: %s, %s" % (getTaskId(), mi, getTaskC(), username, "ERROR does not exist"))
     return ""
 
 # --------------------------------------------------------------------------
@@ -210,7 +206,7 @@ def TASK_updateThreadsForSubreddit(subredditName):
 
     try:
         i_msubreddit = msubreddit.objects.get(name=subredditName)
-        clog.logger.info("%s: %-36s %1s: %s" % (current_task.request.id[:8], mi, 'P', subredditName))
+        clog.logger.info("%s: %-40s %s: %s" % (getTaskId(), mi, getTaskP(), subredditName))
 
         prawReddit = i_msubreddit.getPrawRedditInstance()
 
@@ -228,12 +224,61 @@ def TASK_updateThreadsForSubreddit(subredditName):
                 if i_mthread.addOrUpdateTempField == "oldUnchanged":    countOldUnchanged += 1
                 if i_mthread.addOrUpdateTempField == "oldChanged":      countOldChanged += 1
         except praw.exceptions.APIException as e:
-            clog.logger.info("%s: %-36s %1s: %s PRAW_APIException: error_type = %s, message = %s" % (current_task.request.id[:8], mi, 'P', subredditName, e.error_type, e.message))
-
-        clog.logger.info("%s: %-36s %1s: %s, %d new, %d old, %d oldChanged" % (current_task.request.id[:8], mi, 'C', subredditName, countNew, countOldUnchanged, countOldChanged))
+            clog.logger.info("%s: %-40s %s: %s PRAW_APIException: error_type = %s, message = %s" % (getTaskId(), mi, getTaskP(), subredditName, e.error_type, e.message))
+        clog.logger.info("%s: %-40s %s: %s, %d new, %d old, %d oldChanged" % (getTaskId(), mi, getTaskC(), subredditName, countNew, countOldUnchanged, countOldChanged))
     except ObjectDoesNotExist:
-        clog.logger.info("%s: %-36s %1s: %s, %s" % (current_task.request.id[:8], mi, 'C', subredditName, "ERROR does not exist"))
+        clog.logger.info("%s: %-40s %s: %s, %s" % (getTaskId(), mi, getTaskC(), subredditName, "ERROR does not exist"))
+    return ""
 
+# --------------------------------------------------------------------------
+@task()
+def TASK_updateThreadsByCommentForest(numberToProcess):
+    mi = clog.dumpMethodInfo()
+    # clog.logger.info(mi)
+
+    # create PRAW prawReddit instance
+    prawReddit = mcomment.getPrawRedditInstance()
+    countCommentsAdded = 0
+
+    qs = mthread.objects.filter(pdeleted=False, pforestgot=False).order_by("-rcreated")
+    clog.logger.info("%s: %-40s %s: %d threads pending, processing %d" % (getTaskId(), mi, getTaskP(),  qs.count(), numberToProcess))
+
+    countNew = 0
+    countOldChanged = 0
+    countOldUnchanged = 0
+    countDeleted = 0
+
+    for i_mthread in qs:
+        try:
+            params={};
+            # params['before'] = i_mthread.getBestCommentBeforeValue(????)
+
+            prawSubmissionObject = prawReddit.submission(id=i_mthread.fullname[3:])
+            prawSubmissionObject.comment_sort = "new"
+
+            # prawSubmissionObject.comments.replace_more(limit=None)
+            prawSubmissionObject.comments.replace_more(limit=16)
+
+            for prawComment in prawSubmissionObject.comments.list():
+                if prawComment.author == None:
+                    countDeleted += 1
+                else:
+                    i_mcomment = mcomment.objects.addOrUpdate(prawComment.author.name, prawComment)
+                    if i_mcomment.addOrUpdateTempField == "new":            countNew += 1
+                    if i_mcomment.addOrUpdateTempField == "oldUnchanged":   countOldUnchanged += 1
+                    if i_mcomment.addOrUpdateTempField == "oldChanged":     countOldChanged += 1
+        except praw.exceptions.APIException as e:
+            clog.logger.info("%s: %-40s %s: %s PRAW_APIException: error_type = %s, message = %s" % (getTaskId(), mi, getTaskP(), username, e.error_type, e.message))
+
+        i_mthread.pforestgot = True
+        i_mthread.pcount += countNew
+        i_mthread.save()
+
+        numberToProcess -= 1
+        if numberToProcess <= 0:
+            break
+
+    clog.logger.info("%s: %-40s %s: %d new, %d old, %d oldChanged, %d deleted" % (getTaskId(), mi, getTaskC(), countNew, countOldUnchanged, countOldChanged, countDeleted))
     return ""
 
 # --------------------------------------------------------------------------
@@ -242,20 +287,18 @@ def TASK_updateThreadsForSubreddit(subredditName):
 # Ex: sender.add_periodic_task(60.0,      TASK_template.s(), expires=10)
 @celery_app.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(60.0,       TASK_inspectTaskQueue.s())
-    # # # sender.add_periodic_task( 5.0,      TASK_testLogLevels.s())
-    # # # sender.add_periodic_task( 5.0,      TASK_template.s())
-    sender.add_periodic_task(200.0,      TASK_updateUsersForAllComments.s(100))
-    sender.add_periodic_task(300.0,      TASK_updateThreadsForSubreddit.s('politics'))
-    sender.add_periodic_task(300.0,      TASK_updateThreadsForSubreddit.s('The_Donald'))
-    sender.add_periodic_task(600.0,      TASK_updateThreadsForSubreddit.s('Le_Pen'))
-    sender.add_periodic_task(600.0,      TASK_updateThreadsForSubreddit.s('AskThe_Donald'))
-    sender.add_periodic_task(1200.0,     TASK_updateThreadsForSubreddit.s('Molw'))
-    sender.add_periodic_task(120.0,      TASK_updateCommentsForAllUsers.s())
+    # sender.add_periodic_task(  5.0,      TASK_testLogLevels.s())
+    # sender.add_periodic_task(  5.0,      TASK_template.s())
 
-
-
-
+    sender.add_periodic_task(  60.0,    TASK_inspectTaskQueue.s())
+    sender.add_periodic_task( 200.0,    TASK_updateUsersForAllComments.s(100))
+    sender.add_periodic_task( 300.0,    TASK_updateThreadsForSubreddit.s('politics'))
+    sender.add_periodic_task( 300.0,    TASK_updateThreadsForSubreddit.s('The_Donald'))
+    sender.add_periodic_task( 600.0,    TASK_updateThreadsForSubreddit.s('Le_Pen'))
+    sender.add_periodic_task( 600.0,    TASK_updateThreadsForSubreddit.s('AskThe_Donald'))
+    sender.add_periodic_task(1200.0,    TASK_updateThreadsForSubreddit.s('Molw'))
+    sender.add_periodic_task( 120.0,    TASK_updateCommentsForAllUsers.s())
+    sender.add_periodic_task(  30.0,    TASK_updateThreadsByCommentForest.s(10))
 
 
 

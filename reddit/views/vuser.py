@@ -3,8 +3,6 @@ from django.shortcuts import redirect
 from django.core.exceptions import ObjectDoesNotExist
 from ..config import clog
 from ..models import muser
-from ..tasks import TASK_updateCommentsForUser
-import praw
 # import pprint
 
 # *****************************************************************************
@@ -63,21 +61,6 @@ def delAll(request):
     request.session[sessionKey] = vs
     return redirect('vbase.main', xData=sessionKey)
 
-# *****************************************************************************
-def update(request):
-    mi = clog.dumpMethodInfo()
-    clog.logger.info(mi)
-
-    vs = ''
-    qs = muser.objects.filter(ppoi=True)
-    for i_muser in qs:
-        clog.logger.info("=== Calling task TASK_updateCommentsForUser.delay for user %s" % (i_muser.name))
-        TASK_updateCommentsForUser.delay(i_muser.name)
-
-    clog.logger.info(vs)
-    sessionKey = 'blue'
-    request.session[sessionKey] = vs
-    return redirect('vbase.main', xData=sessionKey)
 
 
 

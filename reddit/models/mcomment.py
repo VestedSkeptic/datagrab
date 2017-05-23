@@ -3,7 +3,7 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from .mbase import mbase
 from ..config import clog
-import praw
+# import praw
 # import pprint
 
 # *****************************************************************************
@@ -19,7 +19,6 @@ class mcommentManager(models.Manager):
             if changedCount == 0: i_mcomment.addOrUpdateTempField = "oldUnchanged"
             else:                 i_mcomment.addOrUpdateTempField = "oldChanged"
         except ObjectDoesNotExist:
-            # clog.logger.info("username = %s" % (username))
             i_mcomment = self.create(username=username, name=prawComment.name, thread=prawComment.link_id, subreddit=prawComment.subreddit_id)
             redditFieldDict = i_mcomment.getRedditFieldDict()
             i_mcomment.addRedditFields(prawComment, redditFieldDict)

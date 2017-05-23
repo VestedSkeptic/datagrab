@@ -3,9 +3,6 @@ from django.shortcuts import redirect
 from django.core.exceptions import ObjectDoesNotExist
 from ..config import clog
 from ..models import msubreddit
-from ..tasks import TASK_updateThreadsForSubreddit
-import praw
-# import pprint
 
 # *****************************************************************************
 def list(request):
@@ -57,26 +54,6 @@ def delAll(request):
     qs = msubreddit.objects.all()
     vs += str(qs.count()) + " msubreddits deleted"
     qs.delete()
-
-    clog.logger.info(vs)
-    sessionKey = 'blue'
-    request.session[sessionKey] = vs
-    return redirect('vbase.main', xData=sessionKey)
-
-# *****************************************************************************
-def update(request):
-    mi = clog.dumpMethodInfo()
-    clog.logger.info(mi)
-
-    vs = ''
-    qs = msubreddit.objects.filter(ppoi=True)
-    if qs.count() > 0:
-        vs += "Scheduling task to update: "
-        for i_msubreddit in qs:
-            vs += i_msubreddit.name + ", "
-            TASK_updateThreadsForSubreddit.delay(i_msubreddit.name)
-    else:
-        vs += "No msubreddits found"
 
     clog.logger.info(vs)
     sessionKey = 'blue'
