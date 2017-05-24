@@ -39,8 +39,8 @@ def TASK_testForDuplicateUsers():
     if itemsFound != 1:
         duplicateUsers[i_muser.name] = 1
 
-    if len(duplicateUsers) >= 1: clog.logger.info("%s: WARNING: %d duplicate users" % (getBaseC(mi, ts), len(duplicateUsers)))
-    else:                        clog.logger.info("%s: no duplicate users found" %    (getBaseC(mi, ts)))
+    if len(duplicateUsers) >= 1: clog.logger.info("%s WARNING: %d duplicate users" % (getBaseC(mi, ts), len(duplicateUsers)))
+    else:                        clog.logger.info("%s no duplicate users found" %    (getBaseC(mi, ts)))
     return ""
 
 # --------------------------------------------------------------------------

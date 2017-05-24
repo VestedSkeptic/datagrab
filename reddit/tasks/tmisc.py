@@ -26,7 +26,7 @@ def TASK_inspectTaskQueue():
     mi = clog.dumpMethodInfo()
     ts = time.time()
 
-    thisTaskName    = 'reddit.tasks.TASK_inspectTaskQueue'
+    thisTaskName    = 'reddit.tasks.tmisc.TASK_inspectTaskQueue'
     workerName      = "celery@datagrab"
 
     i = inspect()
