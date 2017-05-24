@@ -19,20 +19,20 @@ from .ttest import TASK_testLogLevels, TASK_testForDuplicateUsers, TASK_testForD
 def setup_periodic_tasks(sender, **kwargs):
     # sender.add_periodic_task(  5.0,      TASK_testLogLevels.s())
     # sender.add_periodic_task(  5.0,      TASK_template.s())
-    sender.add_periodic_task(  60.0,    TASK_inspectTaskQueue.s(), expires=120)
+    sender.add_periodic_task( 120.0,    TASK_inspectTaskQueue.s(), expires=120)
 
-    # sender.add_periodic_task(  90.0,    TASK_updateThreadsByCommentForest.s(25))
-    # sender.add_periodic_task( 300.0,    TASK_updateUsersForAllComments.s(100))
-    # sender.add_periodic_task(1200.0,    TASK_updateThreadsForSubreddit.s('politics'))
-    # sender.add_periodic_task(1200.0,    TASK_updateThreadsForSubreddit.s('The_Donald'))
-    # sender.add_periodic_task(1210.0,    TASK_updateThreadsForSubreddit.s('AskThe_Donald'))
-    # sender.add_periodic_task(1400.0,    TASK_updateThreadsForSubreddit.s('Le_Pen'))
-    # sender.add_periodic_task(1400.0,    TASK_updateThreadsForSubreddit.s('AgainstHateSubreddits'))
-    # sender.add_periodic_task(1400.0,    TASK_updateThreadsForSubreddit.s('TheNewRight'))
-    # sender.add_periodic_task(7200.0,    TASK_updateThreadsForSubreddit.s('Molw'))
+    # sender.add_periodic_task( 120.0,    TASK_updateThreadsByCommentForest.s(30),                      expires=120)
+    # sender.add_periodic_task( 300.0,    TASK_updateUsersForAllComments.s(100),                        expires=300)
+    # sender.add_periodic_task(1800.0,    TASK_updateThreadsForSubreddit.s('politics'),                 expires=1800)
+    # sender.add_periodic_task(1805.0,    TASK_updateThreadsForSubreddit.s('The_Donald'),               expires=1805)
+    # sender.add_periodic_task(1810.0,    TASK_updateThreadsForSubreddit.s('AskThe_Donald'),            expires=1810)
+    # sender.add_periodic_task(3600.0,    TASK_updateThreadsForSubreddit.s('Le_Pen'))
+    # sender.add_periodic_task(3605.0,    TASK_updateThreadsForSubreddit.s('AgainstHateSubreddits'))
+    # sender.add_periodic_task(3610.0,    TASK_updateThreadsForSubreddit.s('TheNewRight'))
+    # sender.add_periodic_task(7100.0,    TASK_updateThreadsForSubreddit.s('Molw'))
     # sender.add_periodic_task(7200.0,    TASK_updateCommentsForAllUsers.s())
-    # sender.add_periodic_task(7200.0,    TASK_testForDuplicateUsers.s())
-    # sender.add_periodic_task(7200.0,    TASK_testForDuplicateComments.s())
+    # sender.add_periodic_task(8000.0,    TASK_testForDuplicateUsers.s())
+    # sender.add_periodic_task(9000.0,    TASK_testForDuplicateComments.s())
 
     pass
 
@@ -41,8 +41,8 @@ def setup_periodic_tasks(sender, **kwargs):
 # --------------------------------------------------------------------------
 @celery_app.on_after_finalize.connect
 def launch_tasks_on_startup(sender, **kwargs):
-    TASK_updateThreadsByCommentForest.delay(200)
-    # TASK_updateUsersForAllComments.delay(100)
+    # TASK_updateThreadsByCommentForest.delay(200)
+    TASK_updateUsersForAllComments.delay(100)
     # TASK_updateThreadsForSubreddit.delay('politics')
     # TASK_updateThreadsForSubreddit.delay('The_Donald')
     # TASK_updateThreadsForSubreddit.delay('AskThe_Donald')

@@ -19,17 +19,15 @@ def TASK_updateUsersForAllComments(numberToProcess):
     prawReddit = mcomment.getPrawRedditInstance()
     countUsersAdded = 0
 
-    qs = mcomment.objects.filter(puseradded=False)
-    clog.logger.info("%s %d comments pending" % (getBaseP(mi),  qs.count()))
-    while qs.count() > 0:
-
+    qsCount = mcomment.objects.filter(puseradded=False).count()
+    clog.logger.info("%s %d comments pending, processing %d" % (getBaseP(mi),  qsCount, numberToProcess))
+    while qsCount > 0:
         # Look at first result
-        i_mcomment = qs[0]
+        i_mcomment = mcomment.objects.filter(puseradded=False)[0]
 
         # AddOrUpdate that user
         prawRedditor = prawReddit.redditor(i_mcomment.username)
         i_muser = muser.objects.addOrUpdate(prawRedditor)
-
         if i_muser.addOrUpdateTempField == "new":
             countUsersAdded += 1
 
@@ -40,13 +38,13 @@ def TASK_updateUsersForAllComments(numberToProcess):
             item.save()
 
         # are there any puseradded False comments left
-        qs = mcomment.objects.filter(puseradded=False)
+        qsCount = mcomment.objects.filter(puseradded=False).count()
 
         numberToProcess -= 1
         if numberToProcess <= 0:
             break
 
-    clog.logger.info("%s %d comments pending, %d users added" % (getBaseC(mi, ts),   qs.count(), countUsersAdded))
+    clog.logger.info("%s %d comments pending, %d users added" % (getBaseC(mi, ts), qsCount, countUsersAdded))
     return ""
 
 # --------------------------------------------------------------------------
