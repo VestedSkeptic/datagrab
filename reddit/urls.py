@@ -3,6 +3,7 @@ from .views import vbase
 from .views import vsubreddit
 from .views import vthread
 from .views import vuser
+from .views import vanalysis
 
 urlpatterns = [
     url(r'^vbase/main/$',                               vbase.main,                     name='vbase.main'),
@@ -19,6 +20,9 @@ urlpatterns = [
 
     url(r'^vthread/delAll/$',                           vthread.delAll,                 name='vthread.delAll'),
     url(r'^vthread/list/(?P<subreddit>\w+)/$',          vthread.list,                   name='vthread.list'),
+
+    url(r'^vanalysis/topUsersOf/(?P<subreddit>\w+)/$',  vanalysis.topUsersOf,           name='vanalysis.topUsersOf'),
+
 ]
 
 

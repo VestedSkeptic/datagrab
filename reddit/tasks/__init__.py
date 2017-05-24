@@ -41,7 +41,7 @@ def setup_periodic_tasks(sender, **kwargs):
 # --------------------------------------------------------------------------
 @celery_app.on_after_finalize.connect
 def launch_tasks_on_startup(sender, **kwargs):
-    TASK_updateThreadsByCommentForest.delay(1000)
+    TASK_updateThreadsByCommentForest.delay(200)
     # TASK_updateUsersForAllComments.delay(100)
     # TASK_updateThreadsForSubreddit.delay('politics')
     # TASK_updateThreadsForSubreddit.delay('The_Donald')
