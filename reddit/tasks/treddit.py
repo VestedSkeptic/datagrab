@@ -132,7 +132,7 @@ def TASK_updateThreadsForSubreddit(subredditName):
 
 # --------------------------------------------------------------------------
 @task()
-def TASK_updateThreadsByCommentForest(numberToProcess):
+def TASK_updateThreadCommentsByForest(numberToProcess):
     mi = clog.dumpMethodInfo()
     ts = time.time()
 
