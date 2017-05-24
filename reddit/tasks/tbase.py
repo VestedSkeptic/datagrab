@@ -5,11 +5,11 @@ from celery.schedules import crontab                        # for crontab period
 from celery import current_task
 from django.core.exceptions import ObjectDoesNotExist
 import time
-from .config import clog
-from .models import mcomment
-from .models import msubreddit
-from .models import mthread
-from .models import muser
+from ..config import clog
+from ..models import mcomment
+from ..models import msubreddit
+from ..models import mthread
+from ..models import muser
 import pprint
 
 # --------------------------------------------------------------------------
@@ -29,8 +29,7 @@ def getTaskC():
 # --------------------------------------------------------------------------
 def getMI(mi):
     rv = mi[:-2]
-    return rv.ljust(35,' ')
-    # max length of task name plus trailing paranthesis is 35
+    return rv.ljust(35,' ')  # max length of task name plus trailing paranthesis is 35
 
 # --------------------------------------------------------------------------
 def getTimeDif(ts):
@@ -366,8 +365,8 @@ def setup_periodic_tasks(sender, **kwargs):
     # sender.add_periodic_task(7200.0,    TASK_testForDuplicateUsers.s())
     # sender.add_periodic_task(7200.0,    TASK_testForDuplicateComments.s())
 
-    TASK_testForDuplicateUsers.delay()
-    TASK_testForDuplicateComments.delay()
+    # TASK_testForDuplicateUsers.delay()
+    # TASK_testForDuplicateComments.delay()
 
     pass
 
