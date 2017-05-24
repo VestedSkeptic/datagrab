@@ -69,12 +69,9 @@ def test(request):
 
     vs = "vbase.test: EMPTY TEST"
 
-    clog.logger.info(vs)
     sessionKey = 'blue'
     request.session[sessionKey] = vs
     return redirect('vbase.main', xData=sessionKey)
-
-
 
 
 

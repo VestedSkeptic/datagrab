@@ -115,7 +115,7 @@ class msubreddit(mbase, models.Model):
         # clog.logger.info(mi)
 
         s = self.name
-        if self.ppoi: s += " (ppoi)"
+        # if self.ppoi: s += " (ppoi)"
         return format(s)
 
     # --------------------------------------------------------------------------
