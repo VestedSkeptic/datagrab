@@ -9,19 +9,14 @@ from ..config import clog
 # *****************************************************************************
 class muserManager(models.Manager):
     def addOrUpdate(self, prawRedditor):
+        # mi = clog.dumpMethodInfo()
+        # clog.logger.info(mi)
 
         # NOTE: ENDED UP WITH MULITIPLE USERS WITH SAME NAME BECAUSE TWO TASKS operating
         # AT THE SAME TIME CREATED BOTH USERS. THIS CAUSES THE GET CALL BELOW TO FAIL.
         # FOR NOW, BEFORE FIXING THAT ISSUE AND WRITING CODE TO FIX DUPLICATE NAMES AM
         # CHANGING QUERY TO FILTER AND HACKING IN DUPLICATE OF OJBECT DOE SNOT EXIST CODE
-
-        # mi = clog.dumpMethodInfo()
-        # clog.logger.info(mi)
-
         try:
-            # clog.logger.info("prawRedditor.name = %s" % (prawRedditor.name))
-
-            # i_muser = self.get(name=prawRedditor.name)
             qs = muser.objects.filter(name=prawRedditor.name)
             if qs.count() > 0:
                 i_muser = qs[0]
@@ -40,7 +35,6 @@ class muserManager(models.Manager):
             i_muser.addRedditFields(prawRedditor, redditFieldDict)
             i_muser.addOrUpdateTempField = "new"
 
-        # clog.logger.debug("i_muser = %s" % (pprint.pformat(vars(i_muser))))
         i_muser.save()
         return i_muser
 

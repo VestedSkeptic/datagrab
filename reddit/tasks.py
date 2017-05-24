@@ -35,7 +35,6 @@ def getMI(mi):
 # --------------------------------------------------------------------------
 def getTimeDif(ts):
     td = round(time.time()-ts, 0)
-    print(td)
     return '[' + str(int(td)) + ']'
 
 # --------------------------------------------------------------------------
@@ -150,6 +149,27 @@ def TASK_testForDuplicateUsers():
 
 # --------------------------------------------------------------------------
 @task()
+def TASK_testForDuplicateComments():
+    mi = clog.dumpMethodInfo()
+    ts = time.time()
+
+    clog.logger.info("%s" % (getBaseP(mi)))
+
+    duplicateComments = {}
+    qs = mcomment.objects.all()
+    for i_mcomment in qs:
+        qs2 = mcomment.objects.filter(username=i_mcomment.username, name=i_mcomment.name, thread=i_mcomment.thread, subreddit=i_mcomment.subreddit)
+
+    itemsFound = qs2.count()
+    if itemsFound != 1:
+        duplicateComments[i_mcomment.name] = 1
+
+    if len(duplicateComments) >= 1: clog.logger.info("%s: WARNING: %d duplicate comments" % (getBaseC(mi, ts), len(duplicateComments)))
+    else:                           clog.logger.info("%s: no duplicate comments found" %    (getBaseC(mi, ts)))
+    return ""
+
+# --------------------------------------------------------------------------
+@task()
 def TASK_updateUsersForAllComments(numberToProcess):
     mi = clog.dumpMethodInfo()
     ts = time.time()
@@ -201,7 +221,7 @@ def TASK_updateCommentsForAllUsers():
         TASK_updateCommentsForUser.delay(i_muser.name)
         countOfTasksSpawned += 1
 
-    clog.logger.info("%s: %d tasks spawned" % (getBaseC(mi, ts), countOfTasksSpawned))
+    clog.logger.info("%s %d tasks spawned" % (getBaseC(mi, ts), countOfTasksSpawned))
     return ""
 
 # --------------------------------------------------------------------------
@@ -233,10 +253,10 @@ def TASK_updateCommentsForUser(username):
                 i_mcomment.puseradded = True
                 i_mcomment.save()
         except praw.exceptions.APIException as e:
-            clog.logger.info("%s: %s PRAW_APIException: error_type = %s, message = %s" % (getBaseC(mi, ts), username, e.error_type, e.message))
-        clog.logger.info("%s: %s, %d new, %d old, %d oldChanged" % (getBaseC(mi, ts), username, countNew, countOldUnchanged, countOldChanged))
+            clog.logger.info("%s %s PRAW_APIException: error_type = %s, message = %s" % (getBaseC(mi, ts), username, e.error_type, e.message))
+        clog.logger.info("%s %s, %d new, %d old, %d oldChanged" % (getBaseC(mi, ts), username, countNew, countOldUnchanged, countOldChanged))
     except ObjectDoesNotExist:
-        clog.logger.info("%s: %s, %s" % (getBaseC(mi, ts), username, "ERROR does not exist"))
+        clog.logger.info("%s %s, %s" % (getBaseC(mi, ts), username, "ERROR does not exist"))
     return ""
 
 # --------------------------------------------------------------------------
@@ -266,7 +286,7 @@ def TASK_updateThreadsForSubreddit(subredditName):
                 if i_mthread.addOrUpdateTempField == "oldChanged":      countOldChanged += 1
         except praw.exceptions.APIException as e:
             clog.logger.info("%s %s PRAW_APIException: error_type = %s, message = %s" % (getBaseC(mi, ts), subredditName, e.error_type, e.message))
-        clog.logger.info("%s %s, %d new, %d old, %d oldChanged" % (getBaseC(mi, ts), subredditName, countNew, countOldUnchanged, countOldChanged))
+        clog.logger.info("%s %s: %d new, %d old, %d oldChanged" % (getBaseC(mi, ts), subredditName, countNew, countOldUnchanged, countOldChanged))
     except ObjectDoesNotExist:
         clog.logger.info("%s %s, %s" % (getBaseC(mi, ts), subredditName, "ERROR does not exist"))
     return ""
@@ -319,7 +339,7 @@ def TASK_updateThreadsByCommentForest(numberToProcess):
         if numberToProcess <= 0:
             break
 
-    clog.logger.info("%s %d new, %d old, %d oldChanged, %d deleted" % (getBaseC(mi, ts), countNew, countOldUnchanged, countOldChanged, countDeleted))
+    clog.logger.info("%s %d new threads, %d old, %d oldChanged, %d deleted" % (getBaseC(mi, ts), countNew, countOldUnchanged, countOldChanged, countDeleted))
     return ""
 
 # --------------------------------------------------------------------------
@@ -331,18 +351,25 @@ def setup_periodic_tasks(sender, **kwargs):
     # sender.add_periodic_task(  5.0,      TASK_testLogLevels.s())
     # sender.add_periodic_task(  5.0,      TASK_template.s())
     # sender.add_periodic_task( 300.0,    TASK_inspectTaskQueue.s())
+    sender.add_periodic_task( 30.0,    TASK_inspectTaskQueue.s())
 
-    sender.add_periodic_task(  90.0,    TASK_updateThreadsByCommentForest.s(20))
-    sender.add_periodic_task( 300.0,    TASK_updateUsersForAllComments.s(100))
-    sender.add_periodic_task( 600.0,    TASK_updateThreadsForSubreddit.s('politics'))
-    sender.add_periodic_task( 750.0,    TASK_updateThreadsForSubreddit.s('The_Donald'))
-    sender.add_periodic_task( 900.0,    TASK_updateThreadsForSubreddit.s('AskThe_Donald'))
-    sender.add_periodic_task(1200.0,    TASK_updateThreadsForSubreddit.s('Le_Pen'))
-    sender.add_periodic_task(1200.0,    TASK_updateThreadsForSubreddit.s('AgainstHateSubreddits'))
-    sender.add_periodic_task(1200.0,    TASK_updateThreadsForSubreddit.s('TheNewRight'))
-    sender.add_periodic_task(7200.0,    TASK_updateThreadsForSubreddit.s('Molw'))
-    sender.add_periodic_task(2400.0,    TASK_updateCommentsForAllUsers.s())
-    sender.add_periodic_task(7200.0,    TASK_testForDuplicateUsers.s())
+    # sender.add_periodic_task(  90.0,    TASK_updateThreadsByCommentForest.s(25))
+    # sender.add_periodic_task( 300.0,    TASK_updateUsersForAllComments.s(100))
+    # sender.add_periodic_task( 800.0,    TASK_updateThreadsForSubreddit.s('politics'))
+    # sender.add_periodic_task( 800.0,    TASK_updateThreadsForSubreddit.s('The_Donald'))
+    # sender.add_periodic_task(1300.0,    TASK_updateThreadsForSubreddit.s('AskThe_Donald'))
+    # sender.add_periodic_task(1400.0,    TASK_updateThreadsForSubreddit.s('Le_Pen'))
+    # sender.add_periodic_task(1400.0,    TASK_updateThreadsForSubreddit.s('AgainstHateSubreddits'))
+    # sender.add_periodic_task(1400.0,    TASK_updateThreadsForSubreddit.s('TheNewRight'))
+    # sender.add_periodic_task(7200.0,    TASK_updateThreadsForSubreddit.s('Molw'))
+    # sender.add_periodic_task(7200.0,    TASK_updateCommentsForAllUsers.s())
+    # sender.add_periodic_task(7200.0,    TASK_testForDuplicateUsers.s())
+    # sender.add_periodic_task(7200.0,    TASK_testForDuplicateComments.s())
+
+    TASK_testForDuplicateUsers.delay()
+    TASK_testForDuplicateComments.delay()
+
+    pass
 
     # sender.add_periodic_task(
     #     crontab(hour=7, minute=30, day_of_week=1),

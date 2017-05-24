@@ -12,19 +12,27 @@ class mcommentManager(models.Manager):
         # mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 
+        # NOTE SIMILAR CHANGE AS MUSER TO HANDLE DUPLIICATE COMMENTS
+
         try:
-            i_mcomment = self.get(username=username, name=prawComment.name, thread=prawComment.link_id, subreddit=prawComment.subreddit_id)
-            redditFieldDict = i_mcomment.getRedditFieldDict()
-            changedCount = i_mcomment.updateRedditFields(prawComment, redditFieldDict)
-            if changedCount == 0: i_mcomment.addOrUpdateTempField = "oldUnchanged"
-            else:                 i_mcomment.addOrUpdateTempField = "oldChanged"
+            qs = mcomment.objects.filter(username=username, name=prawComment.name, thread=prawComment.link_id, subreddit=prawComment.subreddit_id)
+            if qs.count() > 0:
+                i_mcomment = qs[0]
+                redditFieldDict = i_mcomment.getRedditFieldDict()
+                changedCount = i_mcomment.updateRedditFields(prawComment, redditFieldDict)
+                if changedCount == 0: i_mcomment.addOrUpdateTempField = "oldUnchanged"
+                else:                 i_mcomment.addOrUpdateTempField = "oldChanged"
+            else:
+                i_mcomment = self.create(username=username, name=prawComment.name, thread=prawComment.link_id, subreddit=prawComment.subreddit_id)
+                redditFieldDict = i_mcomment.getRedditFieldDict()
+                i_mcomment.addRedditFields(prawComment, redditFieldDict)
+                i_mcomment.addOrUpdateTempField = "new"
         except ObjectDoesNotExist:
             i_mcomment = self.create(username=username, name=prawComment.name, thread=prawComment.link_id, subreddit=prawComment.subreddit_id)
             redditFieldDict = i_mcomment.getRedditFieldDict()
             i_mcomment.addRedditFields(prawComment, redditFieldDict)
             i_mcomment.addOrUpdateTempField = "new"
 
-        # clog.logger.debug("i_mcomment = %s" % (pprint.pformat(vars(i_mcomment))))
         i_mcomment.save()
         return i_mcomment
 
