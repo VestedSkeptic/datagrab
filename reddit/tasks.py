@@ -39,6 +39,14 @@ def getTimeDif(ts):
     return '[' + str(int(td)) + ']'
 
 # --------------------------------------------------------------------------
+def getBaseP(mi):
+    return "%s: %s: %s:" % (getTaskId(), getMI(mi), getTaskP())
+
+# --------------------------------------------------------------------------
+def getBaseC(mi, ts):
+    return "%s: %s: %s: %s:" % (getTaskId(), getMI(mi), getTaskC(), getTimeDif(ts))
+
+# --------------------------------------------------------------------------
 @task()
 def TASK_template():
     mi = clog.dumpMethodInfo()
@@ -48,23 +56,24 @@ def TASK_template():
     # # create PRAW prawReddit instance
     # prawReddit = mcomment.getPrawRedditInstance()
 
-    clog.logger.info("%s: %s %s:" % (getTaskId(), getMI(mi), getTaskP()))
+    clog.logger.info("%s" % (getBaseP(mi)))
 
-    clog.logger.info("%s: %s %s: %s" % (getTaskId(), getMI(mi), getTaskC(), getTimeDif(ts)))
+    clog.logger.info("%s" % (getBaseC(mi, ts)))
     return ""
 
 # --------------------------------------------------------------------------
 @task()
 def TASK_testLogLevels():
     mi = clog.dumpMethodInfo()
+    ts = time.time()
     # clog.logger.info(mi)
 
-    clog.logger.critical("%s: %s %s: %s" % (getTaskId(), getMI(mi), getTaskC(), 'critical'))
-    clog.logger.error   ("%s: %s %s: %s" % (getTaskId(), getMI(mi), getTaskC(), 'error'))
-    clog.logger.warning ("%s: %s %s: %s" % (getTaskId(), getMI(mi), getTaskC(), 'warning'))
-    clog.logger.info    ("%s: %s %s: %s" % (getTaskId(), getMI(mi), getTaskC(), 'info'))
-    clog.logger.debug   ("%s: %s %s: %s" % (getTaskId(), getMI(mi), getTaskC(), 'debug'))
-    clog.logger.trace   ("%s: %s %s: %s" % (getTaskId(), getMI(mi), getTaskC(), 'trace'))
+    clog.logger.critical("%s %s" % (getBaseC(mi, ts), 'critical'))
+    clog.logger.error   ("%s %s" % (getBaseC(mi, ts), 'error'))
+    clog.logger.warning ("%s %s" % (getBaseC(mi, ts), 'warning'))
+    clog.logger.info    ("%s %s" % (getBaseC(mi, ts), 'info'))
+    clog.logger.debug   ("%s %s" % (getBaseC(mi, ts), 'debug'))
+    clog.logger.trace   ("%s %s" % (getBaseC(mi, ts), 'trace'))
     return ""
 
 # --------------------------------------------------------------------------
@@ -321,7 +330,7 @@ def TASK_updateThreadsByCommentForest(numberToProcess):
 # Ex: sender.add_periodic_task(60.0,      TASK_template.s(), expires=10)
 @celery_app.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
-    # sender.add_periodic_task(  5.0,      TASK_testLogLevels.s())
+    sender.add_periodic_task(  5.0,      TASK_testLogLevels.s())
     sender.add_periodic_task(  5.0,      TASK_template.s())
 
     # sender.add_periodic_task( 300.0,    TASK_inspectTaskQueue.s())
