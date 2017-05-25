@@ -2,6 +2,7 @@
 from celery import current_task
 import time
 
+
 # --------------------------------------------------------------------------
 def getTaskId():
     return current_task.request.id[:8]
@@ -33,6 +34,11 @@ def getBaseP(mi):
 # --------------------------------------------------------------------------
 def getBaseC(mi, ts):
     return "%s: %s %s: %s:" % (getTaskId(), getMI(mi), getTaskC(), getTimeDif(ts))
+
+# --------------------------------------------------------------------------
+def getLine():
+    return "**********************************"
+
 
 
 

@@ -178,7 +178,7 @@ def TASK_updateThreadCommentsByForest(numberToProcess):
         if numberToProcess <= 0:
             break
 
-    clog.logger.info("%s %d new threads, %d old, %d oldChanged, %d deleted" % (getBaseC(mi, ts), countNew, countOldUnchanged, countOldChanged, countDeleted))
+    clog.logger.info("%s %d new comments, %d old, %d oldChanged, %d deleted" % (getBaseC(mi, ts), countNew, countOldUnchanged, countOldChanged, countDeleted))
     return ""
 
 

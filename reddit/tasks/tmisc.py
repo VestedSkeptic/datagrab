@@ -2,7 +2,11 @@ from celery import task
 from celery.task.control import inspect                     # for ispectTasks
 import time
 from ..config import clog
-from .tbase import getBaseP, getBaseC
+from .tbase import getBaseP, getBaseC, getLine
+from ..models import mcomment
+from ..models import msubreddit
+from ..models import mthread
+from ..models import muser
 # import pprint
 
 # --------------------------------------------------------------------------
@@ -73,6 +77,34 @@ def TASK_inspectTaskQueue():
     return ""
 
 
+# --------------------------------------------------------------------------
+@task()
+def TASK_displayModelCounts():
+    mi = clog.dumpMethodInfo()
+    ts = time.time()
+
+    users_poi               = muser.objects.filter(ppoi=True).count()
+    users_notPoi            = muser.objects.filter(ppoi=False).count()
+
+    comments_usersAdded     = mcomment.objects.filter(puseradded=True).count()
+    comments_notUsersAdded  = mcomment.objects.filter(puseradded=False).count()
+
+    subreddits_poi          = msubreddit.objects.filter(ppoi=True).count()
+    subreddits_notPoi       = msubreddit.objects.filter(ppoi=False).count()
+
+    threads_forestGot       = mthread.objects.filter(pforestgot=True).count()
+    threads_notForestGot    = mthread.objects.filter(pforestgot=False).count()
+
+    clog.logger.info("%s %s"    % (getBaseC(mi, ts), getLine()))
+    clog.logger.info("%s * %-21s %8d *" % (getBaseC(mi, ts), "Users  poi",              users_poi))
+    clog.logger.info("%s * %-21s %8d *" % (getBaseC(mi, ts), "Users !poi",              users_notPoi))
+    clog.logger.info("%s * %-21s %8d *" % (getBaseC(mi, ts), "Comments  users added",   comments_usersAdded))
+    clog.logger.info("%s * %-21s %8d *" % (getBaseC(mi, ts), "Comments !users added",   comments_notUsersAdded))
+    clog.logger.info("%s * %-21s %8d *" % (getBaseC(mi, ts), "Subreddits  poi",         subreddits_poi))
+    clog.logger.info("%s * %-21s %8d *" % (getBaseC(mi, ts), "Subreddits !poi",         subreddits_notPoi))
+    clog.logger.info("%s * %-21s %8d *" % (getBaseC(mi, ts), "Threads  forestGot",      threads_forestGot))
+    clog.logger.info("%s * %-21s %8d *" % (getBaseC(mi, ts), "Threads !forestGot",      threads_notForestGot))
+    clog.logger.info("%s %s"    % (getBaseC(mi, ts), getLine()))
 
 
 

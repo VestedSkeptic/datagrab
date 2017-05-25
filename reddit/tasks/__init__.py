@@ -1,11 +1,9 @@
 from datagrab.celery import app as celery_app               # for beat tasks
 from celery.schedules import crontab                        # for crontab periodic tasks
 
-from .tmisc import TASK_template, TASK_inspectTaskQueue
+from .tmisc import TASK_template, TASK_inspectTaskQueue, TASK_displayModelCounts
 from .treddit import TASK_updateUsersForAllComments, TASK_updateCommentsForAllUsers, TASK_updateCommentsForUser, TASK_updateThreadsForSubreddit, TASK_updateThreadCommentsByForest
 from .ttest import TASK_testLogLevels, TASK_testForDuplicateUsers, TASK_testForDuplicateComments
-
-
 
 # CONST_MINUTE    = 60
 # CONST_HOUR      = 3600
@@ -20,8 +18,8 @@ def setup_periodic_tasks(sender, **kwargs):
     # sender.add_periodic_task(  5.0,      TASK_testLogLevels.s())
     # sender.add_periodic_task(  5.0,      TASK_template.s())
     # sender.add_periodic_task( 120.0,    TASK_inspectTaskQueue.s(), expires=120)
-    sender.add_periodic_task( 300.0,    TASK_inspectTaskQueue.s(), expires=120)
 
+    sender.add_periodic_task( 300.0,    TASK_inspectTaskQueue.s(), expires=120)
     sender.add_periodic_task( 120.0,    TASK_updateThreadCommentsByForest.s(30),                      expires=160)
     sender.add_periodic_task( 300.0,    TASK_updateUsersForAllComments.s(100),                        expires=400)
     sender.add_periodic_task(1800.0,    TASK_updateThreadsForSubreddit.s('politics'),                 expires=2200)
@@ -32,10 +30,14 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(3610.0,    TASK_updateThreadsForSubreddit.s('TheNewRight'))
     sender.add_periodic_task(7100.0,    TASK_updateThreadsForSubreddit.s('Molw'))
     sender.add_periodic_task(7200.0,    TASK_updateCommentsForAllUsers.s())
-    # sender.add_periodic_task(8000.0,    TASK_testForDuplicateUsers.s())
-    # sender.add_periodic_task(9000.0,    TASK_testForDuplicateComments.s())
+    sender.add_periodic_task(8000.0,    TASK_testForDuplicateUsers.s())
+    sender.add_periodic_task(9000.0,    TASK_testForDuplicateComments.s())
+    sender.add_periodic_task(3599.0,    TASK_displayModelCounts.s())
 
     pass
+
+
+    TASK_displayModelCounts
 
 
 
@@ -44,16 +46,18 @@ def setup_periodic_tasks(sender, **kwargs):
 def launch_tasks_on_startup(sender, **kwargs):
     # TASK_updateThreadCommentsByForest.delay(200)
     # TASK_updateUsersForAllComments.delay(100)
-    # TASK_updateThreadsForSubreddit.delay('politics')
-    # TASK_updateThreadsForSubreddit.delay('The_Donald')
-    # TASK_updateThreadsForSubreddit.delay('AskThe_Donald')
-    # TASK_updateThreadsForSubreddit.delay('Le_Pen')
-    # TASK_updateThreadsForSubreddit.delay('AgainstHateSubreddits')
-    # TASK_updateThreadsForSubreddit.delay('TheNewRight')
-    # TASK_updateThreadsForSubreddit.delay('Molw')
+    TASK_updateThreadsForSubreddit.delay('politics')
+    TASK_updateThreadsForSubreddit.delay('The_Donald')
+    TASK_updateThreadsForSubreddit.delay('AskThe_Donald')
+    TASK_updateThreadsForSubreddit.delay('Le_Pen')
+    TASK_updateThreadsForSubreddit.delay('AgainstHateSubreddits')
+    TASK_updateThreadsForSubreddit.delay('TheNewRight')
+    TASK_updateThreadsForSubreddit.delay('Molw')
     # TASK_updateCommentsForAllUsers.delay()
     # TASK_testForDuplicateUsers.delay()
     # TASK_testForDuplicateComments.delay()
+
+    TASK_displayModelCounts.delay()
     pass
 
 
