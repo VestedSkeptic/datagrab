@@ -44,8 +44,7 @@ def setup_periodic_tasks(sender, **kwargs):
 # --------------------------------------------------------------------------
 @celery_app.on_after_finalize.connect
 def launch_tasks_on_startup(sender, **kwargs):
-    # TASK_updateThreadCommentsByForest.delay(200)
-    # TASK_updateUsersForAllComments.delay(100)
+    TASK_displayModelCounts.delay()
     TASK_updateThreadsForSubreddit.delay('politics')
     TASK_updateThreadsForSubreddit.delay('The_Donald')
     TASK_updateThreadsForSubreddit.delay('AskThe_Donald')
@@ -53,11 +52,13 @@ def launch_tasks_on_startup(sender, **kwargs):
     TASK_updateThreadsForSubreddit.delay('AgainstHateSubreddits')
     TASK_updateThreadsForSubreddit.delay('TheNewRight')
     TASK_updateThreadsForSubreddit.delay('Molw')
+
+    # TASK_updateThreadCommentsByForest.delay(200)
+    # TASK_updateUsersForAllComments.delay(100)
     # TASK_updateCommentsForAllUsers.delay()
     # TASK_testForDuplicateUsers.delay()
     # TASK_testForDuplicateComments.delay()
 
-    TASK_displayModelCounts.delay()
     pass
 
 

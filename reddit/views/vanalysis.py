@@ -7,16 +7,14 @@ from ..models import msubreddit, mcomment, muser
 import pprint
 
 # # *****************************************************************************
-def topUsersOf(request, subreddit):
+def poiUsersOfSubreddit(request, subreddit, minNumComments):
     mi = clog.dumpMethodInfo()
     # clog.logger.info(mi)
 
-    vs = "vbase.vanalysis.topUsersOf: "
+    vs = "vbase.vanalysis.poiUsersOfSubreddit: "
 
     prawReddit = msubreddit.getPrawRedditInstance()
     prawSubreddit = prawReddit.subreddit(subreddit)
-
-    # vs += "%s subreddit name = %s" % (subreddit, prawSubreddit.name)
 
     subredditDict = {}
 
@@ -25,16 +23,16 @@ def topUsersOf(request, subreddit):
     qs = mcomment.objects.filter(subreddit=prawSubreddit.name).values('username').annotate(num_count=Count('username')).order_by('-num_count')
     for i_mcommentAnnotatedUserCount in qs:
         # {'num_count': 785, 'username': 'RobRoyWithTwist'}
-        if i_mcommentAnnotatedUserCount['num_count'] >= 1000:
+        if i_mcommentAnnotatedUserCount['num_count'] >= int(minNumComments):
             # print(i_mcommentAnnotatedUserCount)
 
-            # # Add this user as poi
-            # prawRedditor = prawReddit.redditor(i_mcommentAnnotatedUserCount['username'])
-            # i_muser = muser.objects.addOrUpdate(prawRedditor)
-            # i_muser.ppoi = True
-            # i_muser.save()
-            # print("%s added" % (i_mcommentAnnotatedUserCount['username']))
-
+            # Add this user as poi
+            prawRedditor = prawReddit.redditor(i_mcommentAnnotatedUserCount['username'])
+            i_muser = muser.objects.addOrUpdate(prawRedditor)
+            i_muser.ppoi = True
+            i_muser.save()
+            if i_muser.addOrUpdateTempField == "new":
+                vs += "<br>" + i_mcommentAnnotatedUserCount['username']
 
             # # Get subreddits this person also comments in
             qs2 = mcomment.objects.filter(username=i_mcommentAnnotatedUserCount['username']).values('rsubreddit_name_prefixed').annotate(num_count2=Count('rsubreddit_name_prefixed')).order_by('-num_count2')
@@ -43,11 +41,21 @@ def topUsersOf(request, subreddit):
                     subredditDict[i_mcommentAnnotatedSubredditCount['rsubreddit_name_prefixed']] = 0
                 subredditDict[i_mcommentAnnotatedSubredditCount['rsubreddit_name_prefixed']] += i_mcommentAnnotatedSubredditCount['num_count2']
 
-
-    for k in subredditDict:
-        print("%06d: %s" % (subredditDict[k], k))
-
-
+    topCount = 10
+    vs += "<br>Top " + str(topCount) + " subreddits these poi also post to are:"
+    from operator import itemgetter
+    sortedList = sorted(subredditDict.items(), key=itemgetter(1), reverse=True)
+    for v in sortedList:
+        # print(v)
+        # # ('r/The_Donald', 34890)
+        # # ('r/politics', 224)
+        # # ('r/AskThe_Donald', 205)
+        # # ('r/Le_Pen', 188)
+        # # ('r/conspiracy', 140)
+        # # ('r/tucker_carlson', 115)
+        if topCount >= 1:
+            vs += "<br>" + v[0]
+        topCount -= 1
 
     sessionKey = 'blue'
     request.session[sessionKey] = vs

@@ -9,10 +9,7 @@ def main(request, xData=None):
     mi = clog.dumpMethodInfo()
     clog.logger.info(mi)
 
-    vs = request.session.get(xData, '')
-
-    vs += '<br><a href="http://localhost:8000/reddit/vbase/test">vbase.test</a>'
-    vs += '<br><b>vuser</b>:'
+    vs = '<b>vuser</b>:'
     vs += ' <a href="http://localhost:8000/reddit/vuser/list">list</a>'
     vs += ', <b>add</b>:'
     vs += ' <a href="http://localhost:8000/reddit/vuser/add/OldDevLearningLinux">OldDevLearningLinux</a>'
@@ -30,16 +27,19 @@ def main(request, xData=None):
     vs += ', <a href="http://localhost:8000/reddit/vthread/list/politics">Politics</a>'
 
     vs += '<br><b>vanalysis</b>:'
-    vs += ' <b>topUsersOf</b>:'
-    vs += ' <a href="http://localhost:8000/reddit/vanalysis/topUsersOf/The_Donald">The_Donald</a>'
-    vs += ' <a href="http://localhost:8000/reddit/vanalysis/topUsersOf/Molw">Molw</a>'
+    vs += ' <b>poiUsersOfSubreddit</b>:'
+    vs += ' <a href="http://localhost:8000/reddit/vanalysis/poiUsersOfSubreddit/The_Donald/500">The_Donald</a>'
+    # vs += ' <a href="http://localhost:8000/reddit/vanalysis/poiUsersOfSubreddit/Molw">Molw</a>'
 
     # vs += ', <a href="http://localhost:8000/reddit/vuser/delAll">delAll</a>'
     # vs += ', <a href="http://localhost:8000/reddit/vsubreddit/delAll">delAll</a>'
     # vs += '  <a href="http://localhost:8000/reddit/vthread/delAll">delAll</a>'
 
+    vs += displayDatabaseModelCounts()
+    vs += '<br><a href="http://localhost:8000/reddit/vbase/test">vbase.test</a>'
+    vs += '<BR>==========================='
 
-    vs += '<br>' + displayDatabaseModelCounts()
+    vs += '<br>' + request.session.get(xData, '')
     return HttpResponse(vs)
 
 # *****************************************************************************
@@ -54,8 +54,7 @@ def displayDatabaseModelCounts():
     subreddits              = msubreddit.objects.all().count()
     subreddits_si           = mthread.objects.filter(pdeleted=False).count()
     subreddits_si_deleted   = mthread.objects.filter(pdeleted=True).count()
-    s = ''
-    s += '<BR>==========================='
+    s = '<BR>==========================='
     s += '<BR>musers: ppoi = ' + str(users_poi)
     s += ', !ppoi = ' + str(users_notPoi)
     s += '<BR>mcomments = ' + str(users_ci)
@@ -64,7 +63,6 @@ def displayDatabaseModelCounts():
     s += '<BR>mthreads = ' + str(subreddits_si)
     s += ', deleted = ' + str(subreddits_si_deleted)
     s += '<BR>==========================='
-    s += '<BR>'
     return s
 
 # *****************************************************************************
