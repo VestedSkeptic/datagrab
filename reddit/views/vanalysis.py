@@ -11,7 +11,7 @@ def poiUsersOfSubreddit(request, subreddit, minNumComments):
     mi = clog.dumpMethodInfo()
     # clog.logger.info(mi)
 
-    vs = "vbase.vanalysis.poiUsersOfSubreddit: "
+    vs = mi
 
     prawReddit = msubreddit.getPrawRedditInstance()
     prawSubreddit = prawReddit.subreddit(subreddit)
@@ -64,7 +64,35 @@ def poiUsersOfSubreddit(request, subreddit, minNumComments):
 
 
 
+# # *****************************************************************************
+def moderatorsOfSubreddit(request, subreddit):
+    mi = clog.dumpMethodInfo()
+    # clog.logger.info(mi)
 
+    vs = mi
+
+    prawReddit = msubreddit.getPrawRedditInstance()
+    prawSubreddit = prawReddit.subreddit(subreddit)
+
+    for moderator in prawSubreddit.moderator():
+        # print('{}: {}'.format(moderator, moderator.mod_permissions))
+        # DatabaseCentral: ['wiki', 'posts', 'access', 'mail', 'config', 'flair']
+
+        # Add this user as poi
+        prawRedditor = prawReddit.redditor(moderator.name)
+        i_muser = muser.objects.addOrUpdate(prawRedditor)
+        i_muser.ppoi = True
+        i_muser.save()
+        if i_muser.addOrUpdateTempField == "new":
+            vs += "<br> added: " + moderator.name
+
+    # Get list of subreddits these mods also moderate
+    # Seems like there isn't an API endpoint for this in Reddit or Praw api.
+    # could manually scrape the page but nope not right now.
+
+    sessionKey = 'blue'
+    request.session[sessionKey] = vs
+    return redirect('vbase.main', xData=sessionKey)
 
 
 

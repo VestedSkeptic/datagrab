@@ -21,8 +21,8 @@ urlpatterns = [
     url(r'^vthread/delAll/$',                           vthread.delAll,                 name='vthread.delAll'),
     url(r'^vthread/list/(?P<subreddit>\w+)/$',          vthread.list,                   name='vthread.list'),
 
-    # url(r'^vanalysis/poiUsersOfSubreddit/(?P<subreddit>\w+)/$',  vanalysis.poiUsersOfSubreddit,           name='vanalysis.poiUsersOfSubreddit'),
     url(r'^vanalysis/poiUsersOfSubreddit/(?P<subreddit>\w+)/(?P<minNumComments>\w+)/$',  vanalysis.poiUsersOfSubreddit,           name='vanalysis.poiUsersOfSubreddit'),
+    url(r'^vanalysis/moderatorsOfSubreddit/(?P<subreddit>\w+)/$',  vanalysis.moderatorsOfSubreddit,           name='vanalysis.moderatorsOfSubreddit'),
 
 
 ]

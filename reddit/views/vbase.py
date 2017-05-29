@@ -27,9 +27,13 @@ def main(request, xData=None):
     vs += ', <a href="http://localhost:8000/reddit/vthread/list/politics">Politics</a>'
 
     vs += '<br><b>vanalysis</b>:'
-    vs += ' <b>poiUsersOfSubreddit</b>:'
+    vs += '<br><b>poiUsersOfSubreddit</b>:'
     vs += ' <a href="http://localhost:8000/reddit/vanalysis/poiUsersOfSubreddit/The_Donald/500">The_Donald</a>'
-    # vs += ' <a href="http://localhost:8000/reddit/vanalysis/poiUsersOfSubreddit/Molw">Molw</a>'
+    vs += '<br><b>moderatorsOfSubreddit</b>:'
+    vs += ' <a href="http://localhost:8000/reddit/vanalysis/moderatorsOfSubreddit/The_Donald">The_Donald</a>'
+
+
+
 
     # vs += ', <a href="http://localhost:8000/reddit/vuser/delAll">delAll</a>'
     # vs += ', <a href="http://localhost:8000/reddit/vsubreddit/delAll">delAll</a>'
