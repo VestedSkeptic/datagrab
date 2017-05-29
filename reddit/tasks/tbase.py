@@ -20,7 +20,7 @@ def getTaskC():
 # --------------------------------------------------------------------------
 def getMI(mi):
     rv = mi[:-2]
-    return rv.ljust(35,' ')  # max length of task name plus trailing paranthesis is 35
+    return rv.ljust(36,' ')  # max length of task name plus trailing paranthesis is 36
 
 # --------------------------------------------------------------------------
 def getTimeDif(ts):

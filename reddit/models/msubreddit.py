@@ -33,6 +33,7 @@ class msubreddit(mbase, models.Model):
     name                            = models.CharField(max_length=30)
     # properties
     ppoi                            = models.BooleanField(default=False)
+    precentlyupdatedthreads         = models.BooleanField(default=False)
     # Redditor fields
     raccounts_active_is_fuzzed      = models.BooleanField(default=False)
     rcollapse_deleted_comments      = models.BooleanField(default=False)

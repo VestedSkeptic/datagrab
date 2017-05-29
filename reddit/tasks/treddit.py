@@ -201,10 +201,35 @@ def TASK_updateThreadCommentsByForest(numberToProcess):
     clog.logger.info("%s %d new comments, %d old, %d oldChanged, %d deleted" % (getBaseC(mi, ts), countNew, countOldUnchanged, countOldChanged, countDeleted))
     return ""
 
+# --------------------------------------------------------------------------
+@task()
+def TASK_updateThreadsForAllSubreddits(subredditCount, forceAllToUpdate):
+    mi = clog.dumpMethodInfo()
+    ts = time.time()
 
+    # get subredditCount number of unprocessed subreddits
+    qs = msubreddit.objects.filter(ppoi=True).filter(precentlyupdatedthreads=False)[:subredditCount]
 
+    # If all subreddits have been recently processed
+    if qs.count() == 0 or forceAllToUpdate:
+        clog.logger.info("%s forceAllToUpdate [%d, %r]" % (getBaseP(mi), qs.count(), forceAllToUpdate))
 
+        # set that flag to false for all subreddits
+        qs = msubreddit.objects.filter(ppoi=True)
+        for i_msubreddit in qs:
+            i_msubreddit.precentlyupdatedthreads = False
+            i_msubreddit.save()
 
+        # Call task again
+        clog.logger.info("%s all subreddits precentlyupdatedthreads reset" % (getBaseC(mi, ts)))
+        TASK_updateThreadsForAllSubreddits.delay(subredditCount, False)
 
-
-
+    # otherwise process returned subreddits
+    else:
+        clog.logger.info("%s %d subreddits being processed" % (getBaseP(mi), qs.count()))
+        countOfTasksSpawned = 0
+        for i_msubreddit in qs:
+            TASK_updateThreadsForSubreddit.delay(i_msubreddit.name)
+            countOfTasksSpawned += 1
+        clog.logger.info("%s %d tasks spawned" % (getBaseC(mi, ts), countOfTasksSpawned))
+    return ""
