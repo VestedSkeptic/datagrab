@@ -3,8 +3,7 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from .mbase import mbase
 from ..config import clog
-# import praw
-# import pprint
+import pprint
 
 # *****************************************************************************
 class msubredditManager(models.Manager):
@@ -24,7 +23,7 @@ class msubredditManager(models.Manager):
             i_msubreddit.addRedditFields(prawSubreddit, redditFieldDict)
             i_msubreddit.addOrUpdateTempField = "new"
 
-        # clog.logger.debug("i_msubreddit = %s" % (pprint.pformat(vars(i_msubreddit))))
+        clog.logger.info("i_msubreddit = %s" % (pprint.pformat(vars(i_msubreddit))))
         i_msubreddit.save()
         return i_msubreddit
 
@@ -57,7 +56,7 @@ class msubreddit(mbase, models.Model):
     rid                             = models.CharField(max_length=12, default='', blank=True)
     rsubmission_type                = models.CharField(max_length=12, default='', blank=True)
     rsubreddit_type                 = models.CharField(max_length=12, default='', blank=True)
-    rtitle                          = models.CharField(max_length=36, default='', blank=True)
+    rtitle                          = models.CharField(max_length=101, default='', blank=True)
     rurl                            = models.CharField(max_length=40, default='', blank=True)
     rwhitelist_status               = models.CharField(max_length=24, default='', blank=True)
 

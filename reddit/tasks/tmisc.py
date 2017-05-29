@@ -83,27 +83,31 @@ def TASK_displayModelCounts():
     mi = clog.dumpMethodInfo()
     ts = time.time()
 
-    users_poi               = muser.objects.filter(ppoi=True).count()
+    users_poi_u             = muser.objects.filter(ppoi=True).filter(precentlyupdatedcomments=True).count()
+    users_poi_nu            = muser.objects.filter(ppoi=True).filter(precentlyupdatedcomments=False).count()
     users_notPoi            = muser.objects.filter(ppoi=False).count()
 
     comments_usersAdded     = mcomment.objects.filter(puseradded=True).count()
     comments_notUsersAdded  = mcomment.objects.filter(puseradded=False).count()
 
-    subreddits_poi          = msubreddit.objects.filter(ppoi=True).count()
+    subreddits_poi_u        = msubreddit.objects.filter(ppoi=True).filter(precentlyupdatedthreads=True).count()
+    subreddits_poi_nu       = msubreddit.objects.filter(ppoi=True).filter(precentlyupdatedthreads=False).count()
     subreddits_notPoi       = msubreddit.objects.filter(ppoi=False).count()
 
     threads_forestGot       = mthread.objects.filter(pforestgot=True).count()
     threads_notForestGot    = mthread.objects.filter(pforestgot=False).count()
 
     clog.logger.info("%s %s"    % (getBaseC(mi, ts), getLine()))
-    clog.logger.info("%s * %-21s %8d *" % (getBaseC(mi, ts), "Users  poi",              users_poi))
-    clog.logger.info("%s * %-21s %8d *" % (getBaseC(mi, ts), "Users !poi",              users_notPoi))
-    clog.logger.info("%s * %-21s %8d *" % (getBaseC(mi, ts), "Comments  users added",   comments_usersAdded))
-    clog.logger.info("%s * %-21s %8d *" % (getBaseC(mi, ts), "Comments !users added",   comments_notUsersAdded))
-    clog.logger.info("%s * %-21s %8d *" % (getBaseC(mi, ts), "Subreddits  poi",         subreddits_poi))
-    clog.logger.info("%s * %-21s %8d *" % (getBaseC(mi, ts), "Subreddits !poi",         subreddits_notPoi))
-    clog.logger.info("%s * %-21s %8d *" % (getBaseC(mi, ts), "Threads  forestGot",      threads_forestGot))
-    clog.logger.info("%s * %-21s %8d *" % (getBaseC(mi, ts), "Threads !forestGot",      threads_notForestGot))
+    clog.logger.info("%s * %-30s %8d *" % (getBaseC(mi, ts), "Users  poi updated",          users_poi_u))
+    clog.logger.info("%s * %-30s %8d *" % (getBaseC(mi, ts), "Users  poi !updated",         users_poi_nu))
+    clog.logger.info("%s * %-30s %8d *" % (getBaseC(mi, ts), "Users !poi",                  users_notPoi))
+    clog.logger.info("%s * %-30s %8d *" % (getBaseC(mi, ts), "Comments  users added",       comments_usersAdded))
+    clog.logger.info("%s * %-30s %8d *" % (getBaseC(mi, ts), "Comments !users added",       comments_notUsersAdded))
+    clog.logger.info("%s * %-30s %8d *" % (getBaseC(mi, ts), "Subreddits  poi updated",     subreddits_poi_u))
+    clog.logger.info("%s * %-30s %8d *" % (getBaseC(mi, ts), "Subreddits  poi !updated",    subreddits_poi_nu))
+    clog.logger.info("%s * %-30s %8d *" % (getBaseC(mi, ts), "Subreddits !poi",             subreddits_notPoi))
+    clog.logger.info("%s * %-30s %8d *" % (getBaseC(mi, ts), "Threads  forestGot",          threads_forestGot))
+    clog.logger.info("%s * %-30s %8d *" % (getBaseC(mi, ts), "Threads !forestGot",          threads_notForestGot))
     clog.logger.info("%s %s"    % (getBaseC(mi, ts), getLine()))
 
 

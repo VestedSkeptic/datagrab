@@ -134,6 +134,9 @@ def TASK_updateThreadsForSubreddit(subredditName):
         params['before'] = i_msubreddit.getThreadsBestBeforeValue(prawReddit)
         # clog.logger.info("before = %s" % (params['before']))
 
+        i_msubreddit.precentlyupdatedthreads =True
+        i_msubreddit.save()
+
         countNew = 0
         countOldUnchanged = 0
         countOldChanged = 0

@@ -172,7 +172,7 @@ class cLogger(object):
     # ref: https://docs.python.org/2/library/logging.html#logrecord-attributes
     # %(levelname).1s has a precision of 1 so that many characters
     def getFormatString(self):
-        return '%(asctime)-8s %(levelname).1s %(filename)-18s (line %(lineno)4s): %(message)s'
+        return '%(asctime)-8s %(levelname).1s %(filename)-15s (line %(lineno)4s): %(message)s'
 
     # --------------------------------------------------------------------------
     def getMethodPtr(self, loggingLevel):
