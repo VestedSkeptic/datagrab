@@ -49,18 +49,35 @@ def TASK_updateUsersForAllComments(numberToProcess):
 
 # --------------------------------------------------------------------------
 @task()
-def TASK_updateCommentsForAllUsers():
+def TASK_updateCommentsForAllUsers(userCount, forceAllToUpdate):
     mi = clog.dumpMethodInfo()
     ts = time.time()
 
-    clog.logger.info("%s" % (getBaseP(mi)))
-    qs = muser.objects.filter(ppoi=True)
-    countOfTasksSpawned = 0
-    for i_muser in qs:
-        TASK_updateCommentsForUser.delay(i_muser.name)
-        countOfTasksSpawned += 1
+    # get userCount number of unprocessed users
+    qs = muser.objects.filter(ppoi=True).filter(precentlyupdatedcomments=False)[:userCount]
 
-    clog.logger.info("%s %d tasks spawned" % (getBaseC(mi, ts), countOfTasksSpawned))
+    # If all users have been recently processed
+    if qs.count() == 0 or forceAllToUpdate:
+        clog.logger.info("%s forceAllToUpdate [%d, %r]" % (getBaseP(mi), qs.count(), forceAllToUpdate))
+
+        # set that flag to false for all users
+        qs = muser.objects.filter(ppoi=True)
+        for i_muser in qs:
+            i_muser.precentlyupdatedcomments = False
+            i_muser.save()
+
+        # Call task again
+        clog.logger.info("%s all users precentlyupdatedcomments reset" % (getBaseC(mi, ts)))
+        TASK_updateCommentsForAllUsers.delay(userCount, False)
+
+    # otherwise process returned users
+    else:
+        clog.logger.info("%s %d users being processed" % (getBaseP(mi), qs.count()))
+        countOfTasksSpawned = 0
+        for i_muser in qs:
+            TASK_updateCommentsForUser.delay(i_muser.name)
+            countOfTasksSpawned += 1
+        clog.logger.info("%s %d tasks spawned" % (getBaseC(mi, ts), countOfTasksSpawned))
     return ""
 
 # --------------------------------------------------------------------------
@@ -78,6 +95,9 @@ def TASK_updateCommentsForUser(username):
         params={};
         params['before'] = i_muser.getBestCommentBeforeValue(prawReddit)
         # clog.logger.info("before = %s" % (params['before']))
+
+        i_muser.precentlyupdatedcomments = True
+        i_muser.save()
 
         # iterate through submissions saving them
         countNew = 0
