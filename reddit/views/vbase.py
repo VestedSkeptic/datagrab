@@ -11,15 +11,11 @@ def main(request, xData=None):
 
     vs = '<b>vuser</b>:'
     vs += ' <a href="http://localhost:8000/reddit/vuser/list">list</a>'
-    vs += ', <b>add</b>:'
-    vs += ' <a href="http://localhost:8000/reddit/vuser/add/OldDevLearningLinux">OldDevLearningLinux</a>'
-    vs += ', <a href="http://localhost:8000/reddit/vuser/add/RoadsideBandit">RoadsideBandit</a>'
+    vs += ', <a href="http://localhost:8000/reddit/vuser/formNewPoiUser">add newPoiUser</a>'
 
     vs += '<br><b>vsubreddit</b>:'
     vs += ' <a href="http://localhost:8000/reddit/vsubreddit/list">list</a>'
-    vs += ' <b>add</b>: '
-    vs += ' <a href="http://localhost:8000/reddit/vsubreddit/add/Molw">Molw</a>'
-    vs += ', <a href="http://localhost:8000/reddit/vsubreddit/add/politics">Politics</a>'
+    # vs += ', <a href="http://localhost:8000/reddit/vsubreddit/newPoiSubreddit">add newPoiSubreddit</a>'
 
     vs += '<br><b>vthread</b>:'
     vs += ' <b>list</b>:'
