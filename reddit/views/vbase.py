@@ -15,7 +15,7 @@ def main(request, xData=None):
 
     vs += '<br><b>vsubreddit</b>:'
     vs += ' <a href="http://localhost:8000/reddit/vsubreddit/list">list</a>'
-    # vs += ', <a href="http://localhost:8000/reddit/vsubreddit/newPoiSubreddit">add newPoiSubreddit</a>'
+    vs += ', <a href="http://localhost:8000/reddit/vsubreddit/formNewPoiSubreddit">add newPoiSubreddit</a>'
 
     vs += '<br><b>vthread</b>:'
     vs += ' <b>list</b>:'

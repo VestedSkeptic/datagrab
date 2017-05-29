@@ -5,11 +5,6 @@ from .tmisc import TASK_template, TASK_inspectTaskQueue, TASK_displayModelCounts
 from .treddit import TASK_updateUsersForAllComments, TASK_updateCommentsForAllUsers, TASK_updateCommentsForUser, TASK_updateThreadsForSubreddit, TASK_updateThreadCommentsByForest
 from .ttest import TASK_testLogLevels, TASK_testForDuplicateUsers, TASK_testForDuplicateComments
 
-# CONST_MINUTE    = 60
-# CONST_HOUR      = 3600
-
-
-
 # --------------------------------------------------------------------------
 # can add expires parameter (in seconds)
 # Ex: sender.add_periodic_task(60.0,      TASK_template.s(), expires=10)
@@ -22,7 +17,7 @@ def setup_periodic_tasks(sender, **kwargs):
     # sender.add_periodic_task( 300.0,    TASK_inspectTaskQueue.s(), expires=120)
 
     sender.add_periodic_task( 120.0,    TASK_updateThreadCommentsByForest.s(30),                      expires=160)
-    sender.add_periodic_task( 300.0,    TASK_updateUsersForAllComments.s(200),                        expires=400)
+    sender.add_periodic_task( 300.0,    TASK_updateUsersForAllComments.s(00),                        expires=400)
     sender.add_periodic_task(1800.0,    TASK_updateThreadsForSubreddit.s('politics'),                 expires=2200)
     sender.add_periodic_task(1805.0,    TASK_updateThreadsForSubreddit.s('The_Donald'),               expires=2205)
     sender.add_periodic_task(1810.0,    TASK_updateThreadsForSubreddit.s('AskThe_Donald'),            expires=2210)
@@ -39,11 +34,6 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(3599.0,    TASK_displayModelCounts.s())
 
     pass
-
-
-    TASK_displayModelCounts
-
-
 
 # --------------------------------------------------------------------------
 @celery_app.on_after_finalize.connect
