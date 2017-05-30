@@ -14,9 +14,14 @@ CONST_USER_AGENT                    = "test app by /u/OldDevLearningLinux, ver 0
 
 # *****************************************************************************
 class mbase(models.Model):
+    # p_updatePriority                = models.IntegerField(default=0)
+    #
+    # class Meta:
+    #     abstract = True
+
+    # def __str__(self):
+    #     return format("mbase")
     pass
-    def __str__(self):
-        return format("mbase")
 
     # # -------------------------------------------------------------------------
     # @staticmethod

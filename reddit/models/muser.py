@@ -39,7 +39,8 @@ class muserManager(models.Manager):
         return i_muser
 
 # *****************************************************************************
-class muser(mbase, models.Model):
+# class muser(mbase, models.Model):
+class muser(mbase):
     name                        = models.CharField(max_length=30, db_index=True)
     # properties
     ppoi                        = models.BooleanField(default=False)

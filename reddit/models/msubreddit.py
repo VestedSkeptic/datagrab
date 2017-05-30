@@ -28,7 +28,8 @@ class msubredditManager(models.Manager):
         return i_msubreddit
 
 # *****************************************************************************
-class msubreddit(mbase, models.Model):
+# class msubreddit(mbase, models.Model):
+class msubreddit(mbase):
     name                            = models.CharField(max_length=30)
     # properties
     ppoi                            = models.BooleanField(default=False)

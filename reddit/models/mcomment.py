@@ -37,7 +37,8 @@ class mcommentManager(models.Manager):
         return i_mcomment
 
 # *****************************************************************************
-class mcomment(mbase, models.Model):
+# class mcomment(mbase, models.Model):
+class mcomment(mbase):
     name                        = models.CharField(max_length=12)
     thread                      = models.CharField(max_length=12)
     subreddit                   = models.CharField(max_length=12, db_index=True)

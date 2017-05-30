@@ -30,7 +30,8 @@ class mthreadManager(models.Manager):
         return i_mthread
 
 # *****************************************************************************
-class mthread(mbase, models.Model):
+# class mthread(mbase, models.Model):
+class mthread(mbase):
     subreddit       = models.ForeignKey(msubreddit, on_delete=models.CASCADE,)
     fullname        = models.CharField(max_length=12)
     # properties
