@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from ..config import clog
 from ..models import mcomment, msubreddit, mthread, muser
+from ..tasks.tmisc import TASK_generateModelCountData
 # import pprint
 
 # *****************************************************************************
@@ -11,11 +12,11 @@ def main(request, xData=None):
 
     vs = '<b>vuser</b>:'
     vs += ' <a href="http://localhost:8000/reddit/vuser/list">list</a>'
-    vs += ', <a href="http://localhost:8000/reddit/vuser/formNewPoiUser">add newPoiUser</a>'
+    vs += ', <b>add</b> <a href="http://localhost:8000/reddit/vuser/formNewPoiUser">newPoiUser</a>'
 
     vs += '<br><b>vsubreddit</b>:'
     vs += ' <a href="http://localhost:8000/reddit/vsubreddit/list">list</a>'
-    vs += ', <a href="http://localhost:8000/reddit/vsubreddit/formNewPoiSubreddit">add newPoiSubreddit</a>'
+    vs += ', <b>add</b> <a href="http://localhost:8000/reddit/vsubreddit/formNewPoiSubreddit">newPoiSubreddit</a>'
 
     vs += '<br><b>vthread</b>:'
     vs += ' <b>list</b>:'
@@ -23,10 +24,16 @@ def main(request, xData=None):
     vs += ', <a href="http://localhost:8000/reddit/vthread/list/politics">Politics</a>'
 
     vs += '<br><b>vanalysis</b>:'
-    vs += '<br><b>poiUsersOfSubreddit</b>:'
+    vs += '<br><b>poiUsersOf</b>:'
     vs += ' <a href="http://localhost:8000/reddit/vanalysis/poiUsersOfSubreddit/The_Donald/500">The_Donald</a>'
-    vs += '<br><b>moderatorsOfSubreddit</b>:'
+    vs += ', <a href="http://localhost:8000/reddit/vanalysis/poiUsersOfSubreddit/hardright/500">hardright</a>'
+    vs += ', <a href="http://localhost:8000/reddit/vanalysis/poiUsersOfSubreddit/politics/500">politics</a>'
+    vs += ', <a href="http://localhost:8000/reddit/vanalysis/poiUsersOfSubreddit/TheNewRight/500">TheNewRight</a>'
+    vs += '<br><b>moderatorsOf</b>:'
     vs += ' <a href="http://localhost:8000/reddit/vanalysis/moderatorsOfSubreddit/The_Donald">The_Donald</a>'
+    vs += ', <a href="http://localhost:8000/reddit/vanalysis/moderatorsOfSubreddit/hardright">hardright</a>'
+    vs += ', <a href="http://localhost:8000/reddit/vanalysis/moderatorsOfSubreddit/politics">politics</a>'
+    vs += ', <a href="http://localhost:8000/reddit/vanalysis/moderatorsOfSubreddit/TheNewRight">TheNewRight</a>'
 
 
 
@@ -37,7 +44,7 @@ def main(request, xData=None):
 
     vs += displayDatabaseModelCounts()
     vs += '<br><a href="http://localhost:8000/reddit/vbase/test">vbase.test</a>'
-    vs += '<BR>==========================='
+    vs += '<BR>============================'
 
     vs += '<br>' + request.session.get(xData, '')
     return HttpResponse(vs)
@@ -47,22 +54,15 @@ def displayDatabaseModelCounts():
     mi = clog.dumpMethodInfo()
     # clog.logger.info(mi)
 
-    users_poi               = muser.objects.filter(ppoi=True).count()
-    users_notPoi            = muser.objects.filter(ppoi=False).count()
-    users_ci                = mcomment.objects.filter(pdeleted=False).count()
-    users_ci_deleted        = mcomment.objects.filter(pdeleted=True).count()
-    subreddits              = msubreddit.objects.all().count()
-    subreddits_si           = mthread.objects.filter(pdeleted=False).count()
-    subreddits_si_deleted   = mthread.objects.filter(pdeleted=True).count()
-    s = '<BR>==========================='
-    s += '<BR>musers: ppoi = ' + str(users_poi)
-    s += ', !ppoi = ' + str(users_notPoi)
-    s += '<BR>mcomments = ' + str(users_ci)
-    s += ', deleted = ' + str(users_ci_deleted)
-    s += '<BR>msubreddits = ' + str(subreddits)
-    s += '<BR>mthreads = ' + str(subreddits_si)
-    s += ', deleted = ' + str(subreddits_si_deleted)
-    s += '<BR>==========================='
+    listOfModelCountStrings = TASK_generateModelCountData()
+
+    s = '<BR>============================'
+    s += '<font face="Courier New" color="green">'
+    for line in listOfModelCountStrings:
+        s += '<BR>'
+        s += line.replace(" ", "&nbsp;")
+    s += '</font>'
+    s += '<BR>============================'
     return s
 
 # *****************************************************************************
@@ -75,9 +75,6 @@ def test(request):
     sessionKey = 'blue'
     request.session[sessionKey] = vs
     return redirect('vbase.main', xData=sessionKey)
-
-
-
 
 
 

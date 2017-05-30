@@ -147,7 +147,7 @@ def TASK_updateCommentsForAllUsers(userCount, forceAllToUpdate):
 
     # If all users have been recently processed
     if qs.count() == 0 or forceAllToUpdate:
-        clog.logger.info("%s forceAllToUpdate [%d, %r]" % (getBaseP(mi), qs.count(), forceAllToUpdate))
+        clog.logger.info("%s forceAllToUpdate [%d, %r] ================================" % (getBaseP(mi), qs.count(), forceAllToUpdate))
 
         # set that flag to false for all users
         qs = muser.objects.filter(ppoi=True)
@@ -215,7 +215,7 @@ def TASK_updateThreadsForAllSubreddits(subredditCount, forceAllToUpdate):
 
     # If all subreddits have been recently processed
     if qs.count() == 0 or forceAllToUpdate:
-        clog.logger.info("%s forceAllToUpdate [%d, %r]" % (getBaseP(mi), qs.count(), forceAllToUpdate))
+        clog.logger.info("%s forceAllToUpdate [%d, %r] ================================" % (getBaseP(mi), qs.count(), forceAllToUpdate))
 
         # set that flag to false for all subreddits
         qs = msubreddit.objects.filter(ppoi=True)

@@ -76,12 +76,10 @@ def TASK_inspectTaskQueue():
         clog.logger.info("%s %s: %s" % (getBaseC(mi, ts), heartbeatTickString, "*** no pending tasks ***"))
     return ""
 
-
 # --------------------------------------------------------------------------
 @task()
-def TASK_displayModelCounts():
+def TASK_generateModelCountData():
     mi = clog.dumpMethodInfo()
-    ts = time.time()
 
     users_poi_u             = muser.objects.filter(ppoi=True).filter(precentlyupdated=True).count()
     users_poi_nu            = muser.objects.filter(ppoi=True).filter(precentlyupdated=False).count()
@@ -97,19 +95,32 @@ def TASK_displayModelCounts():
     threads_forestGot       = mthread.objects.filter(pforestgot=True).count()
     threads_notForestGot    = mthread.objects.filter(pforestgot=False).count()
 
+    listOfModelCountStrings = []
+
+    listOfModelCountStrings.append("%-30s %8d" % ("Users  poi  updated",         users_poi_u))
+    listOfModelCountStrings.append("%-30s %8d" % ("Users  poi !updated",         users_poi_nu))
+    listOfModelCountStrings.append("%-30s %8d" % ("Users !poi",                  users_notPoi))
+    listOfModelCountStrings.append("%-30s %8d" % ("Comments  users added",       comments_usersAdded))
+    listOfModelCountStrings.append("%-30s %8d" % ("Comments !users added",       comments_notUsersAdded))
+    listOfModelCountStrings.append("%-30s %8d" % ("Subreddits  poi  updated",    subreddits_poi_u))
+    listOfModelCountStrings.append("%-30s %8d" % ("Subreddits  poi !updated",    subreddits_poi_nu))
+    listOfModelCountStrings.append("%-30s %8d" % ("Subreddits !poi",             subreddits_notPoi))
+    listOfModelCountStrings.append("%-30s %8d" % ("Threads  forestGot",          threads_forestGot))
+    listOfModelCountStrings.append("%-30s %8d" % ("Threads !forestGot",          threads_notForestGot))
+
+    return listOfModelCountStrings
+
+# --------------------------------------------------------------------------
+@task()
+def TASK_displayModelCounts():
+    mi = clog.dumpMethodInfo()
+    ts = time.time()
+
+    listOfModelCountStrings = TASK_generateModelCountData()
+
     clog.logger.info("%s %s"    % (getBaseC(mi, ts), getLine()))
-    clog.logger.info("%s * %-30s %8d *" % (getBaseC(mi, ts), "Users  poi updated",          users_poi_u))
-    clog.logger.info("%s * %-30s %8d *" % (getBaseC(mi, ts), "Users  poi !updated",         users_poi_nu))
-    clog.logger.info("%s * %-30s %8d *" % (getBaseC(mi, ts), "Users !poi",                  users_notPoi))
-    clog.logger.info("%s * %-30s %8d *" % (getBaseC(mi, ts), "Comments  users added",       comments_usersAdded))
-    clog.logger.info("%s * %-30s %8d *" % (getBaseC(mi, ts), "Comments !users added",       comments_notUsersAdded))
-    clog.logger.info("%s * %-30s %8d *" % (getBaseC(mi, ts), "Subreddits  poi updated",     subreddits_poi_u))
-    clog.logger.info("%s * %-30s %8d *" % (getBaseC(mi, ts), "Subreddits  poi !updated",    subreddits_poi_nu))
-    clog.logger.info("%s * %-30s %8d *" % (getBaseC(mi, ts), "Subreddits !poi",             subreddits_notPoi))
-    clog.logger.info("%s * %-30s %8d *" % (getBaseC(mi, ts), "Threads  forestGot",          threads_forestGot))
-    clog.logger.info("%s * %-30s %8d *" % (getBaseC(mi, ts), "Threads !forestGot",          threads_notForestGot))
+    for line in listOfModelCountStrings:
+        # clog.logger.info("%s * %s *" % (getBaseC(mi, ts), line))
+        clog.logger.info("%s   %s  " % (getBaseC(mi, ts), line))
     clog.logger.info("%s %s"    % (getBaseC(mi, ts), getLine()))
-
-
-
-
+    return

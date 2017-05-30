@@ -12,7 +12,7 @@ def list(request):
     clog.logger.info(mi)
 
     vs = ''
-    qs = msubreddit.objects.all()
+    qs = msubreddit.objects.all().order_by('name')
     if qs.count() == 0:
         vs += "No items to list"
     for item in qs:

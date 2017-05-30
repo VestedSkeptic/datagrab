@@ -12,7 +12,7 @@ def list(request):
     clog.logger.info(mi)
 
     vs = ''
-    qs = muser.objects.filter(ppoi=True)
+    qs = muser.objects.filter(ppoi=True).order_by('name')
     if qs.count() == 0:
         vs += "No users to list"
     for item in qs:
