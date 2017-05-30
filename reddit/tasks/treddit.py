@@ -49,112 +49,6 @@ def TASK_updateUsersForAllComments(numberToProcess):
 
 # --------------------------------------------------------------------------
 @task()
-def TASK_updateCommentsForAllUsers(userCount, forceAllToUpdate):
-    mi = clog.dumpMethodInfo()
-    ts = time.time()
-
-    # get userCount number of unprocessed users
-    qs = muser.objects.filter(ppoi=True).filter(precentlyupdated=False)[:userCount]
-
-    # If all users have been recently processed
-    if qs.count() == 0 or forceAllToUpdate:
-        clog.logger.info("%s forceAllToUpdate [%d, %r]" % (getBaseP(mi), qs.count(), forceAllToUpdate))
-
-        # set that flag to false for all users
-        qs = muser.objects.filter(ppoi=True)
-        for i_muser in qs:
-            i_muser.precentlyupdated = False
-            i_muser.save()
-
-        # Call task again
-        clog.logger.info("%s all users precentlyupdated reset" % (getBaseC(mi, ts)))
-        TASK_updateCommentsForAllUsers.delay(userCount, False)
-
-    # otherwise process returned users
-    else:
-        clog.logger.info("%s %d users being processed" % (getBaseP(mi), qs.count()))
-        countOfTasksSpawned = 0
-        for i_muser in qs:
-            TASK_updateCommentsForUser.delay(i_muser.name)
-            countOfTasksSpawned += 1
-        clog.logger.info("%s %d tasks spawned" % (getBaseC(mi, ts), countOfTasksSpawned))
-    return ""
-
-# --------------------------------------------------------------------------
-@task()
-def TASK_updateCommentsForUser(username):
-    mi = clog.dumpMethodInfo()
-    ts = time.time()
-
-    try:
-        i_muser = muser.objects.get(name=username)
-        clog.logger.info("%s %s" % (getBaseP(mi), username))
-
-        prawReddit = i_muser.getPrawRedditInstance()
-
-        params={};
-        params['before'] = i_muser.getBestCommentBeforeValue(prawReddit)
-        # clog.logger.info("before = %s" % (params['before']))
-
-        i_muser.precentlyupdated = True
-        i_muser.save()
-
-        # iterate through submissions saving them
-        countNew = 0
-        countOldChanged = 0
-        countOldUnchanged = 0
-        try:
-            for prawComment in prawReddit.redditor(i_muser.name).comments.new(limit=None, params=params):
-                i_mcomment = mcomment.objects.addOrUpdate(i_muser.name, prawComment)
-                if i_mcomment.addOrUpdateTempField == "new":            countNew += 1
-                if i_mcomment.addOrUpdateTempField == "oldUnchanged":   countOldUnchanged += 1
-                if i_mcomment.addOrUpdateTempField == "oldChanged":     countOldChanged += 1
-                i_mcomment.puseradded = True
-                i_mcomment.save()
-        except praw.exceptions.APIException as e:
-            clog.logger.info("%s %s PRAW_APIException: error_type = %s, message = %s" % (getBaseC(mi, ts), username, e.error_type, e.message))
-        clog.logger.info("%s %s, %d new, %d old, %d oldChanged" % (getBaseC(mi, ts), username, countNew, countOldUnchanged, countOldChanged))
-    except ObjectDoesNotExist:
-        clog.logger.info("%s %s, %s" % (getBaseC(mi, ts), username, "ERROR does not exist"))
-    return ""
-
-# --------------------------------------------------------------------------
-@task()
-def TASK_updateThreadsForSubreddit(subredditName):
-    mi = clog.dumpMethodInfo()
-    ts = time.time()
-
-    try:
-        i_msubreddit = msubreddit.objects.get(name=subredditName)
-        clog.logger.info("%s %s" % (getBaseP(mi), subredditName))
-
-        prawReddit = i_msubreddit.getPrawRedditInstance()
-
-        params={};
-        params['before'] = i_msubreddit.getThreadsBestBeforeValue(prawReddit)
-        # clog.logger.info("before = %s" % (params['before']))
-
-        i_msubreddit.precentlyupdated =True
-        i_msubreddit.save()
-
-        countNew = 0
-        countOldUnchanged = 0
-        countOldChanged = 0
-        try:
-            for prawThread in prawReddit.subreddit(i_msubreddit.name).new(limit=None, params=params):
-                i_mthread = mthread.objects.addOrUpdate(i_msubreddit, prawThread)
-                if i_mthread.addOrUpdateTempField == "new":             countNew += 1
-                if i_mthread.addOrUpdateTempField == "oldUnchanged":    countOldUnchanged += 1
-                if i_mthread.addOrUpdateTempField == "oldChanged":      countOldChanged += 1
-        except praw.exceptions.APIException as e:
-            clog.logger.info("%s %s PRAW_APIException: error_type = %s, message = %s" % (getBaseC(mi, ts), subredditName, e.error_type, e.message))
-        clog.logger.info("%s %s: %d new, %d old, %d oldChanged" % (getBaseC(mi, ts), subredditName, countNew, countOldUnchanged, countOldChanged))
-    except ObjectDoesNotExist:
-        clog.logger.info("%s %s, %s" % (getBaseC(mi, ts), subredditName, "ERROR does not exist"))
-    return ""
-
-# --------------------------------------------------------------------------
-@task()
 def TASK_updateThreadCommentsByForest(numberToProcess):
     mi = clog.dumpMethodInfo()
     ts = time.time()
@@ -202,6 +96,112 @@ def TASK_updateThreadCommentsByForest(numberToProcess):
             break
 
     clog.logger.info("%s %d new comments, %d old, %d oldChanged, %d deleted" % (getBaseC(mi, ts), countNew, countOldUnchanged, countOldChanged, countDeleted))
+    return ""
+
+# --------------------------------------------------------------------------
+@task()
+def TASK_updateCommentsForUser(username):
+    mi = clog.dumpMethodInfo()
+    ts = time.time()
+
+    try:
+        i_muser = muser.objects.get(name=username)
+        clog.logger.info("%s %s" % (getBaseP(mi), username))
+
+        prawReddit = i_muser.getPrawRedditInstance()
+
+        params={};
+        params['before'] = i_muser.getBestCommentBeforeValue(prawReddit)
+        # clog.logger.info("before = %s" % (params['before']))
+
+        i_muser.precentlyupdated = True
+        i_muser.save()
+
+        # iterate through submissions saving them
+        countNew = 0
+        countOldChanged = 0
+        countOldUnchanged = 0
+        try:
+            for prawComment in prawReddit.redditor(i_muser.name).comments.new(limit=None, params=params):
+                i_mcomment = mcomment.objects.addOrUpdate(i_muser.name, prawComment)
+                if i_mcomment.addOrUpdateTempField == "new":            countNew += 1
+                if i_mcomment.addOrUpdateTempField == "oldUnchanged":   countOldUnchanged += 1
+                if i_mcomment.addOrUpdateTempField == "oldChanged":     countOldChanged += 1
+                i_mcomment.puseradded = True
+                i_mcomment.save()
+        except praw.exceptions.APIException as e:
+            clog.logger.info("%s %s PRAW_APIException: error_type = %s, message = %s" % (getBaseC(mi, ts), username, e.error_type, e.message))
+        clog.logger.info("%s %s, %d new, %d old, %d oldChanged" % (getBaseC(mi, ts), username, countNew, countOldUnchanged, countOldChanged))
+    except ObjectDoesNotExist:
+        clog.logger.info("%s %s, %s" % (getBaseC(mi, ts), username, "ERROR does not exist"))
+    return ""
+
+# --------------------------------------------------------------------------
+@task()
+def TASK_updateCommentsForAllUsers(userCount, forceAllToUpdate):
+    mi = clog.dumpMethodInfo()
+    ts = time.time()
+
+    # get userCount number of unprocessed users
+    qs = muser.objects.filter(ppoi=True).filter(precentlyupdated=False)[:userCount]
+
+    # If all users have been recently processed
+    if qs.count() == 0 or forceAllToUpdate:
+        clog.logger.info("%s forceAllToUpdate [%d, %r]" % (getBaseP(mi), qs.count(), forceAllToUpdate))
+
+        # set that flag to false for all users
+        qs = muser.objects.filter(ppoi=True)
+        for i_muser in qs:
+            i_muser.precentlyupdated = False
+            i_muser.save()
+
+        # Call task again
+        clog.logger.info("%s all users precentlyupdated reset" % (getBaseC(mi, ts)))
+        TASK_updateCommentsForAllUsers.delay(userCount, False)
+
+    # otherwise process returned users
+    else:
+        clog.logger.info("%s %d users being processed" % (getBaseP(mi), qs.count()))
+        countOfTasksSpawned = 0
+        for i_muser in qs:
+            TASK_updateCommentsForUser.delay(i_muser.name)
+            countOfTasksSpawned += 1
+        clog.logger.info("%s %d tasks spawned" % (getBaseC(mi, ts), countOfTasksSpawned))
+    return ""
+
+# --------------------------------------------------------------------------
+@task()
+def TASK_updateThreadsForSubreddit(subredditName):
+    mi = clog.dumpMethodInfo()
+    ts = time.time()
+
+    try:
+        i_msubreddit = msubreddit.objects.get(name=subredditName)
+        clog.logger.info("%s %s" % (getBaseP(mi), subredditName))
+
+        prawReddit = i_msubreddit.getPrawRedditInstance()
+
+        params={};
+        params['before'] = i_msubreddit.getThreadsBestBeforeValue(prawReddit)
+        # clog.logger.info("before = %s" % (params['before']))
+
+        i_msubreddit.precentlyupdated =True
+        i_msubreddit.save()
+
+        countNew = 0
+        countOldUnchanged = 0
+        countOldChanged = 0
+        try:
+            for prawThread in prawReddit.subreddit(i_msubreddit.name).new(limit=None, params=params):
+                i_mthread = mthread.objects.addOrUpdate(i_msubreddit, prawThread)
+                if i_mthread.addOrUpdateTempField == "new":             countNew += 1
+                if i_mthread.addOrUpdateTempField == "oldUnchanged":    countOldUnchanged += 1
+                if i_mthread.addOrUpdateTempField == "oldChanged":      countOldChanged += 1
+        except praw.exceptions.APIException as e:
+            clog.logger.info("%s %s PRAW_APIException: error_type = %s, message = %s" % (getBaseC(mi, ts), subredditName, e.error_type, e.message))
+        clog.logger.info("%s %s: %d new, %d old, %d oldChanged" % (getBaseC(mi, ts), subredditName, countNew, countOldUnchanged, countOldChanged))
+    except ObjectDoesNotExist:
+        clog.logger.info("%s %s, %s" % (getBaseC(mi, ts), subredditName, "ERROR does not exist"))
     return ""
 
 # --------------------------------------------------------------------------
