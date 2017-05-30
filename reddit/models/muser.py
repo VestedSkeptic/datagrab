@@ -43,7 +43,7 @@ class muser(mbase, models.Model):
     name                        = models.CharField(max_length=30, db_index=True)
     # properties
     ppoi                        = models.BooleanField(default=False)
-    precentlyupdatedcomments    = models.BooleanField(default=False)
+    precentlyupdated            = models.BooleanField(default=False)
     # Redditor fields
     r_path                      = models.CharField(max_length=40, default='', blank=True)
 

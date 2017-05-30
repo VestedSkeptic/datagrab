@@ -83,15 +83,15 @@ def TASK_displayModelCounts():
     mi = clog.dumpMethodInfo()
     ts = time.time()
 
-    users_poi_u             = muser.objects.filter(ppoi=True).filter(precentlyupdatedcomments=True).count()
-    users_poi_nu            = muser.objects.filter(ppoi=True).filter(precentlyupdatedcomments=False).count()
+    users_poi_u             = muser.objects.filter(ppoi=True).filter(precentlyupdated=True).count()
+    users_poi_nu            = muser.objects.filter(ppoi=True).filter(precentlyupdated=False).count()
     users_notPoi            = muser.objects.filter(ppoi=False).count()
 
     comments_usersAdded     = mcomment.objects.filter(puseradded=True).count()
     comments_notUsersAdded  = mcomment.objects.filter(puseradded=False).count()
 
-    subreddits_poi_u        = msubreddit.objects.filter(ppoi=True).filter(precentlyupdatedthreads=True).count()
-    subreddits_poi_nu       = msubreddit.objects.filter(ppoi=True).filter(precentlyupdatedthreads=False).count()
+    subreddits_poi_u        = msubreddit.objects.filter(ppoi=True).filter(precentlyupdated=True).count()
+    subreddits_poi_nu       = msubreddit.objects.filter(ppoi=True).filter(precentlyupdated=False).count()
     subreddits_notPoi       = msubreddit.objects.filter(ppoi=False).count()
 
     threads_forestGot       = mthread.objects.filter(pforestgot=True).count()

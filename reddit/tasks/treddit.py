@@ -54,7 +54,7 @@ def TASK_updateCommentsForAllUsers(userCount, forceAllToUpdate):
     ts = time.time()
 
     # get userCount number of unprocessed users
-    qs = muser.objects.filter(ppoi=True).filter(precentlyupdatedcomments=False)[:userCount]
+    qs = muser.objects.filter(ppoi=True).filter(precentlyupdated=False)[:userCount]
 
     # If all users have been recently processed
     if qs.count() == 0 or forceAllToUpdate:
@@ -63,11 +63,11 @@ def TASK_updateCommentsForAllUsers(userCount, forceAllToUpdate):
         # set that flag to false for all users
         qs = muser.objects.filter(ppoi=True)
         for i_muser in qs:
-            i_muser.precentlyupdatedcomments = False
+            i_muser.precentlyupdated = False
             i_muser.save()
 
         # Call task again
-        clog.logger.info("%s all users precentlyupdatedcomments reset" % (getBaseC(mi, ts)))
+        clog.logger.info("%s all users precentlyupdated reset" % (getBaseC(mi, ts)))
         TASK_updateCommentsForAllUsers.delay(userCount, False)
 
     # otherwise process returned users
@@ -96,7 +96,7 @@ def TASK_updateCommentsForUser(username):
         params['before'] = i_muser.getBestCommentBeforeValue(prawReddit)
         # clog.logger.info("before = %s" % (params['before']))
 
-        i_muser.precentlyupdatedcomments = True
+        i_muser.precentlyupdated = True
         i_muser.save()
 
         # iterate through submissions saving them
@@ -134,7 +134,7 @@ def TASK_updateThreadsForSubreddit(subredditName):
         params['before'] = i_msubreddit.getThreadsBestBeforeValue(prawReddit)
         # clog.logger.info("before = %s" % (params['before']))
 
-        i_msubreddit.precentlyupdatedthreads =True
+        i_msubreddit.precentlyupdated =True
         i_msubreddit.save()
 
         countNew = 0
@@ -211,7 +211,7 @@ def TASK_updateThreadsForAllSubreddits(subredditCount, forceAllToUpdate):
     ts = time.time()
 
     # get subredditCount number of unprocessed subreddits
-    qs = msubreddit.objects.filter(ppoi=True).filter(precentlyupdatedthreads=False)[:subredditCount]
+    qs = msubreddit.objects.filter(ppoi=True).filter(precentlyupdated=False)[:subredditCount]
 
     # If all subreddits have been recently processed
     if qs.count() == 0 or forceAllToUpdate:
@@ -220,11 +220,11 @@ def TASK_updateThreadsForAllSubreddits(subredditCount, forceAllToUpdate):
         # set that flag to false for all subreddits
         qs = msubreddit.objects.filter(ppoi=True)
         for i_msubreddit in qs:
-            i_msubreddit.precentlyupdatedthreads = False
+            i_msubreddit.precentlyupdated = False
             i_msubreddit.save()
 
         # Call task again
-        clog.logger.info("%s all subreddits precentlyupdatedthreads reset" % (getBaseC(mi, ts)))
+        clog.logger.info("%s all subreddits precentlyupdated reset" % (getBaseC(mi, ts)))
         TASK_updateThreadsForAllSubreddits.delay(subredditCount, False)
 
     # otherwise process returned subreddits
