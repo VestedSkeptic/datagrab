@@ -33,6 +33,11 @@ class msubreddit(mbase, models.Model):
     # properties
     ppoi                            = models.BooleanField(default=False)
     precentlyupdated                = models.BooleanField(default=False)
+
+#   priority level
+#   timestamp of update
+
+
     # Redditor fields
     raccounts_active_is_fuzzed      = models.BooleanField(default=False)
     rcollapse_deleted_comments      = models.BooleanField(default=False)
