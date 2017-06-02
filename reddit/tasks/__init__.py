@@ -15,7 +15,7 @@ def setup_periodic_tasks(sender, **kwargs):
 
     sender.add_periodic_task( 120.0,    TASK_inspectTaskQueue.s(), expires=120)
     sender.add_periodic_task( 300.0,    TASK_displayModelCounts.s())
-    sender.add_periodic_task( 180.0,    TASK_updateCommentsForAllUsers.s(2, False),         expires=358)
+    sender.add_periodic_task( 180.0,    TASK_updateCommentsForAllUsers.s(5, False),         expires=358)
     sender.add_periodic_task( 300.0,    TASK_updateThreadsForAllSubreddits.s(2, False),     expires=718)
 
     sender.add_periodic_task( 120.0,    TASK_updateThreadCommentsByForest.s(30),            expires=238)
