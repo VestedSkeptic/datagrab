@@ -1,0 +1,30 @@
+{% comment %}
+[<a href="https://www.reddit.com/r/{{i_muser.name}}">new</a>]
+[<a href="http://localhost:8000/reddit/vanalysis/moderatorsOfSubreddit/{{i_muser.name}}">+ mods</a>]
+[<a href="http://localhost:8000/reddit/vanalysis/poiUsersOfSubreddit/{{i_muser.name}}/200">+ poi</a>]
+[<a href="http://localhost:8000/reddit/vthread/list/{{i_muser.name}}">threads</a>]
+{% endcomment %}
+
+<table style="width:100%">
+ <tr>
+   <th>Links</th>
+   <th>Results</th>
+ </tr>
+ <tr>
+   <td>
+     {% for i_muser in users %}
+         {{i_muser.pcommentsupdatetimestamp|date:'m/d H:i'}}
+         &nbsp;#NoChngs:
+         {{i_muser.pupdateswithnochanges}},
+         &nbsp;Pri:
+         {{i_muser.pprioritylevel}},
+         &nbsp;New:
+         {{i_muser.pcountnew}},
+         &nbsp;
+         {{i_muser.name}}
+         <br>
+     {% endfor %}
+   </td>
+   <td>{{rightCol}}</td>
+ </tr>
+</table>

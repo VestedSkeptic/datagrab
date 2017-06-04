@@ -114,8 +114,9 @@ def TASK_updateCommentsForUser(username):
         params['before'] = i_muser.getBestCommentBeforeValue(prawReddit)
         # clog.logger.info("before = %s" % (params['before']))
 
-        i_muser.precentlyupdated = True
-        i_muser.save()
+        # Moved below try statement using new i_msubreddit.threadsUpdated() method
+        # i_muser.precentlyupdated = True
+        # i_muser.save()
 
         # iterate through submissions saving them
         countNew = 0
@@ -135,38 +136,48 @@ def TASK_updateCommentsForUser(username):
         beforeWarningString = ' [before]'
         if countNew == 0 and params['before'] != '':
             beforeWarningString = ' [** %s **]' % (params['before'])
-
         clog.logger.info("%s %s %d new, %d old, %d oldC %s" % (getBaseC(mi, ts), username, countNew, countOldUnchanged, countOldChanged, beforeWarningString))
+
+        i_muser.commentsUpdated(countNew, countOldUnchanged, countOldChanged)
     except ObjectDoesNotExist:
         clog.logger.info("%s %s %s" % (getBaseC(mi, ts), username, "ERROR does not exist"))
     return ""
 
 # --------------------------------------------------------------------------
 @task()
-def TASK_updateCommentsForAllUsers(userCount, forceAllToUpdate):
+# def TASK_updateCommentsForAllUsers(userCount, forceAllToUpdate):
+def TASK_updateCommentsForAllUsers(userCount, priority):
     mi = clog.dumpMethodInfo()
     ts = time.time()
 
     # get userCount number of unprocessed users
-    qs = muser.objects.filter(ppoi=True).filter(precentlyupdated=False)[:userCount]
+    # qs = muser.objects.filter(ppoi=True).filter(precentlyupdated=False)[:userCount]
+    qs = muser.objects.filter(ppoi=True).filter(precentlyupdated=False).filter(pprioritylevel=priority).order_by('name','pcommentsupdatetimestamp')[:userCount]
+
 
     # If all users have been recently processed
-    if qs.count() == 0 or forceAllToUpdate:
-        clog.logger.info("%s forceAllToUpdate [%d, %r] ================================" % (getBaseP(mi), qs.count(), forceAllToUpdate))
+    # if qs.count() == 0 or forceAllToUpdate:
+    if qs.count() == 0:
+        # clog.logger.info("%s forceAllToUpdate [%d, %r] ================================" % (getBaseP(mi), qs.count(), forceAllToUpdate))
+        clog.logger.info("%s forceAllToUpdate ================================, priority = %d" % (getBaseP(mi), priority))
 
         # set that flag to false for all users
-        qs = muser.objects.filter(ppoi=True)
+        qs = muser.objects.filter(ppoi=True).filter(pprioritylevel=priority)
         for i_muser in qs:
             i_muser.precentlyupdated = False
             i_muser.save()
 
         # Call task again
-        clog.logger.info("%s all users precentlyupdated reset" % (getBaseC(mi, ts)))
-        TASK_updateCommentsForAllUsers.delay(userCount, False)
+        if qs.count() > 0:
+            clog.logger.info("%s all users precentlyupdated reset, priority = %d" % (getBaseC(mi, ts), priority))
+            TASK_updateCommentsForAllUsers.delay(userCount, priority)
+        else:
+            clog.logger.info("%s zero users precentlyupdated reset, priority = %d" % (getBaseC(mi, ts), priority))
+
 
     # otherwise process returned users
     else:
-        clog.logger.info("%s %d users being processed" % (getBaseP(mi), qs.count()))
+        clog.logger.info("%s %d users being processed, priority = %d" % (getBaseP(mi), qs.count(), priority))
         countOfTasksSpawned = 0
         for i_muser in qs:
             TASK_updateCommentsForUser.delay(i_muser.name)
@@ -190,7 +201,7 @@ def TASK_updateThreadsForSubreddit(subredditName):
         params['before'] = i_msubreddit.getThreadsBestBeforeValue(prawReddit)
         # clog.logger.info("before = %s" % (params['before']))
 
-        # Moved below try statement using new i_msubreddit.threadUpdated() method
+        # Moved below try statement using new i_msubreddit.threadsUpdated() method
         # i_msubreddit.precentlyupdated =True
         # i_msubreddit.save()
 
@@ -206,7 +217,8 @@ def TASK_updateThreadsForSubreddit(subredditName):
         except praw.exceptions.APIException as e:
             clog.logger.info("%s %s PRAW_APIException: error_type = %s, message = %s" % (getBaseC(mi, ts), subredditName, e.error_type, e.message))
         clog.logger.info("%s %s: %d new, %d old, %d oldChanged" % (getBaseC(mi, ts), subredditName, countNew, countOldUnchanged, countOldChanged))
-        i_msubreddit.threadUpdated(countNew, countOldUnchanged, countOldChanged)
+
+        i_msubreddit.threadsUpdated(countNew, countOldUnchanged, countOldChanged)
     except ObjectDoesNotExist:
         clog.logger.info("%s %s, %s" % (getBaseC(mi, ts), subredditName, "ERROR does not exist"))
     return ""
@@ -217,7 +229,7 @@ def TASK_updateThreadsForAllSubreddits(subredditCount, priority):
     mi = clog.dumpMethodInfo()
     ts = time.time()
 
-    qs = msubreddit.objects.filter(ppoi=True).filter(precentlyupdated=False).filter(pprioritylevel=priority).order_by('name','pupdateswithnochanges')[:subredditCount]
+    qs = msubreddit.objects.filter(ppoi=True).filter(precentlyupdated=False).filter(pprioritylevel=priority).order_by('name','pthreadupdatetimestamp')[:subredditCount]
 
     # If all subreddits have been recently processed
     if qs.count() == 0:
@@ -234,7 +246,7 @@ def TASK_updateThreadsForAllSubreddits(subredditCount, priority):
             clog.logger.info("%s %d subreddits precentlyupdated reset, priority = %d" % (getBaseC(mi, ts), qs.count(), priority))
             TASK_updateThreadsForAllSubreddits.delay(subredditCount, priority)
         else:
-            clog.logger.info("%s zero subreddits precentlyupdated reset, priority = %d" % (getBaseC(mi, ts), qs.count(), priority))
+            clog.logger.info("%s zero subreddits precentlyupdated reset, priority = %d" % (getBaseC(mi, ts), priority))
 
     # otherwise process returned subreddits
     else:

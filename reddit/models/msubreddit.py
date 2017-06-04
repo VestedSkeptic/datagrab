@@ -41,12 +41,6 @@ class msubreddit(mbase):
     pcountnew                       = models.IntegerField(default=0)
     pcountOldUnchanged              = models.IntegerField(default=0)
     pcountOldChanged                = models.IntegerField(default=0)
-
-
-
-#   timestamp of update
-
-
     # Redditor fields
     raccounts_active_is_fuzzed      = models.BooleanField(default=False)
     rcollapse_deleted_comments      = models.BooleanField(default=False)
@@ -140,9 +134,8 @@ class msubreddit(mbase):
         # clog.logger.info("METHOD NOT COMPLETED")
         return ''
 
-
     # --------------------------------------------------------------------------
-    def threadUpdated(self, countNew, countOldUnchanged, countOldChanged):
+    def threadsUpdated(self, countNew, countOldUnchanged, countOldChanged):
         mi = clog.dumpMethodInfo()
         self.precentlyupdated =True
 

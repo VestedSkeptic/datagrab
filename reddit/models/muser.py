@@ -3,6 +3,7 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from .mbase import mbase
 from ..config import clog
+from datetime import datetime
 import praw
 # import pprint
 
@@ -45,6 +46,12 @@ class muser(mbase):
     # properties
     ppoi                        = models.BooleanField(default=False)
     precentlyupdated            = models.BooleanField(default=False)
+    pprioritylevel              = models.IntegerField(default=0)
+    pcommentsupdatetimestamp    = models.DateTimeField(default=datetime(2000, 1, 1, 1, 0, 0))
+    pupdateswithnochanges       = models.IntegerField(default=0)
+    pcountnew                   = models.IntegerField(default=0)
+    pcountOldUnchanged          = models.IntegerField(default=0)
+    pcountOldChanged            = models.IntegerField(default=0)
     # Redditor fields
     r_path                      = models.CharField(max_length=40, default='', blank=True)
 
@@ -95,6 +102,30 @@ class muser(mbase):
                 clog.logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
 
         return youngestRV
+
+    # --------------------------------------------------------------------------
+    def commentsUpdated(self, countNew, countOldUnchanged, countOldChanged):
+        mi = clog.dumpMethodInfo()
+        self.precentlyupdated =True
+
+        if countNew > 0:
+            self.pprioritylevel -= 1
+            self.pupdateswithnochanges = 0
+            if self.pprioritylevel < 0:
+                self.pprioritylevel = 0;
+        else:
+            self.pprioritylevel += 1
+            self.pupdateswithnochanges += 1
+            if self.pprioritylevel > 2:
+                self.pprioritylevel = 2;
+
+        self.pcountnew          = countNew
+        self.pcountOldUnchanged = countOldUnchanged
+        self.pcountOldChanged   = countOldChanged
+
+        self.pcommentsupdatetimestamp = datetime.now()
+        self.save()
+        return
 
 # # ----------------------------------------------------------------------------
 # # REDDITOR attributes

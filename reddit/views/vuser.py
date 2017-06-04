@@ -1,27 +1,19 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils.safestring import mark_safe
 from ..config import clog
 from ..models import muser
 from ..forms import fuser
 # import pprint
 
 # *****************************************************************************
-def list(request):
+def list(request, xData=None):
     mi = clog.dumpMethodInfo()
     clog.logger.info(mi)
 
-    vs = ''
     qs = muser.objects.filter(ppoi=True).order_by('name')
-    if qs.count() == 0:
-        vs += "No users to list"
-    for item in qs:
-        vs += item.name + ", "
-
-    clog.logger.info(vs)
-    sessionKey = 'blue'
-    request.session[sessionKey] = vs
-    return redirect('vbase.main', xData=sessionKey)
+    return render(request, 'vuser_list.html', {'users': qs, 'rightCol': mark_safe(request.session.get(xData, ''))})
 
 # *****************************************************************************
 def delAll(request):

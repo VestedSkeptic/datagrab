@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^vbase/test/$',                               vbase.test,                         name='vbase.test'),
 
     url(r'^vuser/list/$',                               vuser.list,                         name='vuser.list'),
+    url(r'^vuser/list/xData/(?P<xData>\w+)/$',          vuser.list,                         name='vuser.list'),
     url(r'^vuser/formNewPoiUser/$',                     vuser.formNewPoiUser,               name='vuser.formNewPoiUser'),
 
     url(r'^vsubreddit/list/$',                          vsubreddit.list,                    name='vsubreddit.list'),
