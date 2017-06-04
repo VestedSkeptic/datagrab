@@ -190,8 +190,9 @@ def TASK_updateThreadsForSubreddit(subredditName):
         params['before'] = i_msubreddit.getThreadsBestBeforeValue(prawReddit)
         # clog.logger.info("before = %s" % (params['before']))
 
-        i_msubreddit.precentlyupdated =True
-        i_msubreddit.save()
+        # Moved below try statement using new i_msubreddit.threadUpdated() method
+        # i_msubreddit.precentlyupdated =True
+        # i_msubreddit.save()
 
         countNew = 0
         countOldUnchanged = 0
@@ -205,36 +206,39 @@ def TASK_updateThreadsForSubreddit(subredditName):
         except praw.exceptions.APIException as e:
             clog.logger.info("%s %s PRAW_APIException: error_type = %s, message = %s" % (getBaseC(mi, ts), subredditName, e.error_type, e.message))
         clog.logger.info("%s %s: %d new, %d old, %d oldChanged" % (getBaseC(mi, ts), subredditName, countNew, countOldUnchanged, countOldChanged))
+        i_msubreddit.threadUpdated(countNew, countOldUnchanged, countOldChanged)
     except ObjectDoesNotExist:
         clog.logger.info("%s %s, %s" % (getBaseC(mi, ts), subredditName, "ERROR does not exist"))
     return ""
 
 # --------------------------------------------------------------------------
 @task()
-def TASK_updateThreadsForAllSubreddits(subredditCount, forceAllToUpdate):
+def TASK_updateThreadsForAllSubreddits(subredditCount, priority):
     mi = clog.dumpMethodInfo()
     ts = time.time()
 
-    # get subredditCount number of unprocessed subreddits
-    qs = msubreddit.objects.filter(ppoi=True).filter(precentlyupdated=False)[:subredditCount]
+    qs = msubreddit.objects.filter(ppoi=True).filter(precentlyupdated=False).filter(pprioritylevel=priority).order_by('name','pupdateswithnochanges')[:subredditCount]
 
     # If all subreddits have been recently processed
-    if qs.count() == 0 or forceAllToUpdate:
-        clog.logger.info("%s forceAllToUpdate [%d, %r] ================================" % (getBaseP(mi), qs.count(), forceAllToUpdate))
+    if qs.count() == 0:
+        clog.logger.info("%s forceAllToUpdate ================================, priority = %d" % (getBaseP(mi), priority))
 
         # set that flag to false for all subreddits
-        qs = msubreddit.objects.filter(ppoi=True)
+        qs = msubreddit.objects.filter(ppoi=True).filter(pprioritylevel=priority)
         for i_msubreddit in qs:
             i_msubreddit.precentlyupdated = False
             i_msubreddit.save()
 
         # Call task again
-        clog.logger.info("%s all subreddits precentlyupdated reset" % (getBaseC(mi, ts)))
-        TASK_updateThreadsForAllSubreddits.delay(subredditCount, False)
+        if qs.count() > 0:
+            clog.logger.info("%s %d subreddits precentlyupdated reset, priority = %d" % (getBaseC(mi, ts), qs.count(), priority))
+            TASK_updateThreadsForAllSubreddits.delay(subredditCount, priority)
+        else:
+            clog.logger.info("%s zero subreddits precentlyupdated reset, priority = %d" % (getBaseC(mi, ts), qs.count(), priority))
 
     # otherwise process returned subreddits
     else:
-        clog.logger.info("%s %d subreddits being processed" % (getBaseP(mi), qs.count()))
+        clog.logger.info("%s %d subreddits being processed, priority = %d" % (getBaseP(mi), qs.count(), priority))
         countOfTasksSpawned = 0
         for i_msubreddit in qs:
             TASK_updateThreadsForSubreddit.delay(i_msubreddit.name)

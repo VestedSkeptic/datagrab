@@ -10,12 +10,17 @@
    <td>
      {% for i_msubreddit in subreddits %}
          [<a href="https://www.reddit.com/r/{{i_msubreddit.name}}">new</a>]
+         [<a href="http://localhost:8000/reddit/vanalysis/moderatorsOfSubreddit/{{i_msubreddit.name}}">+ mods</a>]
+         [<a href="http://localhost:8000/reddit/vanalysis/poiUsersOfSubreddit/{{i_msubreddit.name}}/200">+ poi</a>]
+         [<a href="http://localhost:8000/reddit/vthread/list/{{i_msubreddit.name}}">threads</a>]
          &nbsp;
-         [<a href="http://localhost:8000/reddit/vanalysis/moderatorsOfSubreddit/{{i_msubreddit.name}}">addMods</a>]
-         &nbsp;
-         [<a href="http://localhost:8000/reddit/vanalysis/poiUsersOfSubreddit/{{i_msubreddit.name}}/200">addPoiUsers</a>]
-         &nbsp;
-         [<a href="http://localhost:8000/reddit/vthread/list/{{i_msubreddit.name}}">list threads</a>]
+         {{i_msubreddit.pthreadupdatetimestamp|date:'m/d H:i'}}
+         &nbsp;#NoChngs:
+         {{i_msubreddit.pupdateswithnochanges}},
+         &nbsp;Pri:
+         {{i_msubreddit.pprioritylevel}},
+         &nbsp;New:
+         {{i_msubreddit.pcountnew}},
          &nbsp;
          {{i_msubreddit.name}}
          <br>
