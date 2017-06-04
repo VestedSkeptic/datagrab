@@ -49,20 +49,13 @@ def poiUsersOfSubreddit(request, subreddit, minNumComments):
         # print(v)
         # # ('r/The_Donald', 34890)
         # # ('r/politics', 224)
-        # # ('r/AskThe_Donald', 205)
-        # # ('r/Le_Pen', 188)
-        # # ('r/conspiracy', 140)
-        # # ('r/tucker_carlson', 115)
         if topCount >= 1:
             vs += "<br>" + v[0]
         topCount -= 1
 
     sessionKey = 'blue'
     request.session[sessionKey] = vs
-    return redirect('vbase.main', xData=sessionKey)
-
-
-
+    return redirect('vsubreddit.list', xData=sessionKey)
 
 # # *****************************************************************************
 def moderatorsOfSubreddit(request, subreddit):
@@ -92,7 +85,7 @@ def moderatorsOfSubreddit(request, subreddit):
 
     sessionKey = 'blue'
     request.session[sessionKey] = vs
-    return redirect('vbase.main', xData=sessionKey)
+    return redirect('vsubreddit.list', xData=sessionKey)
 
 
 

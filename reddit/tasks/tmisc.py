@@ -99,14 +99,23 @@ def TASK_generateModelCountData():
 
     listOfModelCountStrings.append("%-30s %8d" % ("Users  poi  updated",         users_poi_u))
     listOfModelCountStrings.append("%-30s %8d" % ("Users  poi !updated",         users_poi_nu))
+    listOfModelCountStrings.append("%-30s %8d" % ("Users  poi total",            users_poi_u + users_poi_nu))
+    listOfModelCountStrings.append("%s" % ("---------------------------------------"))
     listOfModelCountStrings.append("%-30s %8d" % ("Users !poi",                  users_notPoi))
+    listOfModelCountStrings.append("%s" % ("---------------------------------------"))
     listOfModelCountStrings.append("%-30s %8d" % ("Comments  users added",       comments_usersAdded))
     listOfModelCountStrings.append("%-30s %8d" % ("Comments !users added",       comments_notUsersAdded))
+    listOfModelCountStrings.append("%-30s %8d" % ("Comments total",              comments_usersAdded + comments_notUsersAdded))
+    listOfModelCountStrings.append("%s" % ("---------------------------------------"))
     listOfModelCountStrings.append("%-30s %8d" % ("Subreddits  poi  updated",    subreddits_poi_u))
     listOfModelCountStrings.append("%-30s %8d" % ("Subreddits  poi !updated",    subreddits_poi_nu))
+    listOfModelCountStrings.append("%-30s %8d" % ("Subreddits  total",           subreddits_poi_u + subreddits_poi_nu))
+    listOfModelCountStrings.append("%s" % ("---------------------------------------"))
     listOfModelCountStrings.append("%-30s %8d" % ("Subreddits !poi",             subreddits_notPoi))
+    listOfModelCountStrings.append("%s" % ("---------------------------------------"))
     listOfModelCountStrings.append("%-30s %8d" % ("Threads  forestGot",          threads_forestGot))
     listOfModelCountStrings.append("%-30s %8d" % ("Threads !forestGot",          threads_notForestGot))
+    listOfModelCountStrings.append("%-30s %8d" % ("Threads total",               threads_forestGot + threads_notForestGot))
 
     return listOfModelCountStrings
 

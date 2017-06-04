@@ -1,0 +1,26 @@
+{% comment %}
+{% endcomment %}
+
+<table style="width:100%">
+ <tr>
+   <th>Links</th>
+   <th>Results</th>
+ </tr>
+ <tr>
+   <td>
+     {% for i_msubreddit in subreddits %}
+         [<a href="https://www.reddit.com/r/{{i_msubreddit.name}}">new</a>]
+         &nbsp;
+         [<a href="http://localhost:8000/reddit/vanalysis/moderatorsOfSubreddit/{{i_msubreddit.name}}">addMods</a>]
+         &nbsp;
+         [<a href="http://localhost:8000/reddit/vanalysis/poiUsersOfSubreddit/{{i_msubreddit.name}}/200">addPoiUsers</a>]
+         &nbsp;
+         [<a href="http://localhost:8000/reddit/vthread/list/{{i_msubreddit.name}}">list threads</a>]
+         &nbsp;
+         {{i_msubreddit.name}}
+         <br>
+     {% endfor %}
+   </td>
+   <td>{{rightCol}}</td>
+ </tr>
+</table>

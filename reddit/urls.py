@@ -14,6 +14,7 @@ urlpatterns = [
     url(r'^vuser/formNewPoiUser/$',                     vuser.formNewPoiUser,               name='vuser.formNewPoiUser'),
 
     url(r'^vsubreddit/list/$',                          vsubreddit.list,                    name='vsubreddit.list'),
+    url(r'^vsubreddit/list/xData/(?P<xData>\w+)/$',     vsubreddit.list,                    name='vsubreddit.list'),
     url(r'^vsubreddit/formNewPoiSubreddit/$',           vsubreddit.formNewPoiSubreddit,     name='vsubreddit.formNewPoiSubreddit'),
 
     url(r'^vthread/list/(?P<subreddit>\w+)/$',          vthread.list,                       name='vthread.list'),

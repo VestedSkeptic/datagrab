@@ -1,20 +1,14 @@
-{% for thread in threads %}
-    {# Each "thread" is a mThread model object. #}
-    <a href="https://www.reddit.com/r/{{subreddit}}/comments/{{thread.rid}}">{{thread.rid}}</a>&nbsp;
-    ({{thread.rdomain}})&nbsp;
-    {{thread.rnum_comments}} comments<br/>
+<b>{{subreddit}}</b> threads<br>
 
-
-{% comment %}
-<a href="https://www.reddit.com/r/{{subreddit}}/comments/{{thread.rid}}">{{thread.rtitle}}</a>&nbsp;
-
-
-url to thread on politics:   https://www.reddit.com/r/politics/comments/6bodhr/dem_to_call_for_trumps_impeachment_on_house_floor/
-url to thread on politics:   https://www.reddit.com/r/politics/comments/6bodhr
-url to thread on politics:   politics/comments/6bodhr
-{% endcomment %}
-
+{% for i_mthread in threads %}
+    <b>{{i_mthread.rnum_comments}}</b>
+    &nbsp;
+    <a href="https://www.reddit.com/r/{{subreddit}}/comments/{{i_mthread.rid}}">{{i_mthread.rtitle|truncatechars:90}}</a>
+    &nbsp;
+    <br/>
+    <!-- ({{i_mthread.rdomain}}) -->
 {% endfor %}
+
 <br/>
 <div class="pagination">
     <span class="step-links">
@@ -31,3 +25,22 @@ url to thread on politics:   politics/comments/6bodhr
         {% endif %}
     </span>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+{% comment %}
+<a href="https://www.reddit.com/r/{{subreddit}}/comments/{{thread.rid}}">{{thread.rtitle}}</a>&nbsp;
+
+
+url to thread on politics:   https://www.reddit.com/r/politics/comments/6bodhr/dem_to_call_for_trumps_impeachment_on_house_floor/
+url to thread on politics:   https://www.reddit.com/r/politics/comments/6bodhr
+url to thread on politics:   politics/comments/6bodhr
+{% endcomment %}

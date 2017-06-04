@@ -1,27 +1,19 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils.safestring import mark_safe
 from ..config import clog
 from ..models import msubreddit
 from ..forms import fsubreddit
 # import pprint
 
 # *****************************************************************************
-def list(request):
+def list(request, xData=None):
     mi = clog.dumpMethodInfo()
     clog.logger.info(mi)
 
-    vs = ''
     qs = msubreddit.objects.all().order_by('name')
-    if qs.count() == 0:
-        vs += "No items to list"
-    for item in qs:
-        vs += item.name + ", "
-
-    clog.logger.info(vs)
-    sessionKey = 'blue'
-    request.session[sessionKey] = vs
-    return redirect('vbase.main', xData=sessionKey)
+    return render(request, 'vsubreddit_list.html', {'subreddits': qs, 'rightCol': mark_safe(request.session.get(xData, ''))})
 
 # *****************************************************************************
 def delAll(request):

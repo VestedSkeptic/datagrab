@@ -18,32 +18,6 @@ def main(request, xData=None):
     vs += ' <a href="http://localhost:8000/reddit/vsubreddit/list">list</a>'
     vs += ', <b>add</b> <a href="http://localhost:8000/reddit/vsubreddit/formNewPoiSubreddit">newPoiSubreddit</a>'
 
-    vs += '<br><b>vthread</b>:'
-    vs += ' <b>list</b>:'
-    vs += ' <a href="http://localhost:8000/reddit/vthread/list/Molw">Molw</a>'
-    vs += ', <a href="http://localhost:8000/reddit/vthread/list/politics">Politics</a>'
-
-    vs += '<br><b>vanalysis</b>:'
-    vs += '<br><b>poiUsersOf</b>:'
-    vs += ' <a href="http://localhost:8000/reddit/vanalysis/poiUsersOfSubreddit/The_Donald/300">The_Donald</a>'
-    # vs += ', <a href="http://localhost:8000/reddit/vanalysis/poiUsersOfSubreddit/hardright/100">hardright</a>'
-    # vs += ', <a href="http://localhost:8000/reddit/vanalysis/poiUsersOfSubreddit/politics/100">politics</a>'
-    # vs += ', <a href="http://localhost:8000/reddit/vanalysis/poiUsersOfSubreddit/TheNewRight/100">TheNewRight</a>'
-    vs += ', <a href="http://localhost:8000/reddit/vanalysis/poiUsersOfSubreddit/LiberalDegeneracy/100">LiberalDegeneracy</a>'
-    vs += ', <a href="http://localhost:8000/reddit/vanalysis/poiUsersOfSubreddit/Anarcho_Capitalism/100">Anarcho_Capitalism</a>'
-    vs += ', <a href="http://localhost:8000/reddit/vanalysis/poiUsersOfSubreddit/Physical_Removal/100">Physical_Removal</a>'
-    vs += '<br><b>moderatorsOf</b>:'
-    vs += ' <a href="http://localhost:8000/reddit/vanalysis/moderatorsOfSubreddit/The_Donald">The_Donald</a>'
-    # vs += ', <a href="http://localhost:8000/reddit/vanalysis/moderatorsOfSubreddit/hardright">hardright</a>'
-    # vs += ', <a href="http://localhost:8000/reddit/vanalysis/moderatorsOfSubreddit/politics">politics</a>'
-    # vs += ', <a href="http://localhost:8000/reddit/vanalysis/moderatorsOfSubreddit/TheNewRight">TheNewRight</a>'
-    vs += ', <a href="http://localhost:8000/reddit/vanalysis/moderatorsOfSubreddit/LiberalDegeneracy">LiberalDegeneracy</a>'
-    vs += ', <a href="http://localhost:8000/reddit/vanalysis/moderatorsOfSubreddit/Anarcho_Capitalism">Anarcho_Capitalism</a>'
-    vs += ', <a href="http://localhost:8000/reddit/vanalysis/moderatorsOfSubreddit/Physical_Removal">Physical_Removal</a>'
-
-
-
-
     # vs += ', <a href="http://localhost:8000/reddit/vuser/delAll">delAll</a>'
     # vs += ', <a href="http://localhost:8000/reddit/vsubreddit/delAll">delAll</a>'
     # vs += '  <a href="http://localhost:8000/reddit/vthread/delAll">delAll</a>'

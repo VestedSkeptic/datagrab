@@ -32,8 +32,8 @@ def launch_tasks_on_startup(sender, **kwargs):
     # TASK_inspectTaskQueue.delay()
     # TASK_displayModelCounts.delay()
 
-    TASK_updateCommentsForAllUsers.delay(1, True)
-    TASK_updateThreadsForAllSubreddits.delay(1, True)
+    # TASK_updateCommentsForAllUsers.delay(1, True)
+    # TASK_updateThreadsForAllSubreddits.delay(1, True)
 
     # TASK_updateThreadCommentsByForest.delay(30)
     # TASK_updateUsersForAllComments.delay(100)
