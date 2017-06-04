@@ -131,9 +131,14 @@ def TASK_updateCommentsForUser(username):
                 i_mcomment.save()
         except praw.exceptions.APIException as e:
             clog.logger.info("%s %s PRAW_APIException: error_type = %s, message = %s" % (getBaseC(mi, ts), username, e.error_type, e.message))
-        clog.logger.info("%s %s, %d new, %d old, %d oldChanged" % (getBaseC(mi, ts), username, countNew, countOldUnchanged, countOldChanged))
+
+        beforeWarningString = ' [before]'
+        if countNew == 0 and params['before'] != '':
+            beforeWarningString = ' [** %s **]' % (params['before'])
+
+        clog.logger.info("%s %s %d new, %d old, %d oldC %s" % (getBaseC(mi, ts), username, countNew, countOldUnchanged, countOldChanged, beforeWarningString))
     except ObjectDoesNotExist:
-        clog.logger.info("%s %s, %s" % (getBaseC(mi, ts), username, "ERROR does not exist"))
+        clog.logger.info("%s %s %s" % (getBaseC(mi, ts), username, "ERROR does not exist"))
     return ""
 
 # --------------------------------------------------------------------------

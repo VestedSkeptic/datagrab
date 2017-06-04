@@ -3,7 +3,7 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from .mbase import mbase
 from ..config import clog
-# import praw
+import praw
 # import pprint
 
 # *****************************************************************************
@@ -71,11 +71,30 @@ class muser(mbase):
 
     # --------------------------------------------------------------------------
     def getBestCommentBeforeValue(self, prawReddit):
+        from .mcomment import mcomment
         # mi = clog.dumpMethodInfo()
         # clog.logger.info(mi)
 
-        # clog.logger.info("METHOD NOT COMPLETED")
-        return ''
+        youngestRV = ''
+        qs = mcomment.objects.filter(username=self.name, pdeleted=False).order_by('-name')
+        for item in qs:
+            try:
+                # CAN I BATCH THIS QUERY UP TO GET MULTIPLE COMMENTS FROM REDDIT AT ONCE?
+                isValidComment = prawReddit.comment(item.name[3:])
+                # if isValidComment.author != None:
+                # if isValidComment.author != None and isValidComment.author.name != '[deleted]' and isValidComment.author.name != '[removed]':
+                if isValidComment.author != None and isValidComment.author != '[deleted]' and isValidComment.author != '[removed]':
+                    youngestRV = item.name
+                    # clog.logger.debug("youngestRV = %s" % (youngestRV))
+                    break
+                else: # Update item as deleted.
+                    item.pdeleted = True
+                    item.save()
+                    # clog.logger.debug("userCommentIndex %s flagged as deleted" % (item.name))
+            except praw.exceptions.APIException as e:
+                clog.logger.error("PRAW APIException: error_type = %s, message = %s" % (e.error_type, e.message))
+
+        return youngestRV
 
 # # ----------------------------------------------------------------------------
 # # REDDITOR attributes
