@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from .mbase import mbase
 from ..config import clog
 from datetime import datetime
+from django.utils import timezone
 import pprint
 
 # *****************************************************************************
@@ -36,7 +37,10 @@ class msubreddit(mbase):
     ppoi                            = models.BooleanField(default=False)
     precentlyupdated                = models.BooleanField(default=False)
     pprioritylevel                  = models.IntegerField(default=0)
-    pthreadupdatetimestamp          = models.DateTimeField(default=datetime(2000, 1, 1, 1, 0, 0))
+    # pthreadupdatetimestamp          = models.DateTimeField(default=datetime(2000, 1, 1, 1, 0, 0))
+    # pthreadupdatetimestamp          = models.DateTimeField(default=timezone.now())
+    # pthreadupdatetimestamp          = models.DateTimeField(default=timezone.now)
+    pthreadupdatetimestamp          = models.DateTimeField(default=timezone.make_aware(datetime(2000, 1, 1, 1, 0, 0)))
     pupdateswithnochanges           = models.IntegerField(default=0)
     pcountnew                       = models.IntegerField(default=0)
     pcountOldUnchanged              = models.IntegerField(default=0)
@@ -154,7 +158,8 @@ class msubreddit(mbase):
         self.pcountOldUnchanged = countOldUnchanged
         self.pcountOldChanged   = countOldChanged
 
-        self.pthreadupdatetimestamp = datetime.now()
+        # self.pthreadupdatetimestamp = datetime.now()
+        self.pthreadupdatetimestamp = timezone.now()
         self.save()
         return
 

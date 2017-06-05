@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from .mbase import mbase
 from ..config import clog
 from datetime import datetime
+from django.utils import timezone
 import praw
 # import pprint
 
@@ -47,11 +48,15 @@ class muser(mbase):
     ppoi                        = models.BooleanField(default=False)
     precentlyupdated            = models.BooleanField(default=False)
     pprioritylevel              = models.IntegerField(default=0)
-    pcommentsupdatetimestamp    = models.DateTimeField(default=datetime(2000, 1, 1, 1, 0, 0))
+    # pcommentsupdatetimestamp    = models.DateTimeField(default=datetime(2000, 1, 1, 1, 0, 0))
+    # pcommentsupdatetimestamp    = models.DateTimeField(default=timezone.now())
+    # pcommentsupdatetimestamp    = models.DateTimeField(default=timezone.now)
+    pcommentsupdatetimestamp    = models.DateTimeField(default=timezone.make_aware(datetime(2000, 1, 1, 1, 0, 0)))
     pupdateswithnochanges       = models.IntegerField(default=0)
     pcountnew                   = models.IntegerField(default=0)
     pcountOldUnchanged          = models.IntegerField(default=0)
     pcountOldChanged            = models.IntegerField(default=0)
+    pdeleted                    = models.BooleanField(default=False)
     # Redditor fields
     r_path                      = models.CharField(max_length=40, default='', blank=True)
 
@@ -123,7 +128,8 @@ class muser(mbase):
         self.pcountOldUnchanged = countOldUnchanged
         self.pcountOldChanged   = countOldChanged
 
-        self.pcommentsupdatetimestamp = datetime.now()
+        # self.pcommentsupdatetimestamp = datetime.now()
+        self.pcommentsupdatetimestamp = timezone.now()
         self.save()
         return
 

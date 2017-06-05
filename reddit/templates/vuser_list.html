@@ -22,6 +22,10 @@
          {{i_muser.pcountnew}},
          &nbsp;
          {{i_muser.name}}
+         {% if i_muser.pdeleted %}
+         &nbsp;
+         <b>DELETED</b>
+         {% endif %}
          <br>
      {% endfor %}
    </td>

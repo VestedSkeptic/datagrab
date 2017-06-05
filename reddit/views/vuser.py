@@ -12,7 +12,8 @@ def list(request, xData=None):
     mi = clog.dumpMethodInfo()
     clog.logger.info(mi)
 
-    qs = muser.objects.filter(ppoi=True).order_by('name')
+    # qs = muser.objects.filter(ppoi=True).order_by('name','pcommentsupdatetimestamp')
+    qs = muser.objects.filter(ppoi=True).order_by('-pcommentsupdatetimestamp')
     return render(request, 'vuser_list.html', {'users': qs, 'rightCol': mark_safe(request.session.get(xData, ''))})
 
 # *****************************************************************************

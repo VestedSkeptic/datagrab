@@ -7,6 +7,8 @@ from ..models import msubreddit
 from ..models import mthread
 from ..models import muser
 from .tbase import getBaseP, getBaseC
+import praw
+import prawcore
 # import pprint
 
 # --------------------------------------------------------------------------
@@ -131,7 +133,13 @@ def TASK_updateCommentsForUser(username):
                 i_mcomment.puseradded = True
                 i_mcomment.save()
         except praw.exceptions.APIException as e:
-            clog.logger.info("%s %s PRAW_APIException: error_type = %s, message = %s" % (getBaseC(mi, ts), username, e.error_type, e.message))
+            clog.logger.info("%s %s APIException: error_type = %s, message = %s" % (getBaseC(mi, ts), username, e.error_type, e.message))
+        except prawcore.exceptions.NotFound as e:
+            clog.logger.info("%s %s PrawcoreException: %s, *** USER PROBABLY DELETED ***" % (getBaseC(mi, ts), username, e))
+            i_muser.pdeleted = True
+        except prawcore.exceptions.PrawcoreException as e:
+            clog.logger.info("%s %s PrawcoreException: %s, *** USER PROBABLY SUSPENDED ***" % (getBaseC(mi, ts), username, e))
+            i_muser.pdeleted = True
 
         beforeWarningString = ' [before]'
         if countNew == 0 and params['before'] != '':
@@ -145,24 +153,19 @@ def TASK_updateCommentsForUser(username):
 
 # --------------------------------------------------------------------------
 @task()
-# def TASK_updateCommentsForAllUsers(userCount, forceAllToUpdate):
 def TASK_updateCommentsForAllUsers(userCount, priority):
     mi = clog.dumpMethodInfo()
     ts = time.time()
 
     # get userCount number of unprocessed users
-    # qs = muser.objects.filter(ppoi=True).filter(precentlyupdated=False)[:userCount]
-    qs = muser.objects.filter(ppoi=True).filter(precentlyupdated=False).filter(pprioritylevel=priority).order_by('name','pcommentsupdatetimestamp')[:userCount]
-
+    qs = muser.objects.filter(ppoi=True).filter(precentlyupdated=False).filter(pprioritylevel=priority).filter(pdeleted=False).order_by('name','pcommentsupdatetimestamp')[:userCount]
 
     # If all users have been recently processed
-    # if qs.count() == 0 or forceAllToUpdate:
     if qs.count() == 0:
-        # clog.logger.info("%s forceAllToUpdate [%d, %r] ================================" % (getBaseP(mi), qs.count(), forceAllToUpdate))
         clog.logger.info("%s forceAllToUpdate ================================, priority = %d" % (getBaseP(mi), priority))
 
         # set that flag to false for all users
-        qs = muser.objects.filter(ppoi=True).filter(pprioritylevel=priority)
+        qs = muser.objects.filter(ppoi=True).filter(pprioritylevel=priority).filter(pdeleted=False)
         for i_muser in qs:
             i_muser.precentlyupdated = False
             i_muser.save()
@@ -173,7 +176,6 @@ def TASK_updateCommentsForAllUsers(userCount, priority):
             TASK_updateCommentsForAllUsers.delay(userCount, priority)
         else:
             clog.logger.info("%s zero users precentlyupdated reset, priority = %d" % (getBaseC(mi, ts), priority))
-
 
     # otherwise process returned users
     else:
