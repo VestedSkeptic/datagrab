@@ -3,12 +3,15 @@ from .views import vbase
 from .views import vsubreddit
 from .views import vthread
 from .views import vuser
+from .views import vcomment
 from .views import vanalysis
 
 urlpatterns = [
     url(r'^vbase/main/$',                               vbase.main,                         name='vbase.main'),
     url(r'^vbase/main/xData/(?P<xData>\w+)/$',          vbase.main,                         name='vbase.main'),
     url(r'^vbase/test/$',                               vbase.test,                         name='vbase.test'),
+
+    url(r'^vcomment/user/(?P<username>\w+)/$',          vcomment.user,                      name='vcomment.user'),
 
     url(r'^vuser/list/$',                               vuser.list,                         name='vuser.list'),
     url(r'^vuser/list/xData/(?P<xData>\w+)/$',          vuser.list,                         name='vuser.list'),
