@@ -6,14 +6,15 @@ from .ttest import TASK_testLogLevels, TASK_testForDuplicateUsers, TASK_testForD
 
 CONST_SECONDS_05            = 5
 
-CONST_MINUTES_02            = 120
-CONST_MINUTES_05            = 300
-CONST_MINUTES_10            = 600
-CONST_MINUTES_15            = 900
-CONST_MINUTES_20            = 1200
-CONST_MINUTES_30            = 1800
+CONST_MINUTES_01            = 60
+CONST_MINUTES_02            = CONST_MINUTES_01*2
+CONST_MINUTES_05            = CONST_MINUTES_01*5
+CONST_MINUTES_10            = CONST_MINUTES_01*10
+CONST_MINUTES_15            = CONST_MINUTES_01*15
+CONST_MINUTES_20            = CONST_MINUTES_01*20
+CONST_MINUTES_30            = CONST_MINUTES_01*30
 
-CONST_HOURS___01            = 3600
+CONST_HOURS___01            = CONST_MINUTES_01*60
 CONST_HOURS___02            = CONST_HOURS___01*2
 CONST_HOURS___03            = CONST_HOURS___01*3
 CONST_HOURS___04            = CONST_HOURS___01*4
@@ -31,12 +32,12 @@ def setup_periodic_tasks(sender, **kwargs):
 
     sender.add_periodic_task(CONST_MINUTES_02,  TASK_inspectTaskQueue.s(),                      expires=CONST_MINUTES_02-10)
     sender.add_periodic_task(CONST_MINUTES_05,  TASK_updateThreadsForAllSubreddits.s(2, 0),     expires=CONST_MINUTES_05-10)
-    sender.add_periodic_task(CONST_MINUTES_30,  TASK_updateThreadsForAllSubreddits.s(2, 1),     expires=CONST_MINUTES_30-10)
-    sender.add_periodic_task(CONST_HOURS___04,  TASK_updateThreadsForAllSubreddits.s(2, 2),     expires=CONST_HOURS___04-10)
+    sender.add_periodic_task(CONST_HOURS___01,  TASK_updateThreadsForAllSubreddits.s(5, 1),     expires=CONST_HOURS___01-10)
+    sender.add_periodic_task(CONST_HOURS___04,  TASK_updateThreadsForAllSubreddits.s(10, 2),    expires=CONST_HOURS___04-10)
 
     sender.add_periodic_task(CONST_MINUTES_05,  TASK_updateCommentsForAllUsers.s(10, 0),        expires=CONST_MINUTES_05-10)
-    sender.add_periodic_task(CONST_HOURS___02,  TASK_updateCommentsForAllUsers.s(10, 1),        expires=CONST_HOURS___02-10)
-    sender.add_periodic_task(CONST_HOURS___06,  TASK_updateCommentsForAllUsers.s(10, 2),        expires=CONST_HOURS___06-10)
+    sender.add_periodic_task(CONST_HOURS___02,  TASK_updateCommentsForAllUsers.s(20, 1),        expires=CONST_HOURS___02-10)
+    sender.add_periodic_task(CONST_HOURS___05,  TASK_updateCommentsForAllUsers.s(50, 2),        expires=CONST_HOURS___05-10)
 
     sender.add_periodic_task(CONST_MINUTES_10,  TASK_displayModelCounts.s(),                    expires=CONST_MINUTES_10-10)
 
