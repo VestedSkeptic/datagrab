@@ -14,10 +14,10 @@
    <td>
      {% for i_muser in users %}
          {{i_muser.pcommentsupdatetimestamp|date:'m/d H:i'}}
-         &nbsp;#NoChngs:
-         {{i_muser.pupdateswithnochanges}},
          &nbsp;Pri:
          {{i_muser.pprioritylevel}},
+         &nbsp;#!NC:
+         {{i_muser.pupdateswithnochanges}},
          &nbsp;New:
          {{i_muser.pcountnew}},
          &nbsp;

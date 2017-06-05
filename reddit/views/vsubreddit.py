@@ -12,7 +12,8 @@ def list(request, xData=None):
     mi = clog.dumpMethodInfo()
     clog.logger.info(mi)
 
-    qs = msubreddit.objects.all().order_by('name')
+    # qs = msubreddit.objects.all().order_by('name')
+    qs = msubreddit.objects.all().order_by('pprioritylevel','-pthreadupdatetimestamp')
     return render(request, 'vsubreddit_list.html', {'subreddits': qs, 'rightCol': mark_safe(request.session.get(xData, ''))})
 
 # *****************************************************************************
