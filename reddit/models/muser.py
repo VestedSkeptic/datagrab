@@ -46,7 +46,7 @@ class muser(mbase):
     name                        = models.CharField(max_length=30, db_index=True)
     # properties
     ppoi                        = models.BooleanField(default=False)
-    precentlyupdated            = models.BooleanField(default=False)
+    # precentlyupdated            = models.BooleanField(default=False)
     pprioritylevel              = models.IntegerField(default=0)
     # pcommentsupdatetimestamp    = models.DateTimeField(default=datetime(2000, 1, 1, 1, 0, 0))
     # pcommentsupdatetimestamp    = models.DateTimeField(default=timezone.now())
@@ -111,7 +111,7 @@ class muser(mbase):
     # --------------------------------------------------------------------------
     def commentsUpdated(self, countNew, countOldUnchanged, countOldChanged):
         mi = clog.dumpMethodInfo()
-        self.precentlyupdated =True
+        # self.precentlyupdated =True
 
         if countNew > 0:
             self.pprioritylevel -= 1

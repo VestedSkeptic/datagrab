@@ -36,15 +36,15 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(CONST_HOURS___04,  TASK_updateThreadsForAllSubreddits.s(10, 2),    expires=CONST_HOURS___04-10)
 
     sender.add_periodic_task(CONST_MINUTES_05,  TASK_updateCommentsForAllUsers.s(10, 0),        expires=CONST_MINUTES_05-10)
-    sender.add_periodic_task(CONST_HOURS___02,  TASK_updateCommentsForAllUsers.s(20, 1),        expires=CONST_HOURS___02-10)
-    sender.add_periodic_task(CONST_HOURS___05,  TASK_updateCommentsForAllUsers.s(50, 2),        expires=CONST_HOURS___05-10)
+    sender.add_periodic_task(CONST_HOURS___01,  TASK_updateCommentsForAllUsers.s(20, 1),        expires=CONST_HOURS___01-10)
+    sender.add_periodic_task(CONST_HOURS___02,  TASK_updateCommentsForAllUsers.s(20, 2),        expires=CONST_HOURS___02-10)
 
     sender.add_periodic_task(CONST_MINUTES_10,  TASK_displayModelCounts.s(),                    expires=CONST_MINUTES_10-10)
 
     sender.add_periodic_task(CONST_MINUTES_02,  TASK_updateThreadCommentsByForest.s(30),        expires=CONST_MINUTES_02-10)
     sender.add_periodic_task(CONST_MINUTES_05,  TASK_updateUsersForAllComments.s(100),          expires=CONST_MINUTES_05-10)
-    sender.add_periodic_task(CONST_HOURS___02,  TASK_testForDuplicateUsers.s(),                 expires=CONST_HOURS___02-10)
-    sender.add_periodic_task(CONST_HOURS___02,  TASK_testForDuplicateComments.s(),              expires=CONST_HOURS___02-10)
+    sender.add_periodic_task(CONST_HOURS___06,  TASK_testForDuplicateUsers.s(),                 expires=CONST_HOURS___06-10)
+    sender.add_periodic_task(CONST_HOURS___06,  TASK_testForDuplicateComments.s(),              expires=CONST_HOURS___06-10)
 
     pass
 
@@ -57,9 +57,9 @@ def launch_tasks_on_startup(sender, **kwargs):
     # TASK_updateThreadsForAllSubreddits.delay(1, 0)
     # TASK_updateThreadsForAllSubreddits.delay(1, 1)
     # TASK_updateThreadsForAllSubreddits.delay(1, 2)
-    # TASK_updateCommentsForAllUsers.delay(1, 0)
-    # TASK_updateCommentsForAllUsers.delay(1, 1)
-    # TASK_updateCommentsForAllUsers.delay(1, 2)
+    # TASK_updateCommentsForAllUsers.delay(5, 0)
+    # TASK_updateCommentsForAllUsers.delay(5, 1)
+    # TASK_updateCommentsForAllUsers.delay(5, 2)
 
     # TASK_updateCommentsForAllUsers.delay(1, True)
 

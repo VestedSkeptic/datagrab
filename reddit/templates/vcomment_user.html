@@ -1,30 +1,20 @@
 {% comment %}
-[<a href="https://www.reddit.com/r/{{i_muser.name}}">new</a>]
-[<a href="http://localhost:8000/reddit/vanalysis/moderatorsOfSubreddit/{{i_muser.name}}">+ mods</a>]
-[<a href="http://localhost:8000/reddit/vanalysis/poiUsersOfSubreddit/{{i_muser.name}}/200">+ poi</a>]
-[<a href="http://localhost:8000/reddit/vthread/list/{{i_muser.name}}">threads</a>]
-
-{{i_muser.pcommentsupdatetimestamp|date:'m/d H:i'}}
-&nbsp;#NoChngs:
-&nbsp;Pri:
-{{i_muser.pprioritylevel}},
-&nbsp;New:
-{{i_muser.pcountnew}},
+{% if i_mcomment.rbanned_by %}
+<b>BANNED</b>
 &nbsp;
-{{i_muser.name}}
-{% if i_muser.pdeleted %}
-&nbsp;
-<b>DELETED</b>
 {% endif %}
+
+[<a href="https://www.reddit.com/{{i_mcomment.rsubreddit_name_prefixed}}/comments/{{i_mcomment.thread|slice:"3:"}}//{{i_mcomment.rparent_id}}/">parent</a>]
 {% endcomment %}
 
 <b>{{username}}</b><br>
-
 {% for i_mcomment in comments %}
-  <b>*</b>
+  <b>{{i_mcomment.rsubreddit_name_prefixed}}:</b>
+  <!-- https://www.reddit.com/r/politics/comments/6fkyym//dij0k06/      THREAD IN CONTEXT, note double // -->
+  [<a href="https://www.reddit.com/{{i_mcomment.rsubreddit_name_prefixed}}/comments/{{i_mcomment.thread|slice:"3:"}}//{{i_mcomment.rid}}/">context</a>]
   &nbsp;
-  {{i_mcomment.rsubreddit_name_prefixed}} :
   {{i_mcomment.rbody}}
-
   <br>
 {% endfor %}
+
+

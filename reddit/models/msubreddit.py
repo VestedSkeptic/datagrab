@@ -35,7 +35,7 @@ class msubreddit(mbase):
     name                            = models.CharField(max_length=30)
     # properties
     ppoi                            = models.BooleanField(default=False)
-    precentlyupdated                = models.BooleanField(default=False)
+    # precentlyupdated                = models.BooleanField(default=False)
     pprioritylevel                  = models.IntegerField(default=0)
     # pthreadupdatetimestamp          = models.DateTimeField(default=datetime(2000, 1, 1, 1, 0, 0))
     # pthreadupdatetimestamp          = models.DateTimeField(default=timezone.now())
@@ -141,7 +141,7 @@ class msubreddit(mbase):
     # --------------------------------------------------------------------------
     def threadsUpdated(self, countNew, countOldUnchanged, countOldChanged):
         mi = clog.dumpMethodInfo()
-        self.precentlyupdated =True
+        # self.precentlyupdated =True
 
         if countNew > 0:
             self.pprioritylevel -= 1
