@@ -81,41 +81,49 @@ def TASK_inspectTaskQueue():
 def TASK_generateModelCountData():
     mi = clog.dumpMethodInfo()
 
-    users_poi_u             = muser.objects.filter(ppoi=True).filter(precentlyupdated=True).count()
-    users_poi_nu            = muser.objects.filter(ppoi=True).filter(precentlyupdated=False).count()
+    users_poi               = muser.objects.filter(ppoi=True).count()
     users_notPoi            = muser.objects.filter(ppoi=False).count()
+
+    users_poi_pri_0         = muser.objects.filter(ppoi=True).filter(pprioritylevel=0).count()
+    users_poi_pri_1         = muser.objects.filter(ppoi=True).filter(pprioritylevel=1).count()
+    users_poi_pri_2         = muser.objects.filter(ppoi=True).filter(pprioritylevel=2).count()
 
     comments_usersAdded     = mcomment.objects.filter(puseradded=True).count()
     comments_notUsersAdded  = mcomment.objects.filter(puseradded=False).count()
 
-    subreddits_poi_u        = msubreddit.objects.filter(ppoi=True).filter(precentlyupdated=True).count()
-    subreddits_poi_nu       = msubreddit.objects.filter(ppoi=True).filter(precentlyupdated=False).count()
+    subreddits_poi          = msubreddit.objects.filter(ppoi=True).count()
     subreddits_notPoi       = msubreddit.objects.filter(ppoi=False).count()
+
+    subreddits_poi_pri_0    = msubreddit.objects.filter(ppoi=True).filter(pprioritylevel=0).count()
+    subreddits_poi_pri_1    = msubreddit.objects.filter(ppoi=True).filter(pprioritylevel=1).count()
+    subreddits_poi_pri_2    = msubreddit.objects.filter(ppoi=True).filter(pprioritylevel=2).count()
 
     threads_forestGot       = mthread.objects.filter(pforestgot=True).count()
     threads_notForestGot    = mthread.objects.filter(pforestgot=False).count()
 
     listOfModelCountStrings = []
 
-    listOfModelCountStrings.append("%-30s %8d" % ("Users  poi  updated",         users_poi_u))
-    listOfModelCountStrings.append("%-30s %8d" % ("Users  poi !updated",         users_poi_nu))
-    listOfModelCountStrings.append("%-30s %8d" % ("Users  poi total",            users_poi_u + users_poi_nu))
-    listOfModelCountStrings.append("%s" % ("---------------------------------------"))
+    listOfModelCountStrings.append("%-30s %8d" % ("Users  poi",                  users_poi))
     listOfModelCountStrings.append("%-30s %8d" % ("Users !poi",                  users_notPoi))
+    listOfModelCountStrings.append("%s" % ("---------------------------------------"))
+    listOfModelCountStrings.append("%-30s %8d" % ("Users  poi priority 0",       users_poi_pri_0))
+    listOfModelCountStrings.append("%-30s %8d" % ("Users  poi priority 1",       users_poi_pri_1))
+    listOfModelCountStrings.append("%-30s %8d" % ("Users  poi priority 2",       users_poi_pri_2))
     listOfModelCountStrings.append("%s" % ("---------------------------------------"))
     listOfModelCountStrings.append("%-30s %8d" % ("Comments  users added",       comments_usersAdded))
     listOfModelCountStrings.append("%-30s %8d" % ("Comments !users added",       comments_notUsersAdded))
-    listOfModelCountStrings.append("%-30s %8d" % ("Comments total",              comments_usersAdded + comments_notUsersAdded))
+    listOfModelCountStrings.append("%-30s %8d" % ("Comments  total",             comments_usersAdded + comments_notUsersAdded))
     listOfModelCountStrings.append("%s" % ("---------------------------------------"))
-    listOfModelCountStrings.append("%-30s %8d" % ("Subreddits  poi  updated",    subreddits_poi_u))
-    listOfModelCountStrings.append("%-30s %8d" % ("Subreddits  poi !updated",    subreddits_poi_nu))
-    listOfModelCountStrings.append("%-30s %8d" % ("Subreddits  total",           subreddits_poi_u + subreddits_poi_nu))
-    listOfModelCountStrings.append("%s" % ("---------------------------------------"))
+    listOfModelCountStrings.append("%-30s %8d" % ("Subreddits  poi",             subreddits_poi))
     listOfModelCountStrings.append("%-30s %8d" % ("Subreddits !poi",             subreddits_notPoi))
+    listOfModelCountStrings.append("%s" % ("---------------------------------------"))
+    listOfModelCountStrings.append("%-30s %8d" % ("Subreddits  poi  priority 0", subreddits_poi_pri_0))
+    listOfModelCountStrings.append("%-30s %8d" % ("Subreddits  poi  priority 1", subreddits_poi_pri_1))
+    listOfModelCountStrings.append("%-30s %8d" % ("Subreddits  poi  priority 2", subreddits_poi_pri_2))
     listOfModelCountStrings.append("%s" % ("---------------------------------------"))
     listOfModelCountStrings.append("%-30s %8d" % ("Threads  forestGot",          threads_forestGot))
     listOfModelCountStrings.append("%-30s %8d" % ("Threads !forestGot",          threads_notForestGot))
-    listOfModelCountStrings.append("%-30s %8d" % ("Threads total",               threads_forestGot + threads_notForestGot))
+    listOfModelCountStrings.append("%-30s %8d" % ("Threads  total",              threads_forestGot + threads_notForestGot))
 
     return listOfModelCountStrings
 
