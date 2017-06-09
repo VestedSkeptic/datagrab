@@ -151,8 +151,8 @@ class msubreddit(mbase):
         else:
             self.pprioritylevel += 1
             self.pupdateswithnochanges += 1
-            if self.pprioritylevel > 2:
-                self.pprioritylevel = 2;
+            if self.pprioritylevel > 3:
+                self.pprioritylevel = 3;
 
         self.pcountnew          = countNew
         self.pcountOldUnchanged = countOldUnchanged
