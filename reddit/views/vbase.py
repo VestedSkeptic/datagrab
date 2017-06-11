@@ -45,17 +45,35 @@ def displayDatabaseModelCounts():
     s += '<BR>============================'
     return s
 
+# # *****************************************************************************
+# def test(request):
+#     mi = clog.dumpMethodInfo()
+#     clog.logger.info(mi)
+#
+#     vs = "vbase.test: EMPTY TEST"
+#
+#     sessionKey = 'blue'
+#     request.session[sessionKey] = vs
+#     return redirect('vbase.main', xData=sessionKey)
+
 # *****************************************************************************
 def test(request):
     mi = clog.dumpMethodInfo()
     clog.logger.info(mi)
 
-    vs = "vbase.test: EMPTY TEST"
+    vs = ''
+
+    prawReddit = mcomment.getPrawRedditInstance()
+    prawSubmissionObject = prawReddit.submission(id='6fvbyb')
+
+    for duplicate in prawSubmissionObject.duplicates():
+        vs += duplicate.subreddit_name_prefixed
+        vs += ', '
+
 
     sessionKey = 'blue'
     request.session[sessionKey] = vs
     return redirect('vbase.main', xData=sessionKey)
-
 
 
 
