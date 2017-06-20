@@ -153,7 +153,12 @@ def TASK_updateCommentsForAllUsers(userCount, priority):
     mi = clog.dumpMethodInfo()
     ts = time.time()
 
-    qs = muser.objects.filter(ppoi=True).filter(pprioritylevel=priority).filter(pdeleted=False).order_by('pcommentsupdatetimestamp','name')[:userCount]
+    qs = None
+    if priority >= 0:
+        qs = muser.objects.filter(ppoi=True).filter(pprioritylevel=priority).filter(pdeleted=False).order_by('pcommentsupdatetimestamp','name')[:userCount]
+    else:
+        qs = muser.objects.filter(ppoi=True).filter(pdeleted=False).order_by('pcommentsupdatetimestamp','name')[:userCount]
+
     if qs.count() > 0:
         clog.logger.info("%s %d users being processed, priority = %d" % (getBaseP(mi), qs.count(), priority))
         countOfTasksSpawned = 0

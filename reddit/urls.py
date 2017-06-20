@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^vbase/main/$',                               vbase.main,                         name='vbase.main'),
     url(r'^vbase/main/xData/(?P<xData>\w+)/$',          vbase.main,                         name='vbase.main'),
     url(r'^vbase/test/$',                               vbase.test,                         name='vbase.test'),
+    url(r'^vbase/map/$',                                vbase.map,                          name='vbase.map'),
 
     url(r'^vcomment/user/(?P<username>\w+)/$',          vcomment.user,                      name='vcomment.user'),
 

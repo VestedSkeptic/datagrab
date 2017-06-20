@@ -46,11 +46,7 @@ class muser(mbase):
     name                        = models.CharField(max_length=30, db_index=True)
     # properties
     ppoi                        = models.BooleanField(default=False)
-    # precentlyupdated            = models.BooleanField(default=False)
     pprioritylevel              = models.IntegerField(default=0)
-    # pcommentsupdatetimestamp    = models.DateTimeField(default=datetime(2000, 1, 1, 1, 0, 0))
-    # pcommentsupdatetimestamp    = models.DateTimeField(default=timezone.now())
-    # pcommentsupdatetimestamp    = models.DateTimeField(default=timezone.now)
     pcommentsupdatetimestamp    = models.DateTimeField(default=timezone.make_aware(datetime(2000, 1, 1, 1, 0, 0)))
     pupdateswithnochanges       = models.IntegerField(default=0)
     pcountnew                   = models.IntegerField(default=0)

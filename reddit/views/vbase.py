@@ -18,13 +18,14 @@ def main(request, xData=None):
     vs += ' <a href="http://localhost:8000/reddit/vsubreddit/list">list</a>'
     vs += ', <b>add</b> <a href="http://localhost:8000/reddit/vsubreddit/formNewPoiSubreddit">newPoiSubreddit</a>'
 
+    vs += '<br><a href="http://localhost:8000/reddit/vbase/map">map</a>'
+
     # vs += ', <a href="http://localhost:8000/reddit/vuser/delAll">delAll</a>'
     # vs += ', <a href="http://localhost:8000/reddit/vsubreddit/delAll">delAll</a>'
     # vs += '  <a href="http://localhost:8000/reddit/vthread/delAll">delAll</a>'
 
     vs += displayDatabaseModelCounts()
     vs += '<br><a href="http://localhost:8000/reddit/vbase/test">vbase.test</a>'
-    vs += '<BR>============================'
 
     vs += '<br>' + request.session.get(xData, '')
     return HttpResponse(vs)
@@ -75,6 +76,34 @@ def test(request):
     request.session[sessionKey] = vs
     return redirect('vbase.main', xData=sessionKey)
 
+# *****************************************************************************
+def generateMapLink():
+    vs = '<img src="'
+    vs += "https://maps.googleapis.com/maps/api/staticmap?"
 
+    # vs += "center=Quyon,Quebec"
+    # vs += "center=45.529997,-76.12571597"       # compound
+    vs += "center=45.53716674,-76.14626169"     # NW of compound, center of walking area
 
+    vs += "&zoom=14"
+    vs += "&size=1000x800"
+    vs += "&maptype=roadmap"
+
+    # vs += "&markers=color:blue%7Clabel:S%7C40.702147,-74.015794"
+    # vs += "&markers=color:green%7Clabel:G%7C40.711614,-74.012318"
+    # vs += "&markers=color:red%7Clabel:C%7C40.718217,-73.998284"
+
+    vs += "&style=feature:road%7Celement:geometry%7Ccolor:0x000000&size=480x360"
+
+    # my google api key
+    # AIzaSyA3citi7wr_F-ACo-rScbUX1ViHdKN-RVM
+    vs += "&key=AIzaSyA3citi7wr_F-ACo-rScbUX1ViHdKN-RVM"
+    vs += '">'
+
+    return vs
+
+# *****************************************************************************
+def map(request):
+    vs = generateMapLink()
+    return HttpResponse(vs)
 

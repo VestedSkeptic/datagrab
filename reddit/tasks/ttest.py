@@ -1,5 +1,6 @@
 from celery import task
 import time
+from django.db.models import Count
 from ..config import clog
 from ..models import mcomment
 from ..models import msubreddit
@@ -24,52 +25,66 @@ def TASK_testLogLevels():
 
 # --------------------------------------------------------------------------
 @task()
-def TASK_testForDuplicateUsers():
+def TASK_testForDuplicateComments():
     mi = clog.dumpMethodInfo()
     ts = time.time()
-
     clog.logger.info("%s" % (getBaseP(mi)))
 
-    duplicateUsers = {}
-    qs = muser.objects.all()
-    for i_muser in qs:
-        qs2 = muser.objects.filter(name=i_muser.name)
-
-    itemsFound = qs2.count()
-    if itemsFound != 1:
-        duplicateUsers[i_muser.name] = 1
-
-    if len(duplicateUsers) >= 1: clog.logger.info("%s WARNING: %d duplicate users" % (getBaseC(mi, ts), len(duplicateUsers)))
-    else:                        clog.logger.info("%s no duplicate users found" %    (getBaseC(mi, ts)))
+    qs = mcomment.objects.values('username','name','thread','subreddit').annotate(num_count=Count('name')).filter(num_count__gt=1)
+    if qs.count() > 0:
+        clog.logger.info("%s WARNING: at least %d duplicate comments" % (getBaseC(mi, ts), qs.count()))
+        for i_mac in qs:
+            value = int(i_mac['num_count'])
+            while value > 1:
+                clog.logger.info("%s WARNING: deleting %s, thread %s, subreddit %s, username %s" % (getBaseC(mi, ts), i_mac['name'], i_mac['thread'], i_mac['subreddit'], i_mac['username']))
+                qs2 = mcomment.objects.filter(username=i_mac['username'], name=i_mac['name'], thread=i_mac['thread'], subreddit=i_mac['subreddit'])
+                qs2.delete()
+                value -= 1
+    else:
+        clog.logger.info("%s no duplicate comments found" %    (getBaseC(mi, ts)))
     return ""
 
 # --------------------------------------------------------------------------
 @task()
-def TASK_testForDuplicateComments():
+def TASK_testForDuplicateThreads():
     mi = clog.dumpMethodInfo()
     ts = time.time()
-
     clog.logger.info("%s" % (getBaseP(mi)))
 
-    duplicateComments = {}
-    qs = mcomment.objects.all()
-    for i_mcomment in qs:
-        qs2 = mcomment.objects.filter(username=i_mcomment.username, name=i_mcomment.name, thread=i_mcomment.thread, subreddit=i_mcomment.subreddit)
-
-    itemsFound = qs2.count()
-    if itemsFound != 1:
-        duplicateComments[i_mcomment.name] = 1
-
-    if len(duplicateComments) >= 1: clog.logger.info("%s: WARNING: %d duplicate comments" % (getBaseC(mi, ts), len(duplicateComments)))
-    else:                           clog.logger.info("%s: no duplicate comments found" %    (getBaseC(mi, ts)))
+    qs = mthread.objects.values('fullname').annotate(num_count=Count('fullname')).filter(num_count__gt=1)
+    if qs.count() > 0:
+        clog.logger.info("%s WARNING: at least %d duplicate threads" % (getBaseC(mi, ts), qs.count()))
+        for i_mac in qs:
+            value = int(i_mac['num_count'])
+            while value > 1:
+                clog.logger.info("%s WARNING: deleting %s" % (getBaseC(mi, ts), i_mac['fullname']))
+                qs2 = mthread.objects.filter(fullname=i_mac['fullname'])
+                qs2.delete()
+                value -= 1
+    else:
+        clog.logger.info("%s no duplicate threads found" %    (getBaseC(mi, ts)))
     return ""
 
+# --------------------------------------------------------------------------
+@task()
+def TASK_testForDuplicateUsers():
+    mi = clog.dumpMethodInfo()
+    ts = time.time()
+    clog.logger.info("%s" % (getBaseP(mi)))
 
-
-
-
-
-
+    qs = muser.objects.values('name').annotate(num_count=Count('name')).filter(num_count__gt=1)
+    if qs.count() > 0:
+        clog.logger.info("%s WARNING: at least %d duplicate users" % (getBaseC(mi, ts), qs.count()))
+        for i_mac in qs:
+            value = int(i_mac['num_count'])
+            while value > 1:
+                clog.logger.info("%s WARNING: deleting %s" % (getBaseC(mi, ts), i_mac['name']))
+                qs2 = muser.objects.filter(name=i_mac['name']).order_by('-pcommentsupdatetimestamp')
+                qs2.delete()
+                value -= 1
+    else:
+        clog.logger.info("%s no duplicate users found" %    (getBaseC(mi, ts)))
+    return ""
 
 
 
